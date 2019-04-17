@@ -150,7 +150,7 @@ class IM(object):
     
     
     def gotoXY(self,X,Y):
-        '''Move objective to position X,Y in mm'''
+        '''Move objective to position X,Y in mm - TO FIX: currently issue concatenating bytes and string'''
         
         # Make sure X and Y are not longer than 3 decimal
         X,Y = round(X,3), round(Y,3)
