@@ -60,7 +60,11 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
         self.socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
         
-        return self.__getFeedback__()
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        Status = out[offset+1:-1].decode()
+        
+        return Status
     
     
     def getXaxis(self):
@@ -70,7 +74,12 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00\x14')
         self.socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
         
-        return self.__getFeedback__() # TO DO slice to take only the coordinates
+        # Read feedback and extract version
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        X = float(out[offset+1:-1])
+        
+        return X
         
     
     def getYaxis(self):
@@ -78,10 +87,14 @@ class IM(object):
         
         # Send request
         self.socket.send(b'\x00\x00\x00\x14')
-        self.socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
+        self.socket.send(b'\x02Get\x1fYAxis\x1f19662438\x03')
         
-        return self.__getFeedback__() # TO DO slice to take only the coordinates
-    
+        # Read feedback and extract version
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        Y = float(out[offset+1:-1])
+        
+        return Y
     
     def getZaxis(self):
         '''Return the Z position of the objective in...mm??'''
@@ -90,7 +103,12 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00\x14')
         self.socket.send(b'\x02Get\x1fZAxis\x1f19736510\x03')
         
-        return self.__getFeedback__() # TO DO slice to take only the coordinates
+        # Read feedback and extract version
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        Z = float(out[offset+1:-1])
+        
+        return Z
     
     
     def getWellCoordinates(self):
@@ -102,7 +120,7 @@ class IM(object):
         return self.__getFeedback__()
     
     
-    def  getZstackCenter(self):
+    def getZstackCenter(self):
         # send request
         self.socket.send(b'\x00\x00\x00\x1b')
         self.socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
@@ -110,9 +128,9 @@ class IM(object):
         # Read feedback and isolate value
         out = self.__getFeedback__()
         offset = out.find(b'\x1f')
-        Z = float(out[offset+1:-1])
+        Zcenter = float(out[offset+1:-1])
         
-        return Z
+        return Zcenter
     
     
     def openLid(self):
