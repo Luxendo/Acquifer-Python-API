@@ -12,13 +12,13 @@ import socket
 
 class IM(object):
 	
-	def __init__(self):
+	def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
 		'''
 		Initialise a TCP/IP socket for the exchange of commands
 		'''
 		# local IP and port (constant)
-		self.IP = '127.0.0.1'
-		self.port = 6261
+		self.TCP_IP = TCP_IP
+		self.TCP_PORT = TCP_PORT
 		
 		# Open a TCP/IP socket to communicate
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
