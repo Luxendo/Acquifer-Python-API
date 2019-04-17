@@ -77,12 +77,12 @@ class IM(object):
     
     
     def getWellCoordinates(self):
+        '''Not functionnal in the VI'''
         # send request
         self.socket.send(b'\x00\x00\x00\x1d')
         self.socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
         
         return self.__getFeedback__()
-        
     
     
     def  getZstackCenter(self):
@@ -90,7 +90,12 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00\x1b')
         self.socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
         
-        return self.__getFeedback__()
+        # Read feedback and isolate value
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        Z = float(out[offset+1:-1])
+        
+        return Z
     
     
     def openLid(self):
@@ -117,7 +122,8 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00)')
         self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X +'\x1f' + Y + '\x03')
         
-    
+        
+        
     def closeSocket(self):
         '''Close TCP/IP port'''
         self.socket.close()
