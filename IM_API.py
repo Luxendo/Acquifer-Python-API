@@ -7,6 +7,8 @@ Read/Write actions are always preceeded by a first read/write, setting the size 
 This size is apparently constant (to check if the timestamp in the message is not increasing the length)
  
 NB : if bugs with some receive commands, round to the next 2^ the number of bytes to read
+
+For new commands, take the "Send Len Hex" decimal code and convert it to a byte using bytes.fromhex(str(hexcode))
 '''
 import socket
 
@@ -36,6 +38,19 @@ class IM(object):
        return self.socket.recv(size)
     
     
+    def getVersion(self):
+        '''Get IM version'''
+        
+        # send request
+        self.socket.send(b'\x00\x00\x00\x18')
+        self.socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
+        
+        # Read feedback and extract version
+        out = self.__getFeedback__()
+        
+        return out 
+        
+   
     def getStatus(self):
         '''Query IM status Ready/?Busy?'''
         
