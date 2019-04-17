@@ -36,7 +36,7 @@ class IM(object):
        return self.socket.recv(size)
     
     
-    def getIMstatus(self):
+    def getStatus(self):
         '''Query IM status Ready/?Busy?'''
         
         # Send request
