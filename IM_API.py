@@ -101,11 +101,17 @@ class IM(object):
     def openLid(self):
         self.socket.send(b'\x00\x00\x00\x1a')
         self.socket.send(b'\x02Command\x1fOpenLid\x1f17248828\x03')
+        
+        # Bump feedback
+        self.__getFeedback__()
     
     
     def closeLid(self):
         self.socket.send(b'\x00\x00\x00\x1a')
         self.socket.send(b'\x02Command\x1fCloseLid\x1f8809857\x03')
+        
+        # Bump feedback
+        self.__getFeedback__()
     
     
     def gotoXY(self,X,Y):
@@ -122,6 +128,8 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00)')
         self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X +'\x1f' + Y + '\x03')
         
+        # Bump feedback
+        self.__getFeedback__()
         
         
     def closeSocket(self):
