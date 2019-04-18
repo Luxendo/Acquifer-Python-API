@@ -54,7 +54,7 @@ class IM(object):
         
    
     def getStatus(self):
-        '''Query IM status Ready/?Busy?'''
+        '''Query IM status Ready/Busy(=script running)'''
         
         # Send request
         self.socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
@@ -68,7 +68,7 @@ class IM(object):
     
     
     def getXaxis(self):
-        '''Return the X position of the objective in...mm??'''
+        '''Return the X position of the objective in mm'''
         
         # Send request
         self.socket.send(b'\x00\x00\x00\x14')
@@ -83,7 +83,7 @@ class IM(object):
         
     
     def getYaxis(self):
-        '''Return the Y position of the objective in...mm??'''
+        '''Return the Y position of the objective in mm'''
         
         # Send request
         self.socket.send(b'\x00\x00\x00\x14')
@@ -97,7 +97,7 @@ class IM(object):
         return Y
     
     def getZaxis(self):
-        '''Return the Z position of the objective in...mm??'''
+        '''Return the Z position of the objective in um'''
         
         # Send request
         self.socket.send(b'\x00\x00\x00\x14')
