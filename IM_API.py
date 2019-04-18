@@ -150,7 +150,7 @@ class IM(object):
     
     
     def gotoXY(self,X,Y):
-        '''Move objective to position X,Y in mm'''
+        '''Move objective to position X,Y in mm (max 3 decimal ex:1.111)'''
         
         # Make sure X and Y are not longer than 3 decimal
         X,Y = round(X,3), round(Y,3)
@@ -162,6 +162,23 @@ class IM(object):
         # send command
         self.socket.send(b'\x00\x00\x00)')
         self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
+        
+        # Bump feedback
+        self.__getFeedback__()
+    
+    
+    def gotoZ(self,Z):
+        '''Move objective to position Z in um (max 1 decimal ex:1.1)'''
+        
+        # Make sure Z is not longer than 1 decimal
+        Z= round(Z,1)
+        
+        # convert Z to byte string
+        Z = '{:.1f}'.format(Z).encode()
+        
+        # send command
+        self.socket.send(b'\x00\x00\x00\x1f')
+        self.socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
         
         # Bump feedback
         self.__getFeedback__()
