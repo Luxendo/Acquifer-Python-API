@@ -150,7 +150,7 @@ class IM(object):
     
     
     def gotoXY(self,X,Y):
-        '''Move objective to position X,Y in mm - TO FIX: currently issue concatenating bytes and string'''
+        '''Move objective to position X,Y in mm'''
         
         # Make sure X and Y are not longer than 3 decimal
         X,Y = round(X,3), round(Y,3)
@@ -161,7 +161,7 @@ class IM(object):
         
         # send command
         self.socket.send(b'\x00\x00\x00)')
-        self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X +'\x1f' + Y + '\x03')
+        self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
         
         # Bump feedback
         self.__getFeedback__()
