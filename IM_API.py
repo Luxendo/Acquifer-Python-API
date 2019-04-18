@@ -3,12 +3,9 @@ This module implements the Imaging Machine (IM) class
 The class contains a set of funtions to control the IM using TCP/IP
 In TCP/IP vocabulary this script is on the client side, while the machine controller is the server
 The TCP/IP works by exchanging strings of bytes.
-Read/Write actions are always preceeded by a first read/write, setting the size in bytes of the "functionnal" command to read or write
-This size is apparently constant (to check if the timestamp in the message is not increasing the length)
- 
-NB : if bugs with some receive commands, round to the next 2^ the number of bytes to read
+Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next
 
-For new commands, take the "Send Len Hex" decimal code and convert it to a byte using bytes.fromhex(str(hexcode))
+For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex(str(hexcode))
 '''
 import socket
 
