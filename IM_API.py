@@ -6,6 +6,9 @@ The TCP/IP works by exchanging strings of bytes.
 Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next
 
 For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex(str(hexcode))
+
+- For some reason GotoXY(0,0) only goes to (5,5) at min
+
 '''
 import socket
 
