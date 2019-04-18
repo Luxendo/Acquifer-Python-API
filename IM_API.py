@@ -153,8 +153,8 @@ class IM(object):
         X,Y = round(X,3), round(Y,3)
         
         # convert X,Y to byte string
-        X = str(X).encode()
-        Y = str(Y).encode()
+        X = '{:.3f}'.format(X).encode()
+        Y = '{:.3f}'.format(Y).encode()
         
         # send command
         self.socket.send(b'\x00\x00\x00)')
