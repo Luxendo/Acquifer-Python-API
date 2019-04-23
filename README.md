@@ -4,6 +4,7 @@ This repo contain the python module with the IM class to control the machine fro
 
 # Missing functionnalities:
 - set and get Objective()
+- IncrementX,Y(step) : like the action of clicking the arrow in the GUI. See if available in labview otherwise hrdcoded in python
 - setLight(Channel, Intensity, mode) # Mode Flash or continuous
 - getWellCoordinates() in live mode
 - gotoWell(xx) 
