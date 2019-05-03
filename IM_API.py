@@ -10,7 +10,7 @@ For new commands, take the "Send Len Hex" and "sent message Hex" decimal code fr
 - For some reason GotoXY(0,0) only goes to (5,5) at min
 
 '''
-import socket
+import socket, os
 
 
 class IM(object):
@@ -179,6 +179,46 @@ class IM(object):
         # send command
         self.socket.send(b'\x00\x00\x00\x1f')
         self.socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
+        
+        # Bump feedback
+        self.__getFeedback__()
+    
+    
+    def setScriptFile(self, ScriptPath):
+        '''Load a pre-configured .imsf script file'''
+        
+        # Turn path into a byte string
+        if os.path.exists(ScriptPath):
+            BytePath = ScriptPath.encode()
+            
+            # send command
+            self.socket.send(b'\x00\x00\x00@')
+            self.socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
+            
+            # Bump feedback
+            self.__getFeedback__()
+        
+        else:
+            raise FileNotFoundError("The provided Script file.imsf does not exist")
+        
+        
+    def startScript(self):
+        '''Start a previously defined script (using setScript)'''
+       
+        # send command
+        self.socket.send(b'\x00\x00\x00\x1d')
+        self.socket.send(b'\x02Command\x1fStartScript\x1f2060372\x03')
+        
+        # Bump feedback
+        self.__getFeedback__()
+    
+    
+    def stopScript(self):
+        '''Stop currently executing script'''
+        
+        # send command
+        self.socket.send(b'\x00\x00\x00\x1c')
+        self.socket.send(b'\x02Command\x1fStopScript\x1f2095120\x03')
         
         # Bump feedback
         self.__getFeedback__()
