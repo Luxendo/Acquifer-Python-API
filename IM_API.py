@@ -10,7 +10,7 @@ For new commands, take the "Send Len Hex" and "sent message Hex" decimal code fr
 - For some reason GotoXY(0,0) only goes to (5,5) at min
 
 '''
-import socket, os
+import socket, os, sys
 
 
 class IM(object):
@@ -32,9 +32,14 @@ class IM(object):
         
        # 1st TCP read to get the size of the message to read
        size_bytes = self.socket.recv(4) # always 4 bytes for the header
-       size = int.from_bytes(size_bytes, byteorder="big")
-        
-       # 2nd TCP read actually reading the message
+	   
+	   if sys.version_info.major == 2:
+	      size = int(size_bytes.encode('hex'), 16)
+	   
+	   elif sys.version_info.major == 3:
+          size = int.from_bytes(size_bytes, byteorder="big")
+	   
+	   # 2nd TCP read actually reading the message
        return self.socket.recv(size)
     
     
