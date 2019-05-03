@@ -14,6 +14,8 @@ import socket, os, sys
 
 
 class IM(object):
+    '''Object representing the IM from ACQUIFER defined with a list of methods to control it'''
+    
     
     def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
         '''
@@ -27,19 +29,20 @@ class IM(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((TCP_IP, TCP_PORT))
     
+    
     def __getFeedback__(self):
        '''Generic function to get feedback from the machine after sending a request'''
         
        # 1st TCP read to get the size of the message to read
        size_bytes = self.socket.recv(4) # always 4 bytes for the header
-	   
-	   if sys.version_info.major == 2:
-	      size = int(size_bytes.encode('hex'), 16)
-	   
-	   elif sys.version_info.major == 3:
-          size = int.from_bytes(size_bytes, byteorder="big")
-	   
-	   # 2nd TCP read actually reading the message
+       
+       if sys.version_info.major == 2:
+           size = int(size_bytes.encode('hex'), 16)
+       
+       elif sys.version_info.major == 3:
+            size = int.from_bytes(size_bytes, byteorder="big")
+            
+       # 2nd TCP read actually reading the message
        return self.socket.recv(size)
     
     
