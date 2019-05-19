@@ -22,8 +22,8 @@ class IM(object):
         Initialise a TCP/IP socket for the exchange of commands
         '''
         # local IP and port (constant)
-        self.TCP_IP = TCP_IP
-        self.TCP_PORT = TCP_PORT
+        self._TCP_IP_ = TCP_IP
+        self._TCP_PORT_ = TCP_PORT
         
         # Open a TCP/IP socket to communicate
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
