@@ -56,7 +56,7 @@ class IM(object):
         # Read feedback and extract version
         out = self.__getFeedback__()
         offset = out.find(b'\x1f')
-        Version = float(out[offset+1:-1])
+        Version = out[offset+1:-1]
         
         return Version 
         
