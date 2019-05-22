@@ -30,20 +30,20 @@ class IM(object):
         self.socket.connect((TCP_IP, TCP_PORT))
     
     
-    def __getFeedback__(self):
+    def __getFeedback__(self, size=4):
        '''Generic function to get feedback from the machine after sending a request'''
         
-       # 1st TCP read to get the size of the message to read
-       size_bytes = self.socket.recv(4) # always 4 bytes for the header
+       ## 1st TCP read of 4 bytes to get the size of the message to read
+       size_bytes = self.socket.recv(size) # always 4 bytes for the header
        
        if sys.version_info.major == 2:
-           size = int(size_bytes.encode('hex'), 16)
+           value = int(size_bytes.encode('hex'), 16)
        
        elif sys.version_info.major == 3:
-            size = int.from_bytes(size_bytes, byteorder="big")
+            value = int.from_bytes(size_bytes, byteorder="big")
             
-       # 2nd TCP read actually reading the message
-       return self.socket.recv(size)
+       ## 2nd TCP actually read the message
+       return self.socket.recv(value)
     
     
     def getVersion(self):
@@ -239,8 +239,8 @@ class IM(object):
         '''Start a previously defined script (using setScript)'''
        
         # send command
-        self.socket.send(b'\x00\x00\x00\x1d')
-        self.socket.send(b'\x02Command\x1fStartScript\x1f2060372\x03')
+        self.socket.send(b'\x00\x00\x00 ')
+        self.socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -250,8 +250,8 @@ class IM(object):
         '''Stop currently executing script'''
         
         # send command
-        self.socket.send(b'\x00\x00\x00\x1c')
-        self.socket.send(b'\x02Command\x1fStopScript\x1f2095120\x03')
+        self.socket.send(b'\x00\x00\x00\x1f')
+        self.socket.send(b'\x02Command\x1fStopScript\x1f1403833090\x03')
         
         # Bump feedback
         self.__getFeedback__()
