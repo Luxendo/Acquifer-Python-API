@@ -219,20 +219,26 @@ class IM(object):
     
     def setScriptFile(self, ScriptPath):
         '''Load a pre-configured .imsf script file'''
-        
+		
         # Turn path into a byte string
         if os.path.exists(ScriptPath):
-            BytePath = ScriptPath.encode()
+			
+			# Get size of string to send
+			TotalSize = 28 + len(ScriptPath) # 28 is the minimum on top of which len(Path) is added
+			size_bytes = bytes.fromhex(format(TotalSize, '08X')) # first dec -> Hex string of defined length (8), then to bytes string
+			
+			# Also encode the Path into a byte string
+			BytePath = ScriptPath.encode()
             
             # send command
-            self.socket.send(b'\x00\x00\x00@')
+            self.socket.send(size_bytes)
             self.socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
             
             # Bump feedback
             self.__getFeedback__()
         
         else:
-            raise FileNotFoundError("The provided Script file.imsf does not exist")
+            raise FileNotFoundError("The provided ScriptFile.scpt does not exist")
         
         
     def startScript(self):
