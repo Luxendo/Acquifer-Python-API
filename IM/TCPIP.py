@@ -167,6 +167,12 @@ class IM(object):
         X = '{:.3f}'.format(X).encode()
         Y = '{:.3f}'.format(Y).encode()
         
+		# Adjust size header according to number of digits
+		# 1 digit before comma = 0000 002B
+		# 2 digits = 0000 002C
+		# 3 digits = 0000 002D
+		# But then what if X = 1 digit and Y = 2 digits ?
+		
         # send command
         self.socket.send(b'\x00\x00\x00)')
         self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
@@ -183,9 +189,28 @@ class IM(object):
         
         # convert Z to byte string
         Z = '{:.1f}'.format(Z).encode()
-        
+		
+		# Adjust size of the header accordingly
+		if Z>=0 and Z<=9.9:
+			size = b'\x00\x00\x00"' # Hex = 0000 0022
+		
+		elif Z>=10 and Z<=99.9:
+			size = b'\x00\x00\x00#' # Hex = 0000 0023
+		
+		elif Z>=100 and Z<=999.9:
+			size = b'\x00\x00\x00$' # Hex = 0000 0024
+		
+		elif Z>=1000 and Z<=9999.9:
+			size = b'\x00\x00\x00%' # Hex = 0000 0025
+		
+		elif Z>=10000 and Z<=99999.9:
+			size = b'\x00\x00\x00&' # Hex = 0000 0026
+		
+		else:
+			raise ValueError('Z-value out of range')
+			
         # send command
-        self.socket.send(b'\x00\x00\x00\x1f')
+        self.socket.send(size)
         self.socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
         
         # Bump feedback
