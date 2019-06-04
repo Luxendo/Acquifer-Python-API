@@ -35,7 +35,10 @@ def getSlice(ImageName):
 
 	
 def getChannelIndex(ImageName):
-	'''Return integer index of the image channel'''
+	'''Return integer index of the image channel
+	3 = FITC (GFP...)
+	5 = TRITC (mCherry...)
+	'''
 	return int(ImageName[22:23])
 
 	
