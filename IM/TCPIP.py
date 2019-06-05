@@ -16,8 +16,8 @@ import socket, os, sys
 class IM(object):
     '''Object representing the IM from ACQUIFER defined with a list of methods to control it'''
     
-    
-    def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
+	
+	def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
         '''
         Initialise a TCP/IP socket for the exchange of commands
         '''
@@ -160,21 +160,54 @@ class IM(object):
     def gotoXY(self,X,Y):
         '''Move objective to position X,Y in mm (max 3 decimal ex:1.111)'''
         
-        # Make sure X and Y are not longer than 3 decimal
+		if X>200000 or Y>200000:
+			raise ValueError("X/Y cannot exceed ...")
+			
+		# Compute the length of the integer part of X and Y (impact size of the string that is sent ex: X=1.2, Y=2.3 -> Length = 2)
+		# Max X and Y have each 5 integer digits ex: 10000
+		Length = len( str( int(X) ) ) +  len( str( int(Y) ) )
+              
+        # Adjust size header according to number of integer digits for X and Y
+		# Length = 2 (X has 1 integer digit and Y too) -> Dec=41 - Hex=0000 0029
+		# Length = 3 (X has 1 integer and Y 2 or reverse) -> Dec=42 - Hex=0000 002A
+		# etc. increase the Dec and check the Hex code
+		if Length == 2:
+			size = b'\x00\x00\x00)' # Dec=41 - Hex=0000 0029
+		
+		elif Length == 3:
+			size = b'\x00\x00\x00*' # Dec=42 - Hex=0000 002A
+		
+		elif Length == 4:
+			size = b'\x00\x00\x00+' # Dec=43 - Hex=0000 002B
+		
+		elif Length == 5:
+			size = b'\x00\x00\x00,' # Dec=44 - Hex=0000 002C
+		
+		elif Length == 6:
+			size = b'\x00\x00\x00,' # Dec=45 - Hex=0000 002D
+		
+		elif Length == 7:
+			size = b'\x00\x00\x00.' # Dec=46 - Hex=0000 002E
+		
+		elif Length == 8:
+			size = b'\x00\x00\x00/' # Dec=47 - Hex=0000 002F
+		
+		elif Length == 9:
+			size = b'\x00\x00\x000' # Dec=48 - Hex=0000 0030
+		
+		elif Length == 10:
+			size = b'\x00\x00\x001' # Dec=49 - Hex=0000 0031
+
+        
+		# Make sure X and Y are not longer than 3 decimal
         X,Y = round(X,3), round(Y,3)
         
         # convert X,Y to byte string
         X = '{:.3f}'.format(X).encode()
         Y = '{:.3f}'.format(Y).encode()
         
-        # Adjust size header according to number of digits
-        # 1 digit before comma = 0000 002B
-        # 2 digits = 0000 002C
-        # 3 digits = 0000 002D
-        # But then what if X = 1 digit and Y = 2 digits ?
-        
-        # send command
-        self.socket.send(b'\x00\x00\x00)')
+		# send command
+        self.socket.send(size)
         self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
         
         # Bump feedback
