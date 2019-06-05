@@ -187,28 +187,29 @@ class IM(object):
         # Make sure Z is not longer than 1 decimal
         Z= round(Z,1)
         
-        # convert Z to byte string
-        Z = '{:.1f}'.format(Z).encode()
         
         # Adjust size of the header accordingly
         if Z>=0 and Z<=9.9:
-            size = b'\x00\x00\x00"' # Hex = 0000 0022
+            size = b'\x00\x00\x00\x1f' # Hex = 0000 001F
         
         elif Z>=10 and Z<=99.9:
-            size = b'\x00\x00\x00#' # Hex = 0000 0023
+            size = b'\x00\x00\x00 ' # Hex = 0000 0020
         
         elif Z>=100 and Z<=999.9:
-            size = b'\x00\x00\x00$' # Hex = 0000 0024
+            size = b'\x00\x00\x00!' # Hex = 0000 0021
         
         elif Z>=1000 and Z<=9999.9:
-            size = b'\x00\x00\x00%' # Hex = 0000 0025
+            size = b'\x00\x00\x00"' # Hex = 0000 0022
         
-        elif Z>=10000 and Z<=99999.9:
-            size = b'\x00\x00\x00&' # Hex = 0000 0026
+        elif Z>=10000 and Z<=23000:
+            size = b'\x00\x00\x00#' # Hex = 0000 0023
         
         else:
             raise ValueError('Z-value out of range')
-            
+        
+        # convert Z to byte string
+        Z = '{:.1f}'.format(Z).encode()
+        
         # send command
         self.socket.send(size)
         self.socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
@@ -224,7 +225,7 @@ class IM(object):
         if os.path.exists(ScriptPath):
             
             # Get size of string to send
-            TotalSize = 28 + len(ScriptPath) # 28 is the minimum on top of which len(Path) is added
+            TotalSize = 25 + len(ScriptPath) # 25 (depends on timestamp) is the minimum on top of which len(Path) is added
             size_bytes = bytes.fromhex(format(TotalSize, '08X')) # first dec -> Hex string of defined length (8), then to bytes string
             
             # Also encode the Path into a byte string
@@ -240,7 +241,7 @@ class IM(object):
         else:
             raise FileNotFoundError("The provided ScriptFile.scpt does not exist")
         
-        
+    
     def startScript(self):
         '''Start a previously defined script (using setScript)'''
        
@@ -266,3 +267,4 @@ class IM(object):
     def closeSocket(self):
         '''Close TCP/IP port'''
         self.socket.close()
+
