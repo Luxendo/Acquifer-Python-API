@@ -3,12 +3,9 @@ This module implements the Imaging Machine (IM) class
 The class contains a set of funtions to control the IM using TCP/IP
 In TCP/IP vocabulary this script is on the client side, while the machine controller is the server
 The TCP/IP works by exchanging strings of bytes.
-Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next
+Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next (use len(byte string message)) to get the decimal value for the weight of the message, convert it to Hex and encode it in a byte string using bytes.fromhex
 
 For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex(str(hexcode))
-
-- For some reason GotoXY(0,0) only goes to (5,5) at min
-
 '''
 import socket, os, sys
 
@@ -18,9 +15,8 @@ class IM(object):
     
     
     def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
-        '''
-        Initialise a TCP/IP socket for the exchange of commands
-        '''
+        '''Initialise a TCP/IP socket for the exchange of commands'''
+        
         # local IP and port (constant)
         self._TCP_IP_ = TCP_IP
         self._TCP_PORT_ = TCP_PORT
@@ -30,12 +26,18 @@ class IM(object):
         self.socket.connect((TCP_IP, TCP_PORT))
     
     
+    def __str__(self):
+        '''Return a string representation of the object'''
+        return "IM{} at IP:{}, Port:{}, status:{}".format( self.getVersion(), self._TCP_IP_, self._TCP_PORT_, self.getStatus() )
+    
+    
     def __getFeedback__(self, size=4):
        '''Generic function to get feedback from the machine after sending a request'''
         
        ## 1st TCP read of 4 bytes to get the size of the message to read
        size_bytes = self.socket.recv(size) # always 4 bytes for the header
        
+       # Convert the received size from byte string to decimal
        if sys.version_info.major == 2:
            value = int(size_bytes.encode('hex'), 16)
        
