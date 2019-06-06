@@ -256,27 +256,31 @@ class IM(object):
     def setScriptFile(self, ScriptPath):
         '''Load a pre-configured .imsf script file'''
         
-        # Turn path into a byte string
-        if os.path.exists(ScriptPath):
-            
-            # Get size of string to send
-            TotalSize = 25 + len(ScriptPath) # 25 (depends on timestamp) is the minimum on top of which len(Path) is added
-            size_bytes = bytes.fromhex(format(TotalSize, '08X')) # first dec -> Hex string of defined length (8), then to bytes string
-            
-            # Also encode the Path into a byte string
-            BytePath = ScriptPath.encode()
-            
-            # send command
-            self.socket.send(size_bytes)
-            self.socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
-            
-            # Bump feedback
-            self.__getFeedback__()
+        # Check file path
+        if not os.path.exists(ScriptPath):
+            raise FileNotFoundError("No such file at this path")
         
-        else:
-            raise FileNotFoundError("The provided ScriptFile.scpt does not exist")
+        elif os.path.isdir(ScriptPath):
+            raise IsADirectoryError("setScriptFile expects a path to a .scpt file, not a folder")
+            
+        elif not ScriptPath.endswith(".scpt"):
+            raise TypeError("setScriptFile expects a path to a .scpt file")
+            
+        # Get size of string to send
+        TotalSize = 25 + len(ScriptPath) # 25 (depends on timestamp) is the minimum on top of which len(Path) is added
+        size_bytes = bytes.fromhex(format(TotalSize, '08X')) # first dec -> Hex string of defined length (8), then to bytes string
         
-    
+        # Encode the Path into a byte string
+        BytePath = ScriptPath.encode()
+        
+        # send command
+        self.socket.send(size_bytes)
+        self.socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
+        
+        # Bump feedback
+        self.__getFeedback__()
+        
+
     def startScript(self):
         '''Start a previously defined script (using setScript)'''
        
@@ -302,4 +306,3 @@ class IM(object):
     def closeSocket(self):
         '''Close TCP/IP port'''
         self.socket.close()
-
