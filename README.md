@@ -8,12 +8,11 @@ This repo contain the python module with the IM class to control the machine fro
 - setLight(Channel, Intensity, mode) # Mode Flash or continuous
 - getWellCoordinates() in live mode
 - gotoWell(xx) 
-- setZstackCenter(Zcenter)
+- get/setZstackCenter(Zcenter) in live mode
 - snap(ExposureTime) -> returning the image as a matrix would be best (by pointing to a file or a temporary file/memory buffer)
 - capture(duration, exposureTime) # for video
 - zFocus = AF(ZstackCenter, nSlice, dSlice) # add to table...
 - definePlate or defineGrid
-
 
 # TO DO:
 - Automatic metadata setting for file names (should be automatic in the GUI too)    
