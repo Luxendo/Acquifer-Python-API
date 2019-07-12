@@ -28,7 +28,7 @@ class IM(object):
     
     def __str__(self):
         '''Return a string representation of the object'''
-        return "IM{} at IP:{}, Port:{}, status:{}".format( self.getVersion(), self._TCP_IP_, self._TCP_PORT_, self.getStatus() )
+        return "IM v{} at IP:{}, Port:{}, status:{}".format( self.getVersion(), self._TCP_IP_, self._TCP_PORT_, self.getStatus() )
     
     
     def __getFeedback__(self, size=4):
@@ -58,7 +58,7 @@ class IM(object):
         # Read feedback and extract version
         out = self.__getFeedback__()
         offset = out.find(b'\x1f')
-        Version = out[offset+1:-1]
+        Version = out[offset+1:-1].decode("UTF-8")
         
         return Version 
         
@@ -131,6 +131,7 @@ class IM(object):
     
     
     def getZstackCenter(self):
+        '''Also not functionnal in the VI always return 0'''
         # send request
         self.socket.send(b'\x00\x00\x00\x1b')
         self.socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
