@@ -268,14 +268,15 @@ class IM(object):
             raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
             
         # Get size of string to send
-        TotalSize = 25 + len(ScriptPath) # 25 (depends on timestamp) is the minimum on top of which len(Path) is added
-        size_bytes = bytes.fromhex(format(TotalSize, '08X')) # first dec -> Hex string of defined length (8), then to bytes string
+        TotalSize = 25 + len(ScriptPath)                # 25 (depends on timestamp) is the minimum on top of which len(Path) is added
+        sizeHex   = format(TotalSize, '08X')            # dec -> Hex string of defined length (8)
+        sizeBytes = bytes( bytearray.fromhex(sizeHex) ) # Hex to bytes string
         
-        # Encode the Path into a byte string
+            # Encode the Path into a byte string
         BytePath = ScriptPath.encode()
         
         # send command
-        self.socket.send(size_bytes)
+        self.socket.send(sizeBytes)
         self.socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
         
         # Bump feedback
