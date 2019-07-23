@@ -264,7 +264,7 @@ class IM(object):
         elif os.path.isdir(ScriptPath):
             raise IsADirectoryError("setScriptFile expects a path to a .scpt file, not a folder")
             
-        elif not ScriptPath.endswith(".scpt") or not ScriptPath.endswith(".imsf"):
+        elif not ( ScriptPath.endswith(".scpt") or ScriptPath.endswith(".imsf") ):
             raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
             
         # Get size of string to send
