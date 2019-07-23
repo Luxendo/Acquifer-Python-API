@@ -38,11 +38,8 @@ class IM(object):
        size_bytes = self.socket.recv(size) # always 4 bytes for the header
        
        # Convert the received size from byte string to decimal
-       if sys.version_info.major == 2:
-           value = int(size_bytes.encode('hex'), 16)
-       
-       elif sys.version_info.major == 3:
-            value = int.from_bytes(size_bytes, byteorder="big")
+       if sys.version_info.major == 2:   value = int(size_bytes.encode('hex'), 16)
+       elif sys.version_info.major == 3: value = int.from_bytes(size_bytes, byteorder="big")
             
        ## 2nd TCP actually read the message
        return self.socket.recv(value)
@@ -259,10 +256,12 @@ class IM(object):
         
         # Check file path
         if not os.path.exists(ScriptPath):
+            if sys.version_info.major == 2: FileNotFoundError = IOError # FileNotFoundError does not exist in Py2 
             raise FileNotFoundError("No such file at this path")
-        
+                
         elif os.path.isdir(ScriptPath):
-            raise IsADirectoryError("setScriptFile expects a path to a .scpt file, not a folder")
+            if sys.version_info.major == 2: IsADirectoryError = IOError # IsADirectoryError does not exist in Py2 
+            raise IsADirectoryError("setScriptFile expects a path to a .scpt or .imsf file, not to a folder")
             
         elif not ( ScriptPath.endswith(".scpt") or ScriptPath.endswith(".imsf") ):
             raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
