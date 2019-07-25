@@ -6,7 +6,7 @@ from __future__ import division
 
 
 def getXY_mm(ImageName):
-	'''Extract the axis coordinates (in mm) from the ImageName (for IM4). The coordinates corresponds to the center of the image.'''
+	'''Extract the axis coordinates (in mm) from the ImageName (for IM4). The coordinates corresponds to the center of the image = objective position.'''
 	# Parse string + do conversion
 	X0mm = int(ImageName[65:71]) /1000 # >0
 	Y0mm = int(ImageName[74:80]) /1000
