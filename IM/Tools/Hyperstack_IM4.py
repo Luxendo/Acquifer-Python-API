@@ -106,7 +106,7 @@ Win.addCheckboxGroup(8,12,Wells, BoolWells0)             # Add result from persi
 Win.addButton('Select all' , ButtonClic() ) # add an instance of our ButtonClic listener class to the button. Button clicked -> event -> call actionPerformed(event) 
 Win.addButton('Select none', ButtonClic() ) 
 
-Disclaimer = "https://github.com/acquifer/ImageInLife/wiki/Stacks"	# Help button should point to the Zenodo page
+Disclaimer = "https://doi.org/10.5281/zenodo.3368135"	# Help button should point to the Zenodo page
 Win.addHelp(Disclaimer)
 
 Win.addMessage("This plugin is freely provided by ACQUIFER.\nDOI:10.5281/zenodo.3368135")
