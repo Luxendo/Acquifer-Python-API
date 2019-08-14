@@ -62,6 +62,10 @@ def getExposure(ImageName):
 	'''Return exposure time in ms used for the acquisition with this channel'''
 	return int(ImageName[51:55])
 
+def getTemp(ImageName):
+	'''Return temperature in celsius degrees as measured by the probe at time of acquisition'''
+	return float(ImageName[59:62])/10
+
 
 def convertXY_PixToIM(Xpix, Ypix, PixelSize_um, X0mm, Y0mm, Image_Width=2048, Image_Height=2048):
 	'''
