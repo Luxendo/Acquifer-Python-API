@@ -2,11 +2,9 @@
 HYPERSTACK GENERATOR in Fiji 
 Read all tif images from an experiment inFolder that contains tif images for the different wells, channel, slices and timepoints 
 The script will automatically reads the field from the filename (using index in the string - FOLLOWING ACQUIFER-IM04 NAMING CONVENTION ex: -A001--...) to generate the well's stack
- 
-NB : issue if all the images in the folder dont have the same size 
+Images are supposed to be untouched (same sizes, original names).
  
 TO DO :  
-- Add projections to a stack 
 - Make plate montage for each time point and/or Z-slice with slider that update the full plate display  
  
 '''
@@ -111,7 +109,7 @@ Win.addButton('Select none', ButtonClic() )
 Disclaimer = "https://github.com/acquifer/ImageInLife/wiki/Stacks"	# Help button should point to the Zenodo page
 Win.addHelp(Disclaimer)
 
-Win.addMessage("This plugin is freely provided by ACQUIFER. DOI:****")
+Win.addMessage("This plugin is freely provided by ACQUIFER.\nDOI:10.5281/zenodo.3368135")
 
 Win.showDialog() 
  
