@@ -109,7 +109,11 @@ Win.addButton('Select none', ButtonClic() )
 Disclaimer = "https://doi.org/10.5281/zenodo.3368135"	# Help button should point to the Zenodo page
 Win.addHelp(Disclaimer)
 
-Win.addMessage("This plugin is freely provided by ACQUIFER.\nDOI:10.5281/zenodo.3368135")
+Win.addMessage("This plugin is freely provided by ACQUIFER.")
+
+doiPath = os.path.join(IJ.getDirectory("ImageJ"), "lib", "BadgeDOI_Hyperstack.png")
+DOI=IJ.openImage(doiPath)
+Win.addImage(DOI)
 
 Win.showDialog() 
  
