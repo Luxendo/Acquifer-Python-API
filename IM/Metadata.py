@@ -14,6 +14,10 @@ def getXY_mm(ImageName):
 	
 	return X0mm, Y0mm
 
+def getSubPosition(ImageName):
+	'''Extract the index corresponding to the subposition for that well'''
+	return int(ImageName[9:11])
+
 def getZ_um(ImageName):
 	'''Extract the Z-axis coordinates (in um)'''
 	return float(ImageName[83:89])/10
