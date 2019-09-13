@@ -1,7 +1,7 @@
 '''
 HYPERSTACK GENERATOR in Fiji 
 Read all tif images from an experiment inFolder that contains tif images for the different wells, channel, slices and timepoints 
-The script will automatically reads the field from the filename (using index in the string - FOLLOWING ACQUIFER-IM04 NAMING CONVENTION ex: -A001--...) to generate the well's stack
+The script will automatically reads the field from the Filename (using index in the string - FOLLOWING ACQUIFER-IM04 NAMING CONVENTION ex: -A001--...) to generate the well's stack
 Images are supposed to be untouched (same sizes, original names).
  
 TO DO :  
@@ -177,14 +177,14 @@ if (Win.wasOKed()):
 	ChoiceSlice   = map(int, ChoiceSlice.split(",") )   if ChoiceSlice   else [] 
 	
 	# Find image files for the given channel 
-	#inFolder = str(inFolder) # convert filename object to string object 
+	#inFolder = str(inFolder) # convert Filename object to string object 
 	WellList	= [] # full list of well to know how many iteration for stacking 
 	TimeList	= [] 
 	ChannelList = [] 
 	SliceList   = [] 
 	MainList	= [] # contains tuple with (Filename, Well, TimePoint, Channel, Z-Slice) 
  
-	for fname in os.listdir(inFolder): # extract metadata from image filename  
+	for fname in os.listdir(inFolder): # extract metadata from image Filename  
 		if fname.endswith(".tif"): 
  
 			# first extract the well field 
@@ -194,12 +194,13 @@ if (Win.wasOKed()):
 			if Selection[Well]: 
  
 				try : # int conversion throw an error if the argument string is empty, hence the try  
+					SubPos  = int(fname[9:11])
 					Time 	= int(fname[15:18]) 
 					Channel = int(fname[22:23]) 
 					Slice 	= int(fname[27:30])  
 				except : 
-					IJ.error("Could not get experimental parameters from filename. Check filename pattern (IM04 convention)") 
-					#raise Exception("Could not get experimental parameters from filename. Check filename pattern (IM04 convention)") 
+					IJ.error("Could not get experimental parameters from Filename. Check Filename pattern (IM04 convention)") 
+					#raise Exception("Could not get experimental parameters from Filename. Check Filename pattern (IM04 convention)") 
 				 
 				WellList.append(Well) 
  
@@ -240,18 +241,18 @@ if (Win.wasOKed()):
  
 				 
 				# Append to main list only if it managed to pass the previous if (thanks to the continue statement) 
-				MainList.append((fname,Well,Time,Channel,Slice)) 
+				MainList.append({"Filename":fname, "ID":Well, "TimePoint":Time, "Channel":Channel, "Slice":Slice}) 
  
 			 
-			else : # the well was not selected in the GUI, go for the next image filename 
+			else : # the well was not selected in the GUI, go for the next image Filename 
 				continue 
  
 			 
 	if len(MainList) < 1: 
-		IJ.error("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if filenames match IM04 naming convention" % inFolder) 
-		#raise Exception("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if filenames match IM04 naming convention" % inFolder) 
+		IJ.error("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if Filenames match IM04 naming convention" % inFolder) 
+		#raise Exception("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if Filenames match IM04 naming convention" % inFolder) 
  
-	# Sort list to prepare iteration 
+	# Get unique Well, Time and Channel  
 	WellList = list(set(WellList)) # turn to a set object to have unique item once only  
 	WellList.sort() 			   # sort should be after set since set may change order  
  
@@ -271,7 +272,7 @@ if (Win.wasOKed()):
 	print 'Z-Slice : ' , SliceList 
  
  
-	MainList.sort(key = lambda field:(field[1], field[2], field[4], -field[3]) ) # sort by Well, Time, Z-slice then Channel (- to have C06 ie BF first) since the hyperstack is created following the default "xyczt" order 
+	MainList.sort(key = lambda well:(well["ID"], well["TimePoint"], well["Slice"], -well["Channel"]) ) # sort by Well, Time, Z-slice then Channel (- to have C06 ie BF first) since the hyperstack is created following the default "xyczt" order 
 	'''
 	for i in MainList : 
 		print i 
@@ -283,21 +284,21 @@ if (Win.wasOKed()):
 	## Loop over wells to do stack and projection 
 	for well in WellList: # - TO DO: Add another level in MainList : one per well 
  
-		# Gather images for a given well, and put them into a sublist 
+		# Gather images for a given well, and put them into a sublist (like a GroupBy)
 		IJ.showStatus('Process well : '+well+'...') 
-		SubList = [item for item in MainList if item[1]==well] # Sublist containing (fname1,Well,Time1,ChannelX,Slice),(fname2,Well,Time2,ChannelX,Slice)  for one given well ex: only A001  
+		SubList = [dico for dico in MainList if dico["ID"]==well] # Sublist containing (fname1,Well,Time1,ChannelX,Slice),(fname2,Well,Time2,ChannelX,Slice)  for one given well ex: only A001  
 		#print 'StackSize : ',len(SubList) 
 		 
 		# Get image dimensions of the first image in the list to initialise VStack 
-		width, height = dimensionsOf( os.path.join(inFolder,SubList[0][0]) ) 
+		width, height = dimensionsOf( os.path.join(inFolder, SubList[0]['Filename']) ) 
 		 
 		# Initialise Virtual Stack for this well 
 		VStack = VirtualStack(width, height, None, inFolder)   
 		 
 		# Append slices in the VStack 
 		for item in SubList: 
-			filename = item[0] 
-			VStack.addSlice(filename) # conversion to ImageProcessor object to append to stack 
+			Filename = item["Filename"] 
+			VStack.addSlice(Filename) # conversion to ImageProcessor object to append to stack 
 	 
 			# Once we have finished appending slices, we reconvert back to an ImagePlus object to be able to show and save it 
 			ImpStack = ij.ImagePlus(well, VStack) # well is the title of this hyperstack - Reminder : 1 hyperstack/well 
