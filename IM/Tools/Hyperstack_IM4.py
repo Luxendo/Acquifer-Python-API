@@ -278,9 +278,6 @@ if (Win.wasOKed()):
 		print i 
 	'''
 	 
-	# Initialise HyperStackConverter 
-	HyperStacker = HyperStackConverter()  
-	 
 	## Loop over wells to do stack and projection 
 	for well in WellList: # - TO DO: Add another level in MainList : one per well 
  
@@ -310,7 +307,7 @@ if (Win.wasOKed()):
 		if ImpStack.getStackSize()==1:  
 			HyperStack = ImpStack # issue when a single slice in the Hyperstack 
 		else: 
-			HyperStack = HyperStacker.toHyperStack(ImpStack,len(ChannelList), len(SliceList), len(TimeList),"xyczt","grayscale") # convert PROPERLY ORDERED Stack to Hyperstack  
+			HyperStack = HyperStackConverter.toHyperStack(ImpStack,len(ChannelList), len(SliceList), len(TimeList),"xyczt","grayscale") # convert PROPERLY ORDERED Stack to Hyperstack  
 		 
 		 
 		## Display resulting stack 
