@@ -73,7 +73,6 @@ BoolWells0   = map(eval, prefs.getList(imagej.class, "BoolWells") )
 Win = GenericDialogPlus("Hyperstack generator") # Title of the window 
 
 # Add Acquifer Logo image
-
 LogoPath = os.path.join(IJ.getDirectory("ImageJ"), "lib", "Acquifer_Logo.png")
 Logo     = IJ.openImage(LogoPath)
 Win.addImage(Logo)
@@ -185,40 +184,41 @@ if (Win.wasOKed()):
 	
 	# Find image files for the given channel 
 	#inFolder = str(inFolder) # convert Filename object to string object 
-	WellList	= [] # full list of well to know how many iteration for stacking 
-	TimeList	= [] 
-	ChannelList = [] 
-	SliceList   = [] 
-	subPosList  = []   
-	MainList	= [] # contains tuple with (Filename, Well, TimePoint, Channel, Z-Slice) 
+	setWell	   = set() # full list of well to know how many iteration for stacking 
+	setTime	   = set() 
+	setChannel = set() 
+	setSlice   = set() 
+	setSubPos  = set() 
+   
+	listMain   = [] # contains tuple with (Filename, Well, TimePoint, Channel, Z-Slice) 
  
 	for fname in os.listdir(inFolder): # extract metadata from image Filename  
 		if fname.endswith(".tif"): 
  
 			# first extract the well field 
-			Well = fname[1:5] 
+			well = fname[1:5] 
  
 			# if well is selected in the gui, then extract the other metadata 
-			if Selection[Well]: # read True/False value from the dict Selection with Well:Choice
+			if Selection[well]: # read True/False value from the dict Selection with Well:Choice
  
 				try : # int conversion throw an error if the argument string is empty, hence the try  
-					subPos  = int(fname[9:11])
-					Time 	= int(fname[15:18]) 
-					Channel = int(fname[22:23]) 
-					Slice 	= int(fname[27:30])  
+					subPos   = int(fname[9:11])
+					time 	 = int(fname[15:18]) 
+					channel  = int(fname[22:23]) 
+					sliceIdx = int(fname[27:30])  
 				except : 
 					IJ.error("Could not get experimental parameters from Filename. Check Filename pattern (IM04 convention)") 
 					#raise Exception("Could not get experimental parameters from Filename. Check Filename pattern (IM04 convention)") 
 				 
-				WellList.append(Well) 
+				setWell.add(well) 
  
 				 
 				## Discover CHANNEL from filename  
 				if ChoiceChannel==[]: # No precise channel specified: We add this particular channel to the list 
-					ChannelList.append(Channel) 
+					setChannel.add(channel) 
 					 
 				elif Channel in ChoiceChannel: # This particular channel was selected
-					ChannelList.append(Channel) 
+					setChannel.add(channel) 
  
 				else: # This particular channel was not selected 
 					continue 
@@ -227,10 +227,10 @@ if (Win.wasOKed()):
 				 
 				## Discover TIME from filename  
 				if ChoiceTime==[]: # No precise time specified: We add this particular time to the list
-					TimeList.append(Time) 
+					setTime.add(time) 
 					 
 				elif Time in ChoiceTime: # This particular timepoint was selected
-					TimeList.append(Time) 
+					setTime.add(time) 
  
 				else: # This particular timepoint was not selected
 					continue 
@@ -239,10 +239,10 @@ if (Win.wasOKed()):
 				 
 				## Discover Z-SLICE from filename  
 				if ChoiceSlice==[]: # No precise slice specified: We add this particular slice to the list
-					SliceList.append(Slice) 
+					setSlice.add(sliceIdx) 
 					 
 				elif Slice in ChoiceSlice: # This particular slice was selected
-					SliceList.append(Slice) 
+					setSlice.add(sliceIdx) 
  
 				else: # This particular slice was not selected
 					continue
@@ -250,65 +250,56 @@ if (Win.wasOKed()):
 				
 				## Discover SUBPOSITION from filename  
 				if ChoiceSubPos==[]: # No precise subPosition specified: We add this particular subPosition to the list
-					subPosList.append(subPos) 
+					setSubPos.add(subPos) 
 					 
 				elif subPos in ChoiceSubPos: # This particular subPosition was selected
-					subPosList.append(subPos) 
+					setSubPos.add(subPos) 
  
 				else: # This particular subPosition was not selected
 					continue
  
 				 
 				# Append to main list only if it managed to pass the previous if (ie it did not come across a continue statement) 
-				MainList.append({"Filename":fname, "well":Well, "subPos":subPos, "TimePoint":Time, "Channel":Channel, "Slice":Slice}) 
+				listMain.append({"Filename":fname, "well":well, "subPos":subPos, "TimePoint":time, "Channel":channel, "Slice":sliceIdx}) 
  
 			 
 			else : # the well was not selected in the GUI, go for the next image Filename 
 				continue 
  
 			 
-	if len(MainList) < 1: 
+	if len(listMain) < 1: 
 		IJ.error("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if Filenames match IM04 naming convention" % inFolder) 
 		#raise Exception("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if Filenames match IM04 naming convention" % inFolder) 
  
-	# Get unique Well, Time and Channel  (could add to the set right away ! instead of list)
-	WellList = list(set(WellList)) # turn to a set object to have unique item once only  
-	WellList.sort() 			   # sort should be after set since set may change order  
-	
-	subPosList = list(set(subPosList))
-	subPosList.sort()
- 
-	TimeList = list(set(TimeList))  
-	TimeList.sort() 			   
- 
-	ChannelList = list(set(ChannelList))  
-	ChannelList.sort() 
- 
-	SliceList = list(set(SliceList))  
-	SliceList.sort()  
+	# Turn sets into ordered list
+	listWell    = sorted(setWell) 
+	listSubPos  = sorted(setSubPos)
+	listTime    = sorted(setTime)  
+	listChannel = sorted(setChannel)  
+	listSlice   = sorted(setSlice)  
  
 	# Verification 
-	print 'Well  : ', WellList 
-	print 'Subpositions : ', subPosList
-	print 'Time  : ', TimeList 
-	print 'ChannelIdx  : ', ChannelList 
-	print 'Z-Slice : ' , SliceList 
+	print 'Well  : ',        listWell 
+	print 'Subpositions : ', listSubPos
+	print 'Time  : ',        listTime 
+	print 'ChannelIdx  : ',  listChannel 
+	print 'Z-Slice : ' ,     listSlice 
  
  
-	MainList.sort(key = lambda dico:(dico["well"], dico["subPos"], dico["TimePoint"], dico["Slice"], -dico["Channel"]) ) # sort by Well, SubPositions, Time, Z-slice then Channel (- to have C06 ie BF first) since the hyperstack is created following the default "xyczt" order 
+	listMain.sort(key = lambda dico:(dico["well"], dico["subPos"], dico["TimePoint"], dico["Slice"], -dico["Channel"]) ) # sort by Well, SubPositions, Time, Z-slice then Channel (- to have C06 ie BF first) since the hyperstack is created following the default "xyczt" order 
 	'''
-	for i in MainList : 
+	for i in listMain : 
 		print i 
 	'''
 	 
 	## Loop over wells to do stack and projection 
-	for well in WellList: # - TO DO: Add another level in MainList : one per well 
+	for well in listWell: # - TO DO: Add another level in listMain : one per well 
 		
-		for subPos in subPosList:
+		for subPos in listSubPos:
  
 			# Gather images for a given well, and put them into a sublist (like a GroupBy)
 			IJ.showStatus('Process well : '+well+'...') 
-			allSlices = [dico for dico in MainList if (dico["well"]==well and dico["subPos"]==subPos) ] # Sublist containing (fname1,Well, subPos ,Time1,ChannelX,Slice),(fname2,Well, subPos, Time2,ChannelX,Slice)  for one given well ex: only A001  
+			allSlices = [dico for dico in listMain if (dico["well"]==well and dico["subPos"]==subPos) ] # Sublist containing (fname1,Well, subPos ,Time1,ChannelX,Slice),(fname2,Well, subPos, Time2,ChannelX,Slice)  for one given well ex: only A001  
 			#print 'StackSize : ',len(SubList) 
 		
 			# Get image dimensions of the first image in the list to initialise VStack 
@@ -333,7 +324,7 @@ if (Win.wasOKed()):
 			if ImpStack.getStackSize()==1:  
 				HyperStack = ImpStack # issue when a single slice in the Hyperstack 
 			else: 
-				HyperStack = HyperStackConverter.toHyperStack(ImpStack, len(ChannelList), len(SliceList), len(TimeList),"xyczt","grayscale") # convert PROPERLY ORDERED Stack to Hyperstack  
+				HyperStack = HyperStackConverter.toHyperStack(ImpStack, len(listChannel), len(listSlice), len(listTime),"xyczt","grayscale") # convert PROPERLY ORDERED Stack to Hyperstack  
 			 
 			 
 			## Display resulting stack 
