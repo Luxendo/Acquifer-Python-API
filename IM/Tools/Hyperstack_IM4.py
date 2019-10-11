@@ -57,6 +57,7 @@ Path0	= prefs.get("ImageDirectory","MyPath")
 Channel0 = prefs.get("Channels","")   
 Slice0   = prefs.get("Slices","")  
 Time0	 = prefs.get("Times","") 
+subPos0  = prefs.get("subPos","")
  
 ShowStack0  = prefs.getInt("ShowStack",True) 
 SaveStack0  = prefs.getInt("SaveStack",False) 
@@ -72,6 +73,7 @@ BoolWells0   = map(eval, prefs.getList(imagej.class, "BoolWells") )
 Win = GenericDialogPlus("Hyperstack generator") # Title of the window 
 
 # Add Acquifer Logo image
+
 LogoPath = os.path.join(IJ.getDirectory("ImageJ"), "lib", "Acquifer_Logo.png")
 Logo     = IJ.openImage(LogoPath)
 Win.addImage(Logo)
@@ -81,6 +83,8 @@ Win.addDirectoryField("Image directory", Path0)
 Win.addStringField("Use specific channel(s) separated by , (from 1 to 6) :", Channel0) 
 Win.addStringField("Use specific Z-slice(s):", Slice0) 
 Win.addStringField("Use specific timepoint(s) separated by ',' :", Time0) 
+Win.addStringField("Use specific subposition(s) separated by ',' :", subPos0) 
+
  
 Win.addCheckbox("Show stack ?", ShowStack0) 
 Win.addCheckbox("Save stack ?", SaveStack0) 
@@ -111,6 +115,7 @@ Win.addHelp(Disclaimer)
 
 Win.addMessage("This plugin is freely provided by ACQUIFER.")
 
+
 doiPath = os.path.join(IJ.getDirectory("ImageJ"), "lib", "BadgeDOI_Hyperstack.png")
 DOI=IJ.openImage(doiPath)
 Win.addImage(DOI)
@@ -127,6 +132,7 @@ if (Win.wasOKed()):
 	ChoiceChannel = Win.getNextString()  
 	ChoiceSlice	  = Win.getNextString() 
 	ChoiceTime	  = Win.getNextString() 
+	ChoiceSubPos  = Win.getNextString() 
  
 	i=0 
 	ShowStack	 = Bool[i] 
@@ -156,6 +162,7 @@ if (Win.wasOKed()):
 	prefs.put("Channels", ChoiceChannel)  
 	prefs.put("Slices", ChoiceSlice) 
 	prefs.put("Times", ChoiceTime) 
+	prefs.put("subPos", ChoiceSubPos)
  
 	prefs.put("ShowStack", ShowStack) 
 	prefs.put("SaveStack", SaveStack) 
@@ -165,16 +172,16 @@ if (Win.wasOKed()):
 	prefs.put("ShowProj", ShowProj) 
 	prefs.put("SaveProj", SaveProj)
 	
-	prefs.put(imagej.class, "BoolWells", map(str, BoolWells) ) # persitence for list works with string only
-	 
+	prefs.put(imagej.class, "BoolWells", map(str, BoolWells) ) 	# persitence for list works with string only (hence map str)	 
 	# Stop execution if no well selected 
 	if BoolWells == [False]*96: 
 		IJ.error("No well selected") 
  
 	# Reformat input to list after the input has been saved in memory 
-	ChoiceChannel = map(int, ChoiceChannel.split(",") ) if ChoiceChannel else []
-	ChoiceTime	  = map(int, ChoiceTime.split(",") )	if ChoiceTime	else []
-	ChoiceSlice   = map(int, ChoiceSlice.split(",") )   if ChoiceSlice   else [] 
+	ChoiceChannel = map( int, ChoiceChannel.split(",") ) if ChoiceChannel else []
+	ChoiceTime	  = map( int, ChoiceTime.split(",")    ) if ChoiceTime	  else []
+	ChoiceSlice   = map( int, ChoiceSlice.split(",")   ) if ChoiceSlice   else []
+	ChoiceSubPos  = map( int, ChoiceSubPos.split(",")  ) if ChoiceSubPos  else []
 	
 	# Find image files for the given channel 
 	#inFolder = str(inFolder) # convert Filename object to string object 
@@ -182,6 +189,7 @@ if (Win.wasOKed()):
 	TimeList	= [] 
 	ChannelList = [] 
 	SliceList   = [] 
+	subPosList  = []   
 	MainList	= [] # contains tuple with (Filename, Well, TimePoint, Channel, Z-Slice) 
  
 	for fname in os.listdir(inFolder): # extract metadata from image Filename  
@@ -191,10 +199,10 @@ if (Win.wasOKed()):
 			Well = fname[1:5] 
  
 			# if well is selected in the gui, then extract the other metadata 
-			if Selection[Well]: 
+			if Selection[Well]: # read True/False value from the dict Selection with Well:Choice
  
 				try : # int conversion throw an error if the argument string is empty, hence the try  
-					SubPos  = int(fname[9:11])
+					subPos  = int(fname[9:11])
 					Time 	= int(fname[15:18]) 
 					Channel = int(fname[22:23]) 
 					Slice 	= int(fname[27:30])  
@@ -205,7 +213,7 @@ if (Win.wasOKed()):
 				WellList.append(Well) 
  
 				 
-				## Channel 
+				## Discover CHANNEL from filename  
 				if ChoiceChannel==[]: # No precise channel specified: We add this particular channel to the list 
 					ChannelList.append(Channel) 
 					 
@@ -217,7 +225,7 @@ if (Win.wasOKed()):
  
 					 
 				 
-				## Time 
+				## Discover TIME from filename  
 				if ChoiceTime==[]: # No precise time specified: We add this particular time to the list
 					TimeList.append(Time) 
 					 
@@ -229,19 +237,30 @@ if (Win.wasOKed()):
 				 
  
 				 
-				## Z-Slice 
-				if ChoiceSlice==[]: # No precise slice specified: We add this particular time to the list
+				## Discover Z-SLICE from filename  
+				if ChoiceSlice==[]: # No precise slice specified: We add this particular slice to the list
 					SliceList.append(Slice) 
 					 
 				elif Slice in ChoiceSlice: # This particular slice was selected
 					SliceList.append(Slice) 
  
-				else: # This particular timepoint was not selected
-					continue 
+				else: # This particular slice was not selected
+					continue
+					
+				
+				## Discover SUBPOSITION from filename  
+				if ChoiceSubPos==[]: # No precise subPosition specified: We add this particular subPosition to the list
+					subPosList.append(subPos) 
+					 
+				elif subPos in ChoiceSubPos: # This particular subPosition was selected
+					subPosList.append(subPos) 
+ 
+				else: # This particular subPosition was not selected
+					continue
  
 				 
-				# Append to main list only if it managed to pass the previous if (thanks to the continue statement) 
-				MainList.append({"Filename":fname, "ID":Well, "TimePoint":Time, "Channel":Channel, "Slice":Slice}) 
+				# Append to main list only if it managed to pass the previous if (ie it did not come across a continue statement) 
+				MainList.append({"Filename":fname, "well":Well, "subPos":subPos, "TimePoint":Time, "Channel":Channel, "Slice":Slice}) 
  
 			 
 			else : # the well was not selected in the GUI, go for the next image Filename 
@@ -252,9 +271,12 @@ if (Win.wasOKed()):
 		IJ.error("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if Filenames match IM04 naming convention" % inFolder) 
 		#raise Exception("No image files found in %s satisfying the channel/slice/time selection. Check if extension match and if Filenames match IM04 naming convention" % inFolder) 
  
-	# Get unique Well, Time and Channel  
+	# Get unique Well, Time and Channel  (could add to the set right away ! instead of list)
 	WellList = list(set(WellList)) # turn to a set object to have unique item once only  
 	WellList.sort() 			   # sort should be after set since set may change order  
+	
+	subPosList = list(set(subPosList))
+	subPosList.sort()
  
 	TimeList = list(set(TimeList))  
 	TimeList.sort() 			   
@@ -267,12 +289,13 @@ if (Win.wasOKed()):
  
 	# Verification 
 	print 'Well  : ', WellList 
+	print 'Subpositions : ', subPosList
 	print 'Time  : ', TimeList 
 	print 'ChannelIdx  : ', ChannelList 
 	print 'Z-Slice : ' , SliceList 
  
  
-	MainList.sort(key = lambda well:(well["ID"], well["TimePoint"], well["Slice"], -well["Channel"]) ) # sort by Well, Time, Z-slice then Channel (- to have C06 ie BF first) since the hyperstack is created following the default "xyczt" order 
+	MainList.sort(key = lambda dico:(dico["well"], dico["subPos"], dico["TimePoint"], dico["Slice"], -dico["Channel"]) ) # sort by Well, SubPositions, Time, Z-slice then Channel (- to have C06 ie BF first) since the hyperstack is created following the default "xyczt" order 
 	'''
 	for i in MainList : 
 		print i 
@@ -280,64 +303,67 @@ if (Win.wasOKed()):
 	 
 	## Loop over wells to do stack and projection 
 	for well in WellList: # - TO DO: Add another level in MainList : one per well 
+		
+		for subPos in subPosList:
  
-		# Gather images for a given well, and put them into a sublist (like a GroupBy)
-		IJ.showStatus('Process well : '+well+'...') 
-		SubList = [dico for dico in MainList if dico["ID"]==well] # Sublist containing (fname1,Well,Time1,ChannelX,Slice),(fname2,Well,Time2,ChannelX,Slice)  for one given well ex: only A001  
-		#print 'StackSize : ',len(SubList) 
-		 
-		# Get image dimensions of the first image in the list to initialise VStack 
-		width, height = dimensionsOf( os.path.join(inFolder, SubList[0]['Filename']) ) 
-		 
-		# Initialise Virtual Stack for this well 
-		VStack = VirtualStack(width, height, None, inFolder)   
-		 
-		# Append slices in the VStack 
-		for item in SubList: 
-			Filename = item["Filename"] 
-			VStack.addSlice(Filename) # conversion to ImageProcessor object to append to stack 
-	 
-			# Once we have finished appending slices, we reconvert back to an ImagePlus object to be able to show and save it 
-			ImpStack = ij.ImagePlus(well, VStack) # well is the title of this hyperstack - Reminder : 1 hyperstack/well 
-			#print ImpStack 
-			#Stack.show() # Good 
-		 
-		 
-		## Make a hyperstack out of the ImagePlus virtual stack 
-		if ImpStack.getStackSize()==1:  
-			HyperStack = ImpStack # issue when a single slice in the Hyperstack 
-		else: 
-			HyperStack = HyperStackConverter.toHyperStack(ImpStack,len(ChannelList), len(SliceList), len(TimeList),"xyczt","grayscale") # convert PROPERLY ORDERED Stack to Hyperstack  
-		 
-		 
-		## Display resulting stack 
-		if ShowStack :  
-			HyperStack.show() 
-		 
-		 
-		## Save resulting stack 
-		if SaveStack : 
-			outFolder = os.path.join(inFolder,'HyperStack') 
-			if not os.path.exists(outFolder): os.makedirs(outFolder) # create folder if it does not exist (for the first image to save basicly) 
+			# Gather images for a given well, and put them into a sublist (like a GroupBy)
+			IJ.showStatus('Process well : '+well+'...') 
+			allSlices = [dico for dico in MainList if (dico["well"]==well and dico["subPos"]==subPos) ] # Sublist containing (fname1,Well, subPos ,Time1,ChannelX,Slice),(fname2,Well, subPos, Time2,ChannelX,Slice)  for one given well ex: only A001  
+			#print 'StackSize : ',len(SubList) 
+		
+			# Get image dimensions of the first image in the list to initialise VStack 
+			width, height = dimensionsOf( os.path.join(inFolder, allSlices[0]['Filename']) ) 
 			 
-			outPath = os.path.join(outFolder,well+'.tif') 
-			IJ.save(HyperStack,outPath)		 
-		 
-		 
-		## PROJECTION 
-		if doProj :
-			IJ.showStatus('Do projection')
-			Projected = ZProjector.run(HyperStack, ProjMethod) 
-		 
-			# Display projection (automatic with the stack focuser) 
-			if ShowProj: 
-				Projected.show() 
- 
+			# Initialise Virtual Stack for this well 
+			VStack = VirtualStack(width, height, None, inFolder)   
 			 
-			# Save projection 
-			if SaveProj: 
-				outFolder = os.path.join(inFolder,'Projected') 
+			# Append slices in the VStack 
+			for dico in allSlices: 
+				Filename = dico["Filename"] 
+				VStack.addSlice(Filename) # conversion to ImageProcessor object to append to stack 
+		 
+				# Once we have finished appending slices, we reconvert back to an ImagePlus object to be able to show and save it 
+				ImpName = well + "_subPos" + str(subPos)
+				ImpStack = ij.ImagePlus(ImpName, VStack) # well is the title of this hyperstack - Reminder : 1 hyperstack/well 
+				#print ImpStack 
+				#Stack.show() # Good 
+			 
+			 
+			## Make a hyperstack out of the ImagePlus virtual stack 
+			if ImpStack.getStackSize()==1:  
+				HyperStack = ImpStack # issue when a single slice in the Hyperstack 
+			else: 
+				HyperStack = HyperStackConverter.toHyperStack(ImpStack, len(ChannelList), len(SliceList), len(TimeList),"xyczt","grayscale") # convert PROPERLY ORDERED Stack to Hyperstack  
+			 
+			 
+			## Display resulting stack 
+			if ShowStack :  
+				HyperStack.show() 
+			 
+			 
+			## Save resulting stack 
+			if SaveStack : 
+				outFolder = os.path.join(inFolder,'HyperStack') 
 				if not os.path.exists(outFolder): os.makedirs(outFolder) # create folder if it does not exist (for the first image to save basicly) 
 				 
 				outPath = os.path.join(outFolder,well+'.tif') 
-				IJ.save(Projected,outPath)
+				IJ.save(HyperStack,outPath)		 
+			 
+			 
+			## PROJECTION 
+			if doProj :
+				IJ.showStatus('Do projection')
+				Projected = ZProjector.run(HyperStack, ProjMethod) 
+			 
+				# Display projection (automatic with the stack focuser) 
+				if ShowProj: 
+					Projected.show() 
+	 
+				 
+				# Save projection 
+				if SaveProj: 
+					outFolder = os.path.join(inFolder,'Projected') 
+					if not os.path.exists(outFolder): os.makedirs(outFolder) # create folder if it does not exist (for the first image to save basicly) 
+					 
+					outPath = os.path.join(outFolder,well+'.tif') 
+					IJ.save(Projected,outPath)
