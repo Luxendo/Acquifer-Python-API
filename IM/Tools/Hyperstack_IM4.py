@@ -217,7 +217,7 @@ if (Win.wasOKed()):
 				if ChoiceChannel==[]: # No precise channel specified: We add this particular channel to the list 
 					setChannel.add(channel) 
 					 
-				elif Channel in ChoiceChannel: # This particular channel was selected
+				elif channel in ChoiceChannel: # This particular channel was selected
 					setChannel.add(channel) 
  
 				else: # This particular channel was not selected 
@@ -229,7 +229,7 @@ if (Win.wasOKed()):
 				if ChoiceTime==[]: # No precise time specified: We add this particular time to the list
 					setTime.add(time) 
 					 
-				elif Time in ChoiceTime: # This particular timepoint was selected
+				elif time in ChoiceTime: # This particular timepoint was selected
 					setTime.add(time) 
  
 				else: # This particular timepoint was not selected
@@ -241,7 +241,7 @@ if (Win.wasOKed()):
 				if ChoiceSlice==[]: # No precise slice specified: We add this particular slice to the list
 					setSlice.add(sliceIdx) 
 					 
-				elif Slice in ChoiceSlice: # This particular slice was selected
+				elif slice in ChoiceSlice: # This particular slice was selected
 					setSlice.add(sliceIdx) 
  
 				else: # This particular slice was not selected
