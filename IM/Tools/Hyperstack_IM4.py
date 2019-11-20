@@ -241,7 +241,7 @@ if (Win.wasOKed()):
 				if ChoiceSlice==[]: # No precise slice specified: We add this particular slice to the list
 					setSlice.add(sliceIdx) 
 					 
-				elif slice in ChoiceSlice: # This particular slice was selected
+				elif sliceIdx in ChoiceSlice: # This particular slice was selected
 					setSlice.add(sliceIdx) 
  
 				else: # This particular slice was not selected
