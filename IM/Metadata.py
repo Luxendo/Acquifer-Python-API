@@ -4,71 +4,81 @@ example filename : "-A001--PO01--LO001--CO6--SL001--PX32500--PW0080--IN0020--TM2
 It also contains a function convertXY_PixToIM to convert from pixel coordinates in an image to the corresponding machine coordinates
 '''
 from __future__ import division
+import string
 
 
-def getXY_mm(ImageName):
-	'''Extract the XY-axis coordinates (in mm) from the ImageName (for IM4). The coordinates corresponds to the center of the image = objective position.'''
+def getXY_mm(imageName):
+	'''Extract the XY-axis coordinates (in mm) from the imageName (for IM4). The coordinates corresponds to the center of the image = objective position.'''
 	# Parse string + do conversion
-	X0mm = int(ImageName[65:71]) /1000 # >0
-	Y0mm = int(ImageName[74:80]) /1000
+	X0mm = int(imageName[65:71]) /1000 # >0
+	Y0mm = int(imageName[74:80]) /1000
 	
 	return X0mm, Y0mm
 
-def getSubPosition(ImageName):
+def getSubPosition(imageName):
 	'''Extract the index corresponding to the subposition for that well'''
-	return int(ImageName[9:11])
+	return int(imageName[9:11])
 
-def getZ_um(ImageName):
+def getZ_um(imageName):
 	'''Extract the Z-axis coordinates (in um)'''
-	return float(ImageName[83:89])/10
+	return float(imageName[83:89])/10
 	
 	
-def getPixelSize_um(ImageName):
-	'''Extract the pixel size (in um) from the ImageName (for IM4)'''
-	return float(ImageName[34:39])*10**-4
-	
-
-def getWellId(ImageName):
-	'''Extract well Id (ex:A001) from the ImageName (for IM4)'''
-	return ImageName[1:5]
+def getPixelSize_um(imageName):
+	'''Extract the pixel size (in um) from the imageName (for IM4)'''
+	return float(imageName[34:39])*10**-4
 	
 
-def getWellNum(ImageName):
+def getWellId(imageName):
+	'''Extract well Id (ex:A001) from the imageName (for IM4)'''
+	return imageName[1:5]
+
+def getWellColumn(imageName):
+	'''Extract well column (1-12) from the imageName (for IM4)'''
+	return int(imageName[2:5])
+
+def getWellRow(imageName):
+	'''Extract well row (1-8) from the imageName (for IM4)'''
+	letter = imageName[1:2]
+	return string.uppercase.index(letter)+1 # alphabetical order +1 since starts at 0
+
+
+def getWellNum(imageName):
 	'''Return well number corresponding to order of acquisition by the IM (snake pattern)'''
-	return int(ImageName[106:111]) 
+	return int(imageName[106:111]) 
 
 	
-def getSlice(ImageName):
+def getSlice(imageName):
 	'''Return image slice number of the associated Z-Stack serie'''
-	return int(ImageName[27:30])
+	return int(imageName[27:30])
 
 	
-def getChannelIndex(ImageName):
+def getChannelIndex(imageName):
 	'''Return integer index of the image channel
 	1 = DAPI (385)
 	3 = FITC (GFP...)
 	5 = TRITC (mCherry...)
 	'''
-	return int(ImageName[22:23])
+	return int(imageName[22:23])
 
 	
-def getIterationIndex(ImageName):
+def getIterationIndex(imageName):
 	'''Return the integer index corresponding to the image timepoint'''
-	return int(ImageName[15:18])
+	return int(imageName[15:18])
 
 	
-def getPower(ImageName):
+def getPower(imageName):
 	'''Return relative power (%) used for the acquisition with this channel'''
-	return int(ImageName[43:47])
+	return int(imageName[43:47])
 
 	
-def getExposure(ImageName):
+def getExposure(imageName):
 	'''Return exposure time in ms used for the acquisition with this channel'''
-	return int(ImageName[51:55])
+	return int(imageName[51:55])
 
-def getTemp(ImageName):
+def getTemp(imageName):
 	'''Return temperature in celsius degrees as measured by the probe at time of acquisition'''
-	return float(ImageName[59:62])/10
+	return float(imageName[59:62])/10
 
 
 def convertXY_PixToIM(Xpix, Ypix, PixelSize_um, X0mm, Y0mm, Image_Width=2048, Image_Height=2048):
