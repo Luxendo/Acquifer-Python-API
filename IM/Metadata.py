@@ -1,4 +1,5 @@
 '''
+Python 2 (incl.Fiji) or 3
 This class contains a set of function to extract metadata by parsing the image file names string of images acquired on an IM04
 example filename : "-A001--PO01--LO001--CO6--SL001--PX32500--PW0080--IN0020--TM244--X014580--Y011262--Z209501--T1374031802--WE00001.tif"
 It also contains a function convertXY_PixToIM to convert from pixel coordinates in an image to the corresponding machine coordinates
