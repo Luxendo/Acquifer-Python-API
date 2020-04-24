@@ -6,6 +6,16 @@ It also contains a function convertXY_PixToIM to convert from pixel coordinates 
 from __future__ import division
 import string
 
+pixelSizeToMag = {3.25:2, 
+				  1.625:4, 
+				  0.650:10, 
+				  0.325:20} # Pixel size (um) to objective
+
+magToNA = {2:0.06, 
+		   4:0.13, 
+		   10:0.3,
+		   20:0.45,
+		   40:0.6}
 
 def getXY_mm(imageName):
 	'''Extract the XY-axis coordinates (in mm) from the imageName (for IM4). The coordinates corresponds to the center of the image = objective position.'''
@@ -23,12 +33,23 @@ def getZ_um(imageName):
 	'''Extract the Z-axis coordinates (in um)'''
 	return float(imageName[83:89])/10
 	
-	
 def getPixelSize_um(imageName):
 	'''Extract the pixel size (in um) from the imageName (for IM4)'''
 	return float(imageName[34:39])*10**-4
 	
+def getMagnification(imageName):
+	'''Get the magnification as integer'''
+	pixSize = getPixelSize_um(imageName)
+	if pixelSizeToMag.has_key(pixSize):
+		return pixelSizeToMag[pixSize]
+	else:
+		raise KeyError("No pixel size matching in the pixelSizeToMag dictionnary")
 
+def getNA(imageName):
+	'''Return the Numerical Aperture of the objective'''
+	mag = getMagnification(imageName)
+	return magToNA[mag]
+	
 def getWellId(imageName):
 	'''Extract well Id (ex:A001) from the imageName (for IM4)'''
 	return imageName[1:5]
