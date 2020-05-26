@@ -10,7 +10,12 @@ import string
 pixelSizeToMag = {3.25:2, 
 				  1.625:4, 
 				  0.650:10, 
-				  0.325:20} # Pixel size (um) to objective
+				  0.325:20} # Pixel size (um) to objective magn.
+
+pixelSizeToNA = {3.25:0.06, 
+				 1.625:0.13, 
+				 0.650:0.3, 
+				 0.325:0.45} # Pixel size (um) to objective NA
 
 magToNA = {2:0.06, 
 		   4:0.13, 
@@ -48,8 +53,11 @@ def getObjectiveMagnification(imageName):
 
 def getObjectiveNA(imageName):
 	'''Return the Numerical Aperture of the objective'''
-	mag = getMagnification(imageName)
-	return magToNA[mag]
+	pixSize = getPixelSize_um(imageName)
+	if pixelSizeToNA.has_key(pixSize):
+		return pixelSizeToNA[pixSize]
+	else:
+		raise KeyError("No pixel size matching in the pixelSizeToNA dictionnary")
 	
 def getWellId(imageName):
 	'''Extract well Id (ex:A001) from the imageName (for IM4)'''
