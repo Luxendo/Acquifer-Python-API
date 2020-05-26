@@ -98,7 +98,7 @@ def getLightExposure(imageName):
 	'''Return exposure time in ms used for the acquisition with this channel'''
 	return int(imageName[51:55])
 
-def getTemp(imageName):
+def getTemperature(imageName):
 	'''Return temperature in celsius degrees as measured by the probe at time of acquisition'''
 	return float(imageName[59:62])/10
 
