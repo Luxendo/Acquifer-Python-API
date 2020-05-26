@@ -38,7 +38,7 @@ def getPixelSize_um(imageName):
 	'''Extract the pixel size (in um) from the imageName (for IM4)'''
 	return float(imageName[34:39])*10**-4
 	
-def getMagnification(imageName):
+def getObjectiveMagnification(imageName):
 	'''Get the magnification as integer'''
 	pixSize = getPixelSize_um(imageName)
 	if pixelSizeToMag.has_key(pixSize):
@@ -46,7 +46,7 @@ def getMagnification(imageName):
 	else:
 		raise KeyError("No pixel size matching in the pixelSizeToMag dictionnary")
 
-def getNA(imageName):
+def getObjectiveNA(imageName):
 	'''Return the Numerical Aperture of the objective'''
 	mag = getMagnification(imageName)
 	return magToNA[mag]
