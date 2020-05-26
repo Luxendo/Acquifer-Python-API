@@ -18,7 +18,7 @@ magToNA = {2:0.06,
 		   20:0.45,
 		   40:0.6}
 
-def getXY_mm(imageName):
+def getXYPosition_mm(imageName):
 	'''Extract the XY-axis coordinates (in mm) from the imageName (for IM4). The coordinates corresponds to the center of the image = objective position.'''
 	# Parse string + do conversion
 	X0mm = int(imageName[65:71]) /1000 # >0
@@ -26,11 +26,11 @@ def getXY_mm(imageName):
 	
 	return X0mm, Y0mm
 
-def getSubPosition(imageName):
+def getWellSubPosition(imageName):
 	'''Extract the index corresponding to the subposition for that well'''
 	return int(imageName[9:11])
 
-def getZ_um(imageName):
+def getZPosition_um(imageName):
 	'''Extract the Z-axis coordinates (in um)'''
 	return float(imageName[83:89])/10
 	
@@ -65,12 +65,12 @@ def getWellRow(imageName):
 	return string.uppercase.index(letter)+1 # alphabetical order +1 since starts at 0
 
 
-def getWellNum(imageName):
+def getWellIndex(imageName):
 	'''Return well number corresponding to order of acquisition by the IM (snake pattern)'''
 	return int(imageName[106:111]) 
 
 	
-def getSlice(imageName):
+def getZSlice(imageName):
 	'''Return image slice number of the associated Z-Stack serie'''
 	return int(imageName[27:30])
 
@@ -84,17 +84,17 @@ def getChannelIndex(imageName):
 	return int(imageName[22:23])
 
 	
-def getIterationIndex(imageName):
+def getLoopIteration(imageName):
 	'''Return the integer index corresponding to the image timepoint'''
 	return int(imageName[15:18])
 
 	
-def getPower(imageName):
+def getLightPower(imageName):
 	'''Return relative power (%) used for the acquisition with this channel'''
 	return int(imageName[43:47])
 
 	
-def getExposure(imageName):
+def getLightExposure(imageName):
 	'''Return exposure time in ms used for the acquisition with this channel'''
 	return int(imageName[51:55])
 
