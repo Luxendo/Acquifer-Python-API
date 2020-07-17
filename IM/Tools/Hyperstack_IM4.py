@@ -78,23 +78,24 @@ Logo     = IJ.openImage(LogoPath)
 Win.addImage(Logo)
 
 Win.addDirectoryField("Image directory", Path0) 
- 
-Win.addStringField("Use specific channel(s) separated by , (from 1 to 6) :", Channel0) 
-Win.addStringField("Use specific Z-slice(s):", Slice0) 
-Win.addStringField("Use specific timepoint(s) separated by ',' :", Time0) 
-Win.addStringField("Use specific subposition(s) separated by ',' :", subPos0) 
 
+Win.addMessage("Use specific...")
+Win.addStringField("Channel(s) (from 1 to 6) :", Channel0) 
+Win.addStringField("Z-slice(s):", Slice0) 
+Win.addStringField("Timepoint(s):", Time0) 
+Win.addStringField("Sub-position(s):", subPos0) 
+Win.addMessage("Note: multiple indexes should be separated by commas")
  
-Win.addCheckbox("Show stack ?", ShowStack0) 
-Win.addCheckbox("Save stack ?", SaveStack0) 
+Win.addCheckbox("Show_stack ?", ShowStack0) 
+Win.addCheckbox("Save_stack ?", SaveStack0) 
  
-Win.addCheckbox("Make Z-projection ?",doProj0)
+Win.addCheckbox("Make_Z-projection ?",doProj0)
 Win.addToSameRow()
 Win.addChoice("Method",['avg','sd','max','min','sum','median'], ProjMethod0) 
 Win.addToSameRow() 
-Win.addCheckbox("Show projection ?",ShowProj0) 
+Win.addCheckbox("Show_projection ?",ShowProj0) 
 Win.addToSameRow() 
-Win.addCheckbox("Save projection ?",SaveProj0) 
+Win.addCheckbox("Save_projection ?",SaveProj0) 
  
  
 # Generate tick box with plate layout to select well 
@@ -109,12 +110,14 @@ Win.addCheckboxGroup(8,12,Wells, BoolWells0)             # Add result from persi
 Win.addButton('Select all' , ButtonClic() ) # add an instance of our ButtonClic listener class to the button. Button clicked -> event -> call actionPerformed(event) 
 Win.addButton('Select none', ButtonClic() ) 
 
-Disclaimer = "https://doi.org/10.5281/zenodo.3368135"	# Help button should point to the Zenodo page
-Win.addHelp(Disclaimer)
+# Add help button, pointing to zenodo
+url = "https://doi.org/10.5281/zenodo.3368135"	# Help button should point to the Zenodo page
+Win.addHelp(url)
 
 Win.addMessage("This plugin is freely provided by ACQUIFER.")
+Win.addMessage("v1.3.0")
 
-
+# Add doi badge image
 doiPath = os.path.join(IJ.getDirectory("ImageJ"), "lib", "BadgeDOI_Hyperstack.png")
 DOI=IJ.openImage(doiPath)
 Win.addImage(DOI)
