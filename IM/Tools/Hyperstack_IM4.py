@@ -129,31 +129,23 @@ Win.showDialog()
 ## Recover input 
 if (Win.wasOKed()):  
 	inFolder	  = Win.getNextString() 
-	Bool		  = [checkbox.getState() for checkbox in Win.getCheckboxes()] 
-	 
+	
 	ChoiceChannel = Win.getNextString()  
 	ChoiceSlice	  = Win.getNextString() 
 	ChoiceTime	  = Win.getNextString() 
 	ChoiceSubPos  = Win.getNextString() 
  
-	i=0 
-	ShowStack	 = Bool[i] 
-	 
-	i+=1 
-	SaveStack	 = Bool[i] 
-	 
-	i+=1 
-	doProj		 = Bool[i]
+	
+	ShowStack	 = Win.getNextBoolean()
+	SaveStack	 = Win.getNextBoolean()
+	
+	doProj		 = Win.getNextBoolean()
 	ProjMethod 	 = Win.getNextChoice()
-	i+=1 
-	ShowProj	 = Bool[i] 
-	 
-	i+=1 
-	SaveProj 	 = Bool[i]	 
- 
-	i+=1 
-	BoolWells	 = Bool[i:]  
-	Selection	 = {well:choice for well,choice in zip(Wells,BoolWells)} # create a dictionnary associating a well to a boolean . Chosen or not 
+	ShowProj	 = Win.getNextBoolean()
+	SaveProj 	 = Win.getNextBoolean() 
+	
+	BoolWells = [Win.getNextBoolean() for i in range( len(Wells) ) ] 
+	Selection = {well:choice for well,choice in zip(Wells,BoolWells)} # create a dictionary associating a well to a boolean . Chosen or not 
 	#print Selection 
 	#print len(Wells) # OK 96 
  
