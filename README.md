@@ -17,7 +17,8 @@ This repo contain the python module with the IM class to control the machine fro
 # TO DO:
 - Automatic metadata setting for file names (should be automatic in the GUI too)    
 - once gotoWell is implemented create a class __Plate__ and __Well__ (or a simple dictionnary for well) that would expose an iterator to loop over well positions in order to do    
-```
+- Add a nacro tools set to set the scale bar automatically for the IM images (similar to the scale ba tool of Gilles Carpentier http://image.bio.methods.free.fr/ImageJ/?Scale-Bar-Tools-for-Microscopes.html)
+``` 
 for well in Plate:   
 	X = well['X'] or well.X (if using a class)
 ```
