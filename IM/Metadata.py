@@ -100,7 +100,10 @@ def getLoopIteration(imageName):
 	"""Return the integer index corresponding to the image timepoint."""
 	return int(imageName[15:18])
 
-	
+def getTime(imageName):
+    """Return the time at which the image was recorded."""
+    return int(imageName[92:102])
+    
 def getLightPower(imageName):
 	"""Return relative power (%) used for the acquisition with this channel."""
 	return int(imageName[43:47])
