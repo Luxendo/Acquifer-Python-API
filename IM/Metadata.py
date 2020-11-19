@@ -48,7 +48,7 @@ def getPixelSize_um(imageName):
 def getObjectiveMagnification(imageName):
 	"""Get the magnification as integer."""
 	pixSize = getPixelSize_um(imageName)
-	if pixelSizeToMag.has_key(pixSize):
+	if pixSize in pixelSizeToMag:
 		return pixelSizeToMag[pixSize]
 	else:
 		raise KeyError("No pixel size matching in the pixelSizeToMag dictionnary")
@@ -72,7 +72,7 @@ def getWellColumn(imageName):
 def getWellRow(imageName):
 	"""Extract well row (1-8) from the imageName (for IM4)."""
 	letter = imageName[1:2]
-	return string.uppercase.index(letter)+1 # alphabetical order +1 since starts at 0
+	return string.ascii_uppercase.index(letter)+1 # alphabetical order +1 since starts at 0
 
 
 def getWellIndex(imageName):
