@@ -119,13 +119,15 @@ class IM(object):
     
     
     def getWellCoordinates(self):
-        '''Not functionnal in the VI'''
+        '''Return the well identifier ex:A001 when the acquisition is running exclusively'''
         # send request
         self._socket.send(b'\x00\x00\x00\x1d')
         self._socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
         
-        return self.__getFeedback__()
-    
+        # Read feedback and isolate value
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        return out[offset+1:-1]
     
     def getZstackCenter(self):
         '''Also not functionnal in the VI always return 0'''
