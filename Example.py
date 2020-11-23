@@ -1,6 +1,6 @@
-from IM.TCPIP import IM
+from acquifer import IM
 
-myIM = IM() # create an instance of IM with default TCPIP port
+myIM = IM.TCPIP() # create an instance of IM with default TCPIP port
 
 myIM.getStatus() # return Ready or Busy
 
