@@ -22,8 +22,8 @@ class IM(object):
         self._TCP_PORT_ = TCP_PORT
         
         # Open a TCP/IP socket to communicate
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((TCP_IP, TCP_PORT))
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.connect((TCP_IP, TCP_PORT))
     
     
     def __str__(self):
@@ -35,22 +35,22 @@ class IM(object):
        '''Generic function to get feedback from the machine after sending a request'''
         
        ## 1st TCP read of 4 bytes to get the size of the message to read
-       size_bytes = self.socket.recv(size) # always 4 bytes for the header
+       size_bytes = self._socket.recv(size) # always 4 bytes for the header
        
        # Convert the received size from byte string to decimal
        if sys.version_info.major == 2:   value = int(size_bytes.encode('hex'), 16)
        elif sys.version_info.major == 3: value = int.from_bytes(size_bytes, byteorder="big")
             
        ## 2nd TCP actually read the message
-       return self.socket.recv(value)
+       return self._socket.recv(value)
     
     
     def getVersion(self):
         '''Get IM version'''
         
         # send request
-        self.socket.send(b'\x00\x00\x00\x18')
-        self.socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
+        self._socket.send(b'\x00\x00\x00\x18')
+        self._socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
         
         # Read feedback and extract version
         out = self.__getFeedback__()
@@ -64,8 +64,8 @@ class IM(object):
         '''Query IM status Ready/Busy(=script running)'''
         
         # Send request
-        self.socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
-        self.socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
+        self._socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
+        self._socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
         
         out = self.__getFeedback__()
         offset = out.find(b'\x1f')
@@ -78,8 +78,8 @@ class IM(object):
         '''Return the X position of the objective in mm'''
         
         # Send request
-        self.socket.send(b'\x00\x00\x00\x14')
-        self.socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
+        self._socket.send(b'\x00\x00\x00\x14')
+        self._socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
         
         # Read feedback and extract version
         out = self.__getFeedback__()
@@ -93,8 +93,8 @@ class IM(object):
         '''Return the Y position of the objective in mm'''
         
         # Send request
-        self.socket.send(b'\x00\x00\x00\x14')
-        self.socket.send(b'\x02Get\x1fYAxis\x1f19662438\x03')
+        self._socket.send(b'\x00\x00\x00\x14')
+        self._socket.send(b'\x02Get\x1fYAxis\x1f19662438\x03')
         
         # Read feedback and extract version
         out = self.__getFeedback__()
@@ -107,8 +107,8 @@ class IM(object):
         '''Return the Z position of the objective in um'''
         
         # Send request
-        self.socket.send(b'\x00\x00\x00\x14')
-        self.socket.send(b'\x02Get\x1fZAxis\x1f19736510\x03')
+        self._socket.send(b'\x00\x00\x00\x14')
+        self._socket.send(b'\x02Get\x1fZAxis\x1f19736510\x03')
         
         # Read feedback and extract version
         out = self.__getFeedback__()
@@ -121,8 +121,8 @@ class IM(object):
     def getWellCoordinates(self):
         '''Not functionnal in the VI'''
         # send request
-        self.socket.send(b'\x00\x00\x00\x1d')
-        self.socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
+        self._socket.send(b'\x00\x00\x00\x1d')
+        self._socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
         
         return self.__getFeedback__()
     
@@ -130,8 +130,8 @@ class IM(object):
     def getZstackCenter(self):
         '''Also not functionnal in the VI always return 0'''
         # send request
-        self.socket.send(b'\x00\x00\x00\x1b')
-        self.socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
+        self._socket.send(b'\x00\x00\x00\x1b')
+        self._socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
         
         # Read feedback and isolate value
         out = self.__getFeedback__()
@@ -142,16 +142,16 @@ class IM(object):
     
     
     def openLid(self):
-        self.socket.send(b'\x00\x00\x00\x1a')
-        self.socket.send(b'\x02Command\x1fOpenLid\x1f17248828\x03')
+        self._socket.send(b'\x00\x00\x00\x1a')
+        self._socket.send(b'\x02Command\x1fOpenLid\x1f17248828\x03')
         
         # Bump feedback
         self.__getFeedback__()
     
     
     def closeLid(self):
-        self.socket.send(b'\x00\x00\x00\x1a')
-        self.socket.send(b'\x02Command\x1fCloseLid\x1f8809857\x03')
+        self._socket.send(b'\x00\x00\x00\x1a')
+        self._socket.send(b'\x02Command\x1fCloseLid\x1f8809857\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -207,8 +207,8 @@ class IM(object):
         Y = '{:.3f}'.format(Y).encode()
         
         # send command
-        self.socket.send(size)
-        self.socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
+        self._socket.send(size)
+        self._socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -244,8 +244,8 @@ class IM(object):
         Z = '{:.1f}'.format(Z).encode()
         
         # send command
-        self.socket.send(size)
-        self.socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
+        self._socket.send(size)
+        self._socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -275,8 +275,8 @@ class IM(object):
         BytePath = ScriptPath.encode()
         
         # send command
-        self.socket.send(sizeBytes)
-        self.socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
+        self._socket.send(sizeBytes)
+        self._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -286,8 +286,8 @@ class IM(object):
         '''Start a previously defined script (using setScript)'''
        
         # send command
-        self.socket.send(b'\x00\x00\x00 ')
-        self.socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
+        self._socket.send(b'\x00\x00\x00 ')
+        self._socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -297,8 +297,8 @@ class IM(object):
         '''Stop currently executing script'''
         
         # send command
-        self.socket.send(b'\x00\x00\x00\x1f')
-        self.socket.send(b'\x02Command\x1fStopScript\x1f1403833090\x03')
+        self._socket.send(b'\x00\x00\x00\x1f')
+        self._socket.send(b'\x02Command\x1fStopScript\x1f1403833090\x03')
         
         # Bump feedback
         self.__getFeedback__()
@@ -306,4 +306,4 @@ class IM(object):
         
     def closeSocket(self):
         '''Close TCP/IP port'''
-        self.socket.close()
+        self._socket.close()
