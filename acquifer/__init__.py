@@ -16,7 +16,7 @@ To reduce the length of this single file, the method bodies are separated in pri
 which are imported at the top of this script
 """
 from __future__ import division
-from . import _IM03, _IM04
+from . import _IM, _IM03, _IM04
 import string, socket, os, sys
 
 
