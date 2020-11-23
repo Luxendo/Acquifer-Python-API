@@ -119,7 +119,7 @@ class IM(object):
     
     
     def getWellCoordinates(self):
-        '''Not functionnal in the VI'''
+        '''Return the well ID ex:A001 only during a running acquisition.'''
         # send request
         self.socket.send(b'\x00\x00\x00\x1d')
         self.socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
@@ -128,7 +128,7 @@ class IM(object):
     
     
     def getZstackCenter(self):
-        '''Also not functionnal in the VI always return 0'''
+        '''Return the current Z-stack center during an acquisition.Return 0 if not running an acquisition.'''
         # send request
         self.socket.send(b'\x00\x00\x00\x1b')
         self.socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
