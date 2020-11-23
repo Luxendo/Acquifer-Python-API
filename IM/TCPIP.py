@@ -124,7 +124,10 @@ class IM(object):
         self.socket.send(b'\x00\x00\x00\x1d')
         self.socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
         
-        return self.__getFeedback__()
+        # Read feedback and isolate value
+        out = self.__getFeedback__()
+        offset = out.find(b'\x1f')
+        return out[offset+1:-1]
     
     
     def getZstackCenter(self):
