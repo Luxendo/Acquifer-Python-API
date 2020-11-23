@@ -17,7 +17,7 @@ which are imported at the top of this script
 """
 from __future__ import division
 from . import _IM, _IM03, _IM04
-import string, socket, os, sys
+import socket, string
 
 
 class IM(object):
@@ -80,42 +80,78 @@ class IM(object):
 		def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
 			"""Initialise a TCP/IP socket for the exchange of commands."""
 			# local IP and port (constant)
-			self._TCP_IP_ = TCP_IP
+			self._TCP_IP_   = TCP_IP
 			self._TCP_PORT_ = TCP_PORT
 			
 			# Open a TCP/IP socket to communicate
-			self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			self.socket.connect((TCP_IP, TCP_PORT))
+			self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			self._socket.connect((TCP_IP, TCP_PORT))
 		
 		def __str__(self):
 			"""Return a string representation of the object."""
 			return "IM v{} at IP:{}, Port:{}, status:{}".format( self.getVersion(), self._TCP_IP_, self._TCP_PORT_, self.getStatus() )
 		
+		def __getFeedback__(self, size=4):
+			"""Generic function to get feedback from the machine after sending a request."""
+			return _IM.tcpip.getFeedback(self, size)
+		
 		def getVersion(self):
 			"""Get IM version."""
-			# send request
-			self.socket.send(b'\x00\x00\x00\x18')
-			self.socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
-			
-			# Read feedback and extract version
-			out = self.__getFeedback__()
-			offset = out.find(b'\x1f')
-			Version = out[offset+1:-1].decode("UTF-8")
-			
-			return Version 
-			
-	
+			return _IM.tcpip.getVersion(self)
+		
 		def getStatus(self):
-			"""Query IM status Ready/Busy(=script running)."""
-			# Send request
-			self.socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
-			self.socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
-			
-			out = self.__getFeedback__()
-			offset = out.find(b'\x1f')
-			Status = out[offset+1:-1].decode()
-			
-			return Status
+			"""Get IM status."""
+			return _IM.tcpip.getStatus(self)
+		
+		def getXaxis(self):
+			""""Return the X position of the objective in mm."""
+			return _IM.tcpip.getXaxis(self)
+		
+		def getYaxis(self):
+			"""Return the Y position of the objective in mm."""
+			return _IM.tcpip.getYaxis(self)
+		
+		def getZaxis(self):
+			'''Return the Z position of the objective in um.'''
+			return _IM.tcpip.getZaxis()
+		
+		def getWellCoordinates(self):
+			'''Return the well identifier ex:A001 when the acquisition is running exclusively.'''
+			return _IM.tcpip.getWellCoordinates(self)
+		
+		def getZstackCenter(self):
+			'''Return the Z-stack center when an acquisition is running exclusively.'''
+			return _IM.tcpip.getZstackCenter(self)
+		
+		def openLid(self):
+			_IM.tcpip.openLid(self)
+		
+		def closeLid(self):
+			_IM.tcpip.closeLid(self)
+		
+		def gotoXY(self,X,Y):
+			'''Move objective to position X,Y in mm (max 3 decimal ex:1.111).'''
+			_IM.tcpip.gotoXY(self,X,Y)
+		
+		def gotoZ(self,Z):
+			'''Move objective to position Z in um (max 1 decimal ex:1.1).'''
+			_IM.tcpip.gotoZ(self, Z)
+		
+		def setScriptFile(self, scriptPath):
+			'''Load a pre-configured .imsf script file.'''
+			_IM.tcpip.setScriptFile(self, scriptPath)
+		
+		def startScript(self):
+			'''Start a previously defined script (using setScript).'''
+			_IM.tcpip.startScript(self)
+		
+		def stopScript(self):
+			'''Stop currently executing script.'''
+			_IM.tcpip.stopScript(self)
+		
+		def closeSocket(self):
+			'''Close TCP/IP port.'''
+			_IM.tcpip.closeSocket(self)
 
 
 class IM03(IM):
