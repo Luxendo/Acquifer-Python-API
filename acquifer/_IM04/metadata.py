@@ -1,5 +1,5 @@
 """
-Extract IM metadata from filename.
+Extract IM04 metadata from filename.
 
 Python 2 (incl.Fiji) or 3
 This class contains a set of function to extract metadata by parsing the image file names string of images acquired on an IM04
