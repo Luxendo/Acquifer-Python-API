@@ -8,140 +8,140 @@ Read/Write actions are always preceeded by a first read/write, that sends/read a
 
 For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex(str(hexcode))
 
-The self argument here is used out of a class and correspond to a IM.TCPIP object
+The IM_TCPIP argument in the function below corresponds to an instance of the IM.TCPIP class
 '''
 import os, sys
 
 
-def getFeedback(self, size=4):
+def getFeedback(IM_TCPIP, size=4):
 	'''Generic function to get feedback from the machine after sending a request'''
 	
 	## 1st TCP read of 4 bytes to get the size of the message to read
-	size_bytes = self._socket.recv(size) # always 4 bytes for the header
+	size_bytes = IM_TCPIP._socket.recv(size) # always 4 bytes for the header
 	
 	# Convert the received size from byte string to decimal
 	if sys.version_info.major == 2:	 value = int(size_bytes.encode('hex'), 16)
 	elif sys.version_info.major == 3: value = int.from_bytes(size_bytes, byteorder="big")
 		
 	## 2nd TCP actually read the message
-	return self._socket.recv(value)
+	return IM_TCPIP._socket.recv(value)
 
 
-def getVersion(self):
+def getVersion(IM_TCPIP):
 	'''Get IM version'''
 	
 	# send request
-	self._socket.send(b'\x00\x00\x00\x18')
-	self._socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x18')
+	IM_TCPIP._socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
 	
 	# Read feedback and extract version
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	Version = out[offset+1:-1].decode("UTF-8")
 	
 	return Version 
 	
 
-def getStatus(self):
+def getStatus(IM_TCPIP):
 	'''Query IM status Ready/Busy(=script running)'''
 	
 	# Send request
-	self._socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
-	self._socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
+	IM_TCPIP._socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
 	
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	Status = out[offset+1:-1].decode()
 	
 	return Status
 
 
-def getXaxis(self):
+def getXaxis(IM_TCPIP):
 	'''Return the X position of the objective in mm'''
 	
 	# Send request
-	self._socket.send(b'\x00\x00\x00\x14')
-	self._socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x14')
+	IM_TCPIP._socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
 	
 	# Read feedback and extract version
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	X = float(out[offset+1:-1])
 	
 	return X
 	
 
-def getYaxis(self):
+def getYaxis(IM_TCPIP):
 	'''Return the Y position of the objective in mm'''
 	
 	# Send request
-	self._socket.send(b'\x00\x00\x00\x14')
-	self._socket.send(b'\x02Get\x1fYAxis\x1f19662438\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x14')
+	IM_TCPIP._socket.send(b'\x02Get\x1fYAxis\x1f19662438\x03')
 	
 	# Read feedback and extract version
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	Y = float(out[offset+1:-1])
 	
 	return Y
 
-def getZaxis(self):
+def getZaxis(IM_TCPIP):
 	'''Return the Z position of the objective in um'''
 	
 	# Send request
-	self._socket.send(b'\x00\x00\x00\x14')
-	self._socket.send(b'\x02Get\x1fZAxis\x1f19736510\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x14')
+	IM_TCPIP._socket.send(b'\x02Get\x1fZAxis\x1f19736510\x03')
 	
 	# Read feedback and extract version
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	Z = float(out[offset+1:-1])
 	
 	return Z
 
 
-def getWellCoordinates(self):
+def getWellCoordinates(IM_TCPIP):
 	'''Return the well identifier ex:A001 when the acquisition is running exclusively'''
 	# send request
-	self._socket.send(b'\x00\x00\x00\x1d')
-	self._socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1d')
+	IM_TCPIP._socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
 	
 	# Read feedback and isolate value
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	return out[offset+1:-1]
 
-def getZstackCenter(self):
+def getZstackCenter(IM_TCPIP):
 	'''Return the Z-stack center when an acquisition is running exclusively'''
 	# send request
-	self._socket.send(b'\x00\x00\x00\x1b')
-	self._socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1b')
+	IM_TCPIP._socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
 	
 	# Read feedback and isolate value
-	out = self.__getFeedback__()
+	out = IM_TCPIP.__getFeedback__()
 	offset = out.find(b'\x1f')
 	Zcenter = float(out[offset+1:-1])
 	
 	return Zcenter
 
 
-def openLid(self):
-	self._socket.send(b'\x00\x00\x00\x1a')
-	self._socket.send(b'\x02Command\x1fOpenLid\x1f17248828\x03')
+def openLid(IM_TCPIP):
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1a')
+	IM_TCPIP._socket.send(b'\x02Command\x1fOpenLid\x1f17248828\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 
 
-def closeLid(self):
-	self._socket.send(b'\x00\x00\x00\x1a')
-	self._socket.send(b'\x02Command\x1fCloseLid\x1f8809857\x03')
+def closeLid(IM_TCPIP):
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1a')
+	IM_TCPIP._socket.send(b'\x02Command\x1fCloseLid\x1f8809857\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 
 
-def gotoXY(self,X,Y):
+def gotoXY(IM_TCPIP,X,Y):
 	'''Move objective to position X,Y in mm (max 3 decimal ex:1.111)'''
 	
 	if X<10 or X>119 or Y<7 or Y>82:
@@ -191,14 +191,14 @@ def gotoXY(self,X,Y):
 	Y = '{:.3f}'.format(Y).encode()
 	
 	# send command
-	self._socket.send(size)
-	self._socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
+	IM_TCPIP._socket.send(size)
+	IM_TCPIP._socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 
 
-def gotoZ(self,Z):
+def gotoZ(IM_TCPIP,Z):
 	'''Move objective to position Z in um (max 1 decimal ex:1.1)'''
 	
 	# Make sure Z is not longer than 1 decimal
@@ -228,14 +228,14 @@ def gotoZ(self,Z):
 	Z = '{:.1f}'.format(Z).encode()
 	
 	# send command
-	self._socket.send(size)
-	self._socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
+	IM_TCPIP._socket.send(size)
+	IM_TCPIP._socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 
 
-def setScriptFile(self, ScriptPath):
+def setScriptFile(IM_TCPIP, ScriptPath):
 	'''Load a pre-configured .imsf script file'''
 	
 	# Check file path
@@ -259,35 +259,35 @@ def setScriptFile(self, ScriptPath):
 	BytePath = ScriptPath.encode()
 	
 	# send command
-	self._socket.send(sizeBytes)
-	self._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
+	IM_TCPIP._socket.send(sizeBytes)
+	IM_TCPIP._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 	
 
-def startScript(self):
+def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScript)'''
    
 	# send command
-	self._socket.send(b'\x00\x00\x00 ')
-	self._socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00 ')
+	IM_TCPIP._socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 
 
-def stopScript(self):
+def stopScript(IM_TCPIP):
 	'''Stop currently executing script'''
 	
 	# send command
-	self._socket.send(b'\x00\x00\x00\x1f')
-	self._socket.send(b'\x02Command\x1fStopScript\x1f1403833090\x03')
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1f')
+	IM_TCPIP._socket.send(b'\x02Command\x1fStopScript\x1f1403833090\x03')
 	
 	# Bump feedback
-	self.__getFeedback__()
+	IM_TCPIP.__getFeedback__()
 	
 	
-def closeSocket(self):
+def closeSocket(IM_TCPIP):
 	'''Close TCP/IP port'''
-	self._socket.close()
+	IM_TCPIP._socket.close()
