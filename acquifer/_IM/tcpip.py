@@ -2,6 +2,8 @@
 This private module contains a set of funtions to control the IM using TCP/IP
 They are used in the acquifer.__init___ module within the IM class but are stored here
 to limit the size of the __init__ file
+See test_tcpip.py in the repo's root directory for testing
+
 In TCP/IP vocabulary this script is on the client side, while the machine controller is the server
 The TCP/IP works by exchanging strings of bytes.
 Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next (use len(byte string message)) to get the decimal value for the weight of the message, convert it to Hex and encode it in a byte string using bytes.fromhex
