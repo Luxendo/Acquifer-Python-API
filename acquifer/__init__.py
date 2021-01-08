@@ -104,7 +104,7 @@ class IM(object):
 			return _IM.tcpip.getStatus(self)
 		
 		def getXaxis(self):
-			""""Return the X position of the objective in mm."""
+			"""Return the X position of the objective in mm."""
 			return _IM.tcpip.getXaxis(self)
 		
 		def getYaxis(self):
@@ -112,15 +112,15 @@ class IM(object):
 			return _IM.tcpip.getYaxis(self)
 		
 		def getZaxis(self):
-			'''Return the Z position of the objective in um.'''
+			"""Return the Z position of the objective in um."""
 			return _IM.tcpip.getZaxis()
 		
 		def getWellCoordinates(self):
-			'''Return the well identifier ex:A001 when the acquisition is running exclusively.'''
+			"""Return the well identifier ex:A001 when the acquisition is running exclusively."""
 			return _IM.tcpip.getWellCoordinates(self)
 		
 		def getZstackCenter(self):
-			'''Return the Z-stack center when an acquisition is running exclusively.'''
+			"""Return the Z-stack center when an acquisition is running exclusively."""
 			return _IM.tcpip.getZstackCenter(self)
 		
 		def openLid(self):
@@ -130,27 +130,27 @@ class IM(object):
 			_IM.tcpip.closeLid(self)
 		
 		def gotoXY(self,X,Y):
-			'''Move objective to position X,Y in mm (max 3 decimal ex:1.111).'''
+			"""Move objective to position X,Y in mm (max 3 decimal ex:1.111)."""
 			_IM.tcpip.gotoXY(self,X,Y)
 		
 		def gotoZ(self,Z):
-			'''Move objective to position Z in um (max 1 decimal ex:1.1).'''
+			"""Move objective to position Z in um (max 1 decimal ex:1.1)."""
 			_IM.tcpip.gotoZ(self, Z)
 		
 		def setScriptFile(self, scriptPath):
-			'''Load a pre-configured .imsf script file.'''
+			"""Load a pre-configured .imsf script file."""
 			_IM.tcpip.setScriptFile(self, scriptPath)
 		
 		def startScript(self):
-			'''Start a previously defined script (using setScript).'''
+			"""Start a previously defined script (using setScript)."""
 			_IM.tcpip.startScript(self)
 		
 		def stopScript(self):
-			'''Stop currently executing script.'''
+			"""Stop currently executing script."""
 			_IM.tcpip.stopScript(self)
 		
 		def closeSocket(self):
-			'''Close TCP/IP port.'''
+			"""Close TCP/IP port."""
 			_IM.tcpip.closeSocket(self)
 
 
