@@ -121,6 +121,10 @@ class IM(object):
 			"""Return the objective number."""
 			return _IM.tcpip.getObjectiveNo(self)
 		
+		def getLightNo(self):
+			"""Return the current channel number. Between 0:None to 6:BF."""
+			return _IM.tcpip.getLightNo(self)
+		
 		def getWellCoordinates(self):
 			"""Return the well identifier ex:A001 when the acquisition is running exclusively."""
 			return _IM.tcpip.getWellCoordinates(self)

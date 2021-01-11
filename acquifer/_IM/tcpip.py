@@ -112,6 +112,17 @@ def getObjectiveNo(IM_TCPIP):
 	
 	return int(out[offset+1:-1])
 
+def getLightNo(IM_TCPIP):
+	"""Return the current light channel number 0: none to 6:BF."""
+	
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x18')
+	IM_TCPIP._socket.send(b'\x02Get\x1fLightNo\x1f1032592535\x03')
+	
+	out = IM_TCPIP.__getFeedback__()
+	offset = out.find(b'\x1f')
+	
+	return int(out[offset+1:-1])
+
 def getWellCoordinates(IM_TCPIP):
 	'''Return the well identifier ex:A001 when the acquisition is running exclusively'''
 	# send request
