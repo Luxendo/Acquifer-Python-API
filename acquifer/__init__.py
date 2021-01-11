@@ -130,9 +130,11 @@ class IM(object):
 			return _IM.tcpip.getZstackCenter(self)
 		
 		def openLid(self):
+			"""Open IM lid."""
 			_IM.tcpip.openLid(self)
 		
 		def closeLid(self):
+			"""Close IM lid."""
 			_IM.tcpip.closeLid(self)
 		
 		def goToXY(self,X,Y):
