@@ -18,7 +18,6 @@ To reduce the length of this single file, the method bodies are separated in pri
 which are imported at the top of this script
 """
 from __future__ import division
-from ._IM import tcpip
 from . import _IM, _IM03, _IM04
 import socket, string
 
@@ -96,65 +95,65 @@ class IM(object):
 		
 		def __getFeedback__(self, size=4):
 			"""Generic function to get feedback from the machine after sending a request."""
-			return tcpip.getFeedback(self, size)
+			return _IM.tcpip.getFeedback(self, size)
 		
 		def getVersion(self):
 			"""Get IM version."""
-			return tcpip.getVersion(self)
+			return _IM.tcpip.getVersion(self)
 		
 		def getStatus(self):
 			"""Get IM status."""
-			return tcpip.getStatus(self)
+			return _IM.tcpip.getStatus(self)
 		
 		def getXaxis(self):
 			"""Return the X position of the objective in mm."""
-			return tcpip.getXaxis(self)
+			return _IM.tcpip.getXaxis(self)
 		
 		def getYaxis(self):
 			"""Return the Y position of the objective in mm."""
-			return tcpip.getYaxis(self)
+			return _IM.tcpip.getYaxis(self)
 		
 		def getZaxis(self):
 			"""Return the Z position of the objective in um."""
-			return tcpip.getZaxis(self)
+			return _IM.tcpip.getZaxis(self)
 		
 		def getWellCoordinates(self):
 			"""Return the well identifier ex:A001 when the acquisition is running exclusively."""
-			return tcpip.getWellCoordinates(self)
+			return _IM.tcpip.getWellCoordinates(self)
 		
 		def getZstackCenter(self):
 			"""Return the Z-stack center when an acquisition is running exclusively."""
-			return tcpip.getZstackCenter(self)
+			return _IM.tcpip.getZstackCenter(self)
 		
 		def openLid(self):
-			tcpip.openLid(self)
+			_IM.tcpip.openLid(self)
 		
 		def closeLid(self):
-			tcpip.closeLid(self)
+			_IM.tcpip.closeLid(self)
 		
 		def goToXY(self,X,Y):
 			"""Move objective to position X,Y in mm (max 3 decimal ex:1.111)."""
-			tcpip.goToXY(self,X,Y)
+			_IM.tcpip.goToXY(self,X,Y)
 		
 		def goToZ(self,Z):
 			"""Move objective to position Z in um (max 1 decimal ex:1.1)."""
-			tcpip.goToZ(self, Z)
+			_IM.tcpip.goToZ(self, Z)
 		
 		def setScriptFile(self, scriptPath):
 			"""Load a pre-configured .imsf script file."""
-			tcpip.setScriptFile(self, scriptPath)
+			_IM.tcpip.setScriptFile(self, scriptPath)
 		
 		def startScript(self):
 			"""Start a previously defined script (using setScript)."""
-			tcpip.startScript(self)
+			_IM.tcpip.startScript(self)
 		
 		def stopScript(self):
 			"""Stop currently executing script."""
-			tcpip.stopScript(self)
+			_IM.tcpip.stopScript(self)
 		
 		def closeSocket(self):
 			"""Close TCP/IP port."""
-			tcpip.closeSocket(self)
+			_IM.tcpip.closeSocket(self)
 
 
 class IM03(IM):
