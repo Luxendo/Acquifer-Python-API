@@ -101,6 +101,16 @@ def getZaxis(IM_TCPIP):
 	
 	return Z
 
+def getObjectiveNo(IM_TCPIP):
+	"""Return the number of the current Objective"""
+	
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1c')
+	IM_TCPIP._socket.send(b'\x02Get\x1fObjectiveNo\x1f1030281479\x03')
+	
+	out = IM_TCPIP.__getFeedback__()
+	offset = out.find(b'\x1f')
+	
+	return int(out[offset+1:-1])
 
 def getWellCoordinates(IM_TCPIP):
 	'''Return the well identifier ex:A001 when the acquisition is running exclusively'''
@@ -257,7 +267,7 @@ def setScriptFile(IM_TCPIP, ScriptPath):
 	sizeHex	  = format(TotalSize, '08X')			# dec -> Hex string of defined length (8)
 	sizeBytes = bytes( bytearray.fromhex(sizeHex) ) # Hex to bytes string
 	
-		# Encode the Path into a byte string
+	# Encode the Path into a byte string
 	BytePath = ScriptPath.encode()
 	
 	# send command
@@ -270,7 +280,7 @@ def setScriptFile(IM_TCPIP, ScriptPath):
 
 def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScript)'''
-   
+	
 	# send command
 	IM_TCPIP._socket.send(b'\x00\x00\x00 ')
 	IM_TCPIP._socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
