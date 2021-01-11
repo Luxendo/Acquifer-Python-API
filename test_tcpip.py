@@ -21,3 +21,5 @@ im.goToZ(20.123)
 
 # Check after moving
 printPosition()
+
+im.closeSocket()
