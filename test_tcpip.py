@@ -17,7 +17,7 @@ printPosition()
 
 # Go to XYZ-position
 im.goToXY(12.345, 23.456)
-im.goToZ(20.123)
+im.goToZ(20.1)
 
 # Check after moving
 printPosition()
