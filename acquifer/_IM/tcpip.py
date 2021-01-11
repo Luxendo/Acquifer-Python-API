@@ -143,7 +143,7 @@ def closeLid(IM_TCPIP):
 	IM_TCPIP.__getFeedback__()
 
 
-def gotoXY(IM_TCPIP,X,Y):
+def goToXY(IM_TCPIP,X,Y):
 	'''Move objective to position X,Y in mm (max 3 decimal ex:1.111)'''
 	
 	if X<10 or X>119 or Y<7 or Y>82:
@@ -200,7 +200,7 @@ def gotoXY(IM_TCPIP,X,Y):
 	IM_TCPIP.__getFeedback__()
 
 
-def gotoZ(IM_TCPIP,Z):
+def goToZ(IM_TCPIP,Z):
 	'''Move objective to position Z in um (max 1 decimal ex:1.1)'''
 	
 	# Make sure Z is not longer than 1 decimal

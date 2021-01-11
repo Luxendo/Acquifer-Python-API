@@ -130,13 +130,13 @@ class IM(object):
 		def closeLid(self):
 			tcpip.closeLid(self)
 		
-		def gotoXY(self,X,Y):
+		def goToXY(self,X,Y):
 			"""Move objective to position X,Y in mm (max 3 decimal ex:1.111)."""
-			tcpip.gotoXY(self,X,Y)
+			tcpip.goToXY(self,X,Y)
 		
-		def gotoZ(self,Z):
+		def goToZ(self,Z):
 			"""Move objective to position Z in um (max 1 decimal ex:1.1)."""
-			tcpip.gotoZ(self, Z)
+			tcpip.goToZ(self, Z)
 		
 		def setScriptFile(self, scriptPath):
 			"""Load a pre-configured .imsf script file."""
