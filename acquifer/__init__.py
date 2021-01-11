@@ -114,7 +114,7 @@ class IM(object):
 		
 		def getZaxis(self):
 			"""Return the Z position of the objective in um."""
-			return tcpip.getZaxis()
+			return tcpip.getZaxis(self)
 		
 		def getWellCoordinates(self):
 			"""Return the well identifier ex:A001 when the acquisition is running exclusively."""
