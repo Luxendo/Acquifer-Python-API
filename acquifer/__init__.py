@@ -6,13 +6,15 @@ import acquifer
 or 
 from acquifer import IM, IM03, IM04
 
-IM is a model class, the mother class for IM03 and IM04
-Therefore only what differs between IM03 and IM04 needs rewriting
+IM is the mother class for IM03 and IM04, it contains default implementations for functions that works both with IM03 and IM04
+IM03 and IM04 classes inherit the IM class, therefore only what differs between IM03 and IM04 needs rewriting in the IM03 and IM04 classes
 
-Besides the classes are nested with inner classes such as Metadata to allow
+The IM (and descendant) classes are nested with inner classes such as Metadata and TCPIP to allow
 IM.Metadata.getWellName()
+or
+im = IM.TCPIP() # create a new IM object for control over TCP/IP with default IP adress and port
 
-To reduce the length of this single file, the method bodies are separated in private submodules
+To reduce the length of this single file, the method bodies are separated in private submodules (prefixed with _ : _IM, _IM3, _IM4)
 which are imported at the top of this script
 """
 from __future__ import division
