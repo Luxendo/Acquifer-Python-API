@@ -137,6 +137,10 @@ class IM(object):
 			"""Return the Z-stack center when an acquisition is running exclusively."""
 			return _IM.tcpip.getZstackCenter(self)
 		
+		def getImageFile(self):
+			"""Return current image file."""
+			return _IM.tcpip.getImageFile(self)
+		
 		def openLid(self):
 			"""Open IM lid."""
 			_IM.tcpip.openLid(self)

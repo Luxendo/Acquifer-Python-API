@@ -165,6 +165,13 @@ def getZstackCenter(IM_TCPIP):
 	
 	return getFeedbackAndParseValue(IM_TCPIP, float)
 
+def getImageFile(IM_TCPIP):
+	"""Return current image file."""
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x1a')
+	IM_TCPIP._socket.send(b'\x02Get\x1fImageFile\x1f1114544145\x03')
+	
+	return getFeedbackAndParseValue(IM_TCPIP)
+
 def openLid(IM_TCPIP):
 	"""Open the IM lid."""
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x1a')
