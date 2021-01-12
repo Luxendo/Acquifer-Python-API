@@ -152,10 +152,6 @@ class IM(object):
 		def goToZ(self,Z):
 			"""Move objective to position Z in um (max 1 decimal ex:1.1)."""
 			_IM.tcpip.goToZ(self, Z)
-		
-		def setScriptFile(self, scriptPath):
-			"""Load a pre-configured .imsf script file."""
-			_IM.tcpip.setScriptFile(self, scriptPath)
 			
 		def setImageDirectory(self, dirPath):
 			"""
@@ -218,6 +214,10 @@ class IM(object):
 			Load parameters from a pre-configred experiment, stored in an .exp file.
 			"""
 			_IM.tcpip.openExperimentFile(self, expFilePath)
+		
+		def setScriptFile(self, scriptPath):
+			"""Load a pre-configured .imsf script file."""
+			_IM.tcpip.setScriptFile(self, scriptPath)
 		
 		def startScript(self):
 			"""Start a previously defined script (using setScript)."""
