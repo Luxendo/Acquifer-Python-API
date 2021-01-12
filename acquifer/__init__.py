@@ -209,6 +209,12 @@ class IM(object):
 			"""
 			_IM.tcpip.setPlate(self, plateName)
 		
+		def openExperimentFile(self, expFilePath):
+			"""
+			Load parameters from a pre-configred experiment, stored in an .exp file.
+			"""
+			_IM.tcpip.openExperimentFile(self, expFilePath)
+		
 		def startScript(self):
 			"""Start a previously defined script (using setScript)."""
 			_IM.tcpip.startScript(self)

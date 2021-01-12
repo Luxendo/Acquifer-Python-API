@@ -280,6 +280,24 @@ def setPlate(IM_TCPIP, plateName):
 	"""
 	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptPlateName\x1f1093819124\x1f', plateName)
 
+def openExperimentFile(IM_TCPIP, expFilePath):
+	"""
+	Load parameters from a pre-configred experiment, stored in an .exp file.
+	"""
+	# Check file path
+	if not os.path.exists(expFilePath):
+		if sys.version_info.major == 2: FileNotFoundError = IOError # FileNotFoundError does not exist in Py2 
+		raise FileNotFoundError("No such file at this path")
+			
+	elif os.path.isdir(expFilePath):
+		if sys.version_info.major == 2: IsADirectoryError = IOError # IsADirectoryError does not exist in Py2 
+		raise IsADirectoryError("openExperimentFile expects a path to a .imef file, not to a folder")
+		
+	elif not expFilePath.endswith(".imef"):
+		raise TypeError("openExperimentFile expects a path to a .imef file")
+	
+	sendStringCommand(IM_TCPIP, b'\x02Command\x1fOpenExperimentFile\x1f1110352790\x1f', expFilePath)
+
 def setScriptFile(IM_TCPIP, scriptPath):
 	'''Load a pre-configured .imsf script file'''
 	
@@ -295,7 +313,7 @@ def setScriptFile(IM_TCPIP, scriptPath):
 	elif not ( scriptPath.endswith(".scpt") or scriptPath.endswith(".imsf") ):
 		raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
 		
-	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath )
+	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath)
 
 def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScriptFile)'''
