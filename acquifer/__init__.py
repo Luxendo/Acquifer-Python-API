@@ -153,6 +153,10 @@ class IM(object):
 			"""Load a pre-configured .imsf script file."""
 			_IM.tcpip.setScriptFile(self, scriptPath)
 		
+		def setProject(self, projectName):
+			"""Set the project name."""
+			_IM.tcpip.setProject(self, projectName)
+		
 		def startScript(self):
 			"""Start a previously defined script (using setScript)."""
 			_IM.tcpip.startScript(self)

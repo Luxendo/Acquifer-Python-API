@@ -8,8 +8,24 @@ In TCP/IP vocabulary this script is on the client side, while the machine contro
 The TCP/IP works by exchanging strings of bytes.
 Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next (use len(byte string message)) to get the decimal value for the weight of the message, convert it to Hex and encode it in a byte string using bytes.fromhex
 
-For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex(str(hexcode))
+For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex("hexcode") ex: bytes.fromhex("0000 001F")
 
+For commands taking a string argument ex: setScriptFile(filePath): 
+	1) set the path to an empty argument and call the VI function (press the button)
+	2) Write down the hex code for "Send len hex" AND "sendStringHex"
+	3) Convert (online converter) this code to a decimal value 0000 001F -> 31
+	4) When an argument is provided, the len will be the value above (offset) + len(stringArgument) ex: 31 + len("test")
+	The offset is specific to the current sendStringHex, which length varies due to a timestamp. 
+	A given timestamp can be reused though, ie the offset too.
+	5) The function should thus compute the length of the message with the offset and argument
+	6) Convert the message length to hexadecimal code string of length 8, using format(size, '08x') 
+	7) Convert the hexadecimal code string to a hexadecimal byteString with bytes( bytearray.fromhex(sizeHex) )
+	8) Send this byteString for the message length
+	9) Convert the sendStringHex from 2) to a byteString using bytes( bytearray.fromhex(sendStringHex) )
+	10) Edit this string, by inserting the string argument between the /x01f and /x03f tags, and encoding the stringARgument as byte using stringArgument.encode()
+	
+	Might be possible to convert directly from decimal to bytes string ex: bytearray([31]) but this does not allow setting the length of the message to 4
+	
 The IM_TCPIP argument in the function below corresponds to an instance of the IM.TCPIP class
 '''
 import os, sys
@@ -253,6 +269,18 @@ def setScriptFile(IM_TCPIP, ScriptPath):
 	
 	# Bump feedback
 	getFeedback(IM_TCPIP)
+
+def setProject(IM_TCPIP, projectName):
+	"""Set the project name, corresponds to set Script Project in the VI."""
+	
+	# Get size of string to send
+	size = 31 + len(projectName)    # 31 (depends on timestamp) is the minimum on top of which len(Path) is added
+	sizeHex	  = format(size, '08X') # decimal to Hexadecimal string of defined length (8) ex: 0000001F
+	sizeBytes = bytes( bytearray.fromhex(sizeHex) ) # Hex (ex: 0000 001F) to bytes string
+	
+	# send command
+	IM_TCPIP._socket.send(sizeBytes)
+	IM_TCPIP._socket.send(b'\x02Set\x1fScriptProject\x1f1091397111\x1f' + projectName.encode() + b'\x03')
 
 def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScript)'''
