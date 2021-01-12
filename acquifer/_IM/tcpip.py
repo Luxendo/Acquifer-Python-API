@@ -218,11 +218,11 @@ def goToXY(IM_TCPIP,X,Y):
 	# Make sure X and Y are not longer than 3 decimal
 	X,Y = round(X,3), round(Y,3)
 	
-	# convert X,Y to byte string
+	# Make sure X,Y with 3 decimal places and convert to byte string
 	X = '{:.3f}'.format(X).encode()
 	Y = '{:.3f}'.format(Y).encode()
 	
-	# send command
+	# send command (dont use sendStringCommand here, since 2 arguments and only 1 supported)
 	IM_TCPIP._socket.send(size)
 	IM_TCPIP._socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
 	
@@ -234,7 +234,6 @@ def goToZ(IM_TCPIP,Z):
 	
 	# Make sure Z is not longer than 1 decimal
 	Z= round(Z,1)
-	
 	
 	# Adjust size of the header accordingly
 	if Z>=0 and Z<=9.9:
