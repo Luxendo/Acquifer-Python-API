@@ -240,32 +240,29 @@ def goToZ(IM_TCPIP,Z):
 	# Bump feedback
 	getFeedback(IM_TCPIP)
 
-def setScriptFile(IM_TCPIP, ScriptPath):
+def setScriptFile(IM_TCPIP, scriptPath):
 	'''Load a pre-configured .imsf script file'''
 	
 	# Check file path
-	if not os.path.exists(ScriptPath):
+	if not os.path.exists(scriptPath):
 		if sys.version_info.major == 2: FileNotFoundError = IOError # FileNotFoundError does not exist in Py2 
 		raise FileNotFoundError("No such file at this path")
 			
-	elif os.path.isdir(ScriptPath):
+	elif os.path.isdir(scriptPath):
 		if sys.version_info.major == 2: IsADirectoryError = IOError # IsADirectoryError does not exist in Py2 
 		raise IsADirectoryError("setScriptFile expects a path to a .scpt or .imsf file, not to a folder")
 		
-	elif not ( ScriptPath.endswith(".scpt") or ScriptPath.endswith(".imsf") ):
+	elif not ( scriptPath.endswith(".scpt") or scriptPath.endswith(".imsf") ):
 		raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
 		
 	# Get size of string to send
-	TotalSize = 25 + len(ScriptPath)				# 25 (depends on timestamp) is the minimum on top of which len(Path) is added
+	TotalSize = 25 + len(scriptPath)				# 25 (depends on timestamp) is the minimum on top of which len(Path) is added
 	sizeHex	  = format(TotalSize, '08X')			# dec -> Hex string of defined length (8)
 	sizeBytes = bytes( bytearray.fromhex(sizeHex) ) # Hex to bytes string
 	
-	# Encode the Path into a byte string
-	BytePath = ScriptPath.encode()
-	
 	# send command
 	IM_TCPIP._socket.send(sizeBytes)
-	IM_TCPIP._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
+	IM_TCPIP._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + scriptPath.encode() + b'\x03')
 	
 	# Bump feedback
 	getFeedback(IM_TCPIP)
