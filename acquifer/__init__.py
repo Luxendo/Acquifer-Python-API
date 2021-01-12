@@ -119,7 +119,7 @@ class IM(object):
 		
 		def getLidAxis(self):
 			"""Return the position of the lid."""
-			_IM.tcpip.getLidAxis(self)
+			return _IM.tcpip.getLidAxis(self)
 			
 		def getObjectiveNo(self):
 			"""Return the objective number."""
