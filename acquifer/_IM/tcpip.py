@@ -28,6 +28,17 @@ def getFeedback(IM_TCPIP, size=4):
 	## 2nd TCP actually read the message
 	return IM_TCPIP._socket.recv(value)
 
+def parseValue(byteString, cast=None):
+	"""Extract the string value from the feedback string and optionally cast the resulting string to a predefined type ex: int, float"""
+	offset = byteString.find(b'\x1f')      # the value is always between the x1f tag and until the last character, the end tag x3f
+	out = byteString[offset+1:-1] 
+	
+	return cast(out) if cast else out.decode() # decode("UTF-8") or just decode ?
+
+def getFeedbackAndParseValue(IM_TCPIP, cast=None):
+	"""Call the feedback and directly parse the value of interest"""
+	feedback = getFeedback(IM_TCPIP)
+	return parseValue(feedback, cast)
 
 def getVersion(IM_TCPIP):
 	'''Get IM version'''
@@ -36,13 +47,7 @@ def getVersion(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x18')
 	IM_TCPIP._socket.send(b'\x02Get\x1fIMVersion\x1f10982031\x03')
 	
-	# Read feedback and extract version
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	Version = out[offset+1:-1].decode("UTF-8")
-	
-	return Version 
-	
+	return getFeedbackAndParseValue(IM_TCPIP)
 
 def getStatus(IM_TCPIP):
 	'''Query IM status Ready/Busy(=script running)'''
@@ -51,12 +56,7 @@ def getStatus(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x17') # header with size of message to expect
 	IM_TCPIP._socket.send(b'\x02Get\x1fIMStatus\x1f19487256\x03')
 	
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	Status = out[offset+1:-1].decode()
-	
-	return Status
-
+	return getFeedbackAndParseValue(IM_TCPIP)
 
 def getXaxis(IM_TCPIP):
 	'''Return the X position of the objective in mm'''
@@ -65,13 +65,7 @@ def getXaxis(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x14')
 	IM_TCPIP._socket.send(b'\x02Get\x1fXAxis\x1f19662438\x03')
 	
-	# Read feedback and extract version
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	X = float(out[offset+1:-1])
-	
-	return X
-	
+	return  getFeedbackAndParseValue(IM_TCPIP, cast=float)
 
 def getYaxis(IM_TCPIP):
 	'''Return the Y position of the objective in mm'''
@@ -79,13 +73,8 @@ def getYaxis(IM_TCPIP):
 	# Send request
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x14')
 	IM_TCPIP._socket.send(b'\x02Get\x1fYAxis\x1f19662438\x03')
-	
-	# Read feedback and extract version
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	Y = float(out[offset+1:-1])
-	
-	return Y
+
+	return getFeedbackAndParseValue(IM_TCPIP, float)
 
 def getZaxis(IM_TCPIP):
 	'''Return the Z position of the objective in um'''
@@ -93,13 +82,8 @@ def getZaxis(IM_TCPIP):
 	# Send request
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x14')
 	IM_TCPIP._socket.send(b'\x02Get\x1fZAxis\x1f19736510\x03')
-	
-	# Read feedback and extract version
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	Z = float(out[offset+1:-1])
-	
-	return Z
+
+	return getFeedbackAndParseValue(IM_TCPIP, float)
 
 def getObjectiveNo(IM_TCPIP):
 	"""Return the number of the current Objective"""
@@ -107,10 +91,7 @@ def getObjectiveNo(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x1c')
 	IM_TCPIP._socket.send(b'\x02Get\x1fObjectiveNo\x1f1030281479\x03')
 	
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	
-	return int(out[offset+1:-1])
+	return getFeedbackAndParseValue(IM_TCPIP, int)
 
 def getLightNo(IM_TCPIP):
 	"""Return the current light channel number 0: none to 6:BF."""
@@ -118,10 +99,7 @@ def getLightNo(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x18')
 	IM_TCPIP._socket.send(b'\x02Get\x1fLightNo\x1f1032592535\x03')
 	
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	
-	return int(out[offset+1:-1])
+	return getFeedbackAndParseValue(IM_TCPIP, int)
 
 def getWellCoordinates(IM_TCPIP):
 	'''Return the well identifier ex:A001 when the acquisition is running exclusively'''
@@ -129,10 +107,7 @@ def getWellCoordinates(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x1d')
 	IM_TCPIP._socket.send(b'\x02Get\x1fWellCoordinate\x1f19813767\x03')
 	
-	# Read feedback and isolate value
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	return out[offset+1:-1]
+	return getFeedbackAndParseValue(IM_TCPIP)
 
 def getZstackCenter(IM_TCPIP):
 	'''Return the Z-stack center when an acquisition is running exclusively'''
@@ -140,29 +115,23 @@ def getZstackCenter(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x1b')
 	IM_TCPIP._socket.send(b'\x02Get\x1fZStackCenter\x1f19841627\x03')
 	
-	# Read feedback and isolate value
-	out = IM_TCPIP.__getFeedback__()
-	offset = out.find(b'\x1f')
-	Zcenter = float(out[offset+1:-1])
-	
-	return Zcenter
-
+	return getFeedbackAndParseValue(IM_TCPIP, float)
 
 def openLid(IM_TCPIP):
+	"""Open the IM lid."""
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x1a')
 	IM_TCPIP._socket.send(b'\x02Command\x1fOpenLid\x1f17248828\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-
+	getFeedback(IM_TCPIP)
 
 def closeLid(IM_TCPIP):
+	"""Close the IM lid."""
 	IM_TCPIP._socket.send(b'\x00\x00\x00\x1a')
 	IM_TCPIP._socket.send(b'\x02Command\x1fCloseLid\x1f8809857\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-
+	getFeedback(IM_TCPIP)
 
 def goToXY(IM_TCPIP,X,Y):
 	'''Move objective to position X,Y in mm (max 3 decimal ex:1.111)'''
@@ -204,7 +173,6 @@ def goToXY(IM_TCPIP,X,Y):
 	
 	elif Length == 10:
 		size = b'\x00\x00\x001' # Dec=49 - Hex=0000 0031
-
 	
 	# Make sure X and Y are not longer than 3 decimal
 	X,Y = round(X,3), round(Y,3)
@@ -218,8 +186,7 @@ def goToXY(IM_TCPIP,X,Y):
 	IM_TCPIP._socket.send(b'\x02Command\x1fGotoXYAxis\x1f19901915\x1f' + X + b'\x1f' + Y + b'\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-
+	getFeedback(IM_TCPIP)
 
 def goToZ(IM_TCPIP,Z):
 	'''Move objective to position Z in um (max 1 decimal ex:1.1)'''
@@ -255,8 +222,7 @@ def goToZ(IM_TCPIP,Z):
 	IM_TCPIP._socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-
+	getFeedback(IM_TCPIP)
 
 def setScriptFile(IM_TCPIP, ScriptPath):
 	'''Load a pre-configured .imsf script file'''
@@ -286,8 +252,7 @@ def setScriptFile(IM_TCPIP, ScriptPath):
 	IM_TCPIP._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + BytePath + b'\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-	
+	getFeedback(IM_TCPIP)
 
 def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScript)'''
@@ -297,8 +262,7 @@ def startScript(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x02Command\x1fStartScript\x1f1403806682\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-
+	getFeedback(IM_TCPIP)
 
 def stopScript(IM_TCPIP):
 	'''Stop currently executing script'''
@@ -308,9 +272,8 @@ def stopScript(IM_TCPIP):
 	IM_TCPIP._socket.send(b'\x02Command\x1fStopScript\x1f1403833090\x03')
 	
 	# Bump feedback
-	IM_TCPIP.__getFeedback__()
-	
-	
+	getFeedback(IM_TCPIP)
+
 def closeSocket(IM_TCPIP):
 	'''Close TCP/IP port'''
 	IM_TCPIP._socket.close()
