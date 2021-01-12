@@ -2,6 +2,8 @@
 Test the TCPIP port of the IM
 Make sure to set the active directory to the root of the repo using cd in the command prompt
 Also make sure that the smart imaging test VI is not running simultaneously, it is also esablishing a connection and would thus prevent new ones
+
+Tested with v 4.10.07
 """
 from acquifer import IM
 import time
@@ -9,14 +11,16 @@ import time
 im = IM.TCPIP()
 print(im) # should print status, version and port
 
+#%% Lid
+print("Lid position: ", im.getLidAxis())
 #%% Check XYZ-position
-def printPosition():
+def printPositions():
     print("") # new line
     print("X-position: ", im.getXaxis())
     print("Y-position: ", im.getYaxis())
     print("Z-position: ", im.getZaxis())
 
-printPosition()
+printPositions()
 
 #%% Get objective
 print("\nObjective number: ", im.getObjectiveNo())
@@ -28,7 +32,7 @@ im.goToXY(12.345, 23.456)
 im.goToZ(20.1)
 
 # Check after moving
-printPosition()
+printPositions()
 
 #%% setScript, start, stop
 print("Start a known script and stop it after 20s")

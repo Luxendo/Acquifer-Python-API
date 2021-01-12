@@ -126,6 +126,13 @@ def getZaxis(IM_TCPIP):
 
 	return getFeedbackAndParseValue(IM_TCPIP, float)
 
+def getLidAxis(IM_TCPIP):
+	"""Return the position of the lid"""
+	IM_TCPIP._socket.send(b'\x00\x00\x00\x18')
+	IM_TCPIP._socket.send(b'\x02Get\x1fLidAxis\x1f1113623284\x03')
+	
+	return getFeedbackAndParseValue(IM_TCPIP, float)
+
 def getObjectiveNo(IM_TCPIP):
 	"""Return the number of the current Objective"""
 	

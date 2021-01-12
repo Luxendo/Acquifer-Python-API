@@ -117,6 +117,10 @@ class IM(object):
 			"""Return the Z position of the objective in um."""
 			return _IM.tcpip.getZaxis(self)
 		
+		def getLidAxis(self):
+			"""Return the position of the lid."""
+			_IM.tcpip.getLidAxis(self)
+			
 		def getObjectiveNo(self):
 			"""Return the objective number."""
 			return _IM.tcpip.getObjectiveNo(self)
