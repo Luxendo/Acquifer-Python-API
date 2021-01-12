@@ -258,24 +258,6 @@ def goToZ(IM_TCPIP,Z):
 	Z = '{:.1f}'.format(Z)
 	sendStringCommand(IM_TCPIP, b'\x02Command\x1fGotoZAxis\x1f1655963\x1f', Z)
 
-
-def setScriptFile(IM_TCPIP, scriptPath):
-	'''Load a pre-configured .imsf script file'''
-	
-	# Check file path
-	if not os.path.exists(scriptPath):
-		if sys.version_info.major == 2: FileNotFoundError = IOError # FileNotFoundError does not exist in Py2 
-		raise FileNotFoundError("No such file at this path")
-			
-	elif os.path.isdir(scriptPath):
-		if sys.version_info.major == 2: IsADirectoryError = IOError # IsADirectoryError does not exist in Py2 
-		raise IsADirectoryError("setScriptFile expects a path to a .scpt or .imsf file, not to a folder")
-		
-	elif not ( scriptPath.endswith(".scpt") or scriptPath.endswith(".imsf") ):
-		raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
-		
-	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath )
-
 def setImageDirectory(IM_TCPIP, dirPath):
 	"""
 	Set the main image directory that wil contain the project directories and plate subdirectories.
@@ -298,7 +280,22 @@ def setPlate(IM_TCPIP, plateName):
 	"""
 	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptPlateName\x1f1093819124\x1f', plateName)
 
-
+def setScriptFile(IM_TCPIP, scriptPath):
+	'''Load a pre-configured .imsf script file'''
+	
+	# Check file path
+	if not os.path.exists(scriptPath):
+		if sys.version_info.major == 2: FileNotFoundError = IOError # FileNotFoundError does not exist in Py2 
+		raise FileNotFoundError("No such file at this path")
+			
+	elif os.path.isdir(scriptPath):
+		if sys.version_info.major == 2: IsADirectoryError = IOError # IsADirectoryError does not exist in Py2 
+		raise IsADirectoryError("setScriptFile expects a path to a .scpt or .imsf file, not to a folder")
+		
+	elif not ( scriptPath.endswith(".scpt") or scriptPath.endswith(".imsf") ):
+		raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
+		
+	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath )
 
 def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScriptFile)'''
