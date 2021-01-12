@@ -57,22 +57,29 @@ def getFeedbackAndParseValue(IM_TCPIP, cast=None):
 	feedback = getFeedback(IM_TCPIP)
 	return parseValue(feedback, cast)
 
-def getBytesLength(baseLength, stringArgument):
-	"""Return a byte string communicating the length of a message, provided the message base length (an integer, everything except the argument) and a custom string argument."""
-	length    = baseLength + len(stringArgument)
+def getBytesLength(commandPrefix, stringArgument):
+	"""
+	Return a byte string communicating the length of a message provided the command prefix. ie without the argument and end tag a custom string argument.
+	- commandPrefix : byte string, prefix of the command to send, without the argument and end tag, ex: b'\x02Set\x1fScriptPlateName\x1f1093819124\x1f'
+	- stringArgument: argument to communicate with the commaned ex: the Plate name for the command above
+	"""
+	length    = len(commandPrefix) + 1 + len(stringArgument) # +1 for the end tag, no provided in the prefix
 	lengthHex = format(length, '08X')            # decimal to Hexadecimal string of predefined length (8) ex "0000001F"
 	return bytes( bytearray.fromhex(lengthHex) ) # Hexadecimal string to bytes string
 
-def sendStringCommand(IM_TCPIP, baseLength, commandPrefix, stringArgument):
+def sendStringCommand(IM_TCPIP, commandPrefix, stringArgument):
 	"""
 	Send a command with custom string argument to the IM.
 	baseLength     : int, length of the message without stringArgument
 	commandPrefix  : byteString, string for the message without the last \x03 tag, it should be the command corresponding to the baseLength
 	stringArgument : string, custom argument to path ex: a plate name. 
 	"""
-	sizeBytes = getBytesLength(baseLength, stringArgument)
+	sizeBytes = getBytesLength(commandPrefix, stringArgument)
 	IM_TCPIP._socket.send(sizeBytes)
 	IM_TCPIP._socket.send(commandPrefix + stringArgument.encode() + b'\x03')
+	
+	# drop feedback
+	getFeedback(IM_TCPIP)
 
 def getVersion(IM_TCPIP):
 	'''Get IM version'''
@@ -248,15 +255,10 @@ def goToZ(IM_TCPIP,Z):
 	else:
 		raise ValueError('Z-value out of range')
 	
-	# convert Z to byte string
-	Z = '{:.1f}'.format(Z).encode()
-	
-	# send command
-	IM_TCPIP._socket.send(size)
-	IM_TCPIP._socket.send(b'\x02Command\x1fGotoZAxis\x1f1655963\x1f' + Z + b'\x03')
-	
-	# Bump feedback
-	getFeedback(IM_TCPIP)
+	# Make sure Z has 1 decimal
+	Z = '{:.1f}'.format(Z)
+	sendStringCommand(IM_TCPIP, b'\x02Command\x1fGotoZAxis\x1f1655963\x1f', Z)
+
 
 def setScriptFile(IM_TCPIP, scriptPath):
 	'''Load a pre-configured .imsf script file'''
@@ -273,20 +275,31 @@ def setScriptFile(IM_TCPIP, scriptPath):
 	elif not ( scriptPath.endswith(".scpt") or scriptPath.endswith(".imsf") ):
 		raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
 		
-	sendStringCommand(IM_TCPIP, 25, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath )
-	
-	# Bump feedback
-	getFeedback(IM_TCPIP)
+	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath )
+
+def setImageDirectory(IM_TCPIP, dirPath):
+	"""
+	Set the main image directory that wil contain the project directories and plate subdirectories.
+	Correspond to 'set Script Image Path' in the labview VI.
+	"""
+	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptImagePath\x1f1105029885\x1f', dirPath)
 
 def setProject(IM_TCPIP, projectName):
-	"""Set the project name (string), corresponds to set Script Project in the VI."""
-	sendStringCommand(IM_TCPIP, 31, b'\x02Set\x1fScriptProject\x1f1091397111\x1f', projectName)
-	getFeedback(IM_TCPIP)
+	"""
+	Set the project name (string), corresponding to a directory name that will contain the plate directory for every acquisition
+	corresponds to set Script Project in the VI.
+	"""
+	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptProject\x1f1091397111\x1f', projectName)
 
 def setPlate(IM_TCPIP, plateName):
-	"""Set the plate name (string), corresponds to set Script Plate Name in the VI."""
-	sendStringCommand(IM_TCPIP, 33, b'\x02Set\x1fScriptPlateName\x1f1093819124\x1f', plateName)
-	getFeedback(IM_TCPIP)
+	"""
+	Set the plate name (string), used to name the subdirectory where the images will be saved within the Project directory.
+	A unique subdirectory name will be formed for every new acquisition, by adding unique timestamp before the plate name provided here.
+	corresponds to 'set Script Plate Name' in the VI.
+	"""
+	sendStringCommand(IM_TCPIP, b'\x02Set\x1fScriptPlateName\x1f1093819124\x1f', plateName)
+
+
 
 def startScript(IM_TCPIP):
 	'''Start a previously defined script (using setScriptFile)'''
