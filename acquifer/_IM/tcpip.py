@@ -1,7 +1,8 @@
 '''
 This private module contains a set of funtions to control the IM using TCP/IP
 They are used in the acquifer.__init___ module within the IM class but are stored here
-to limit the size of the __init__ file
+to limit the size of the __init__ file.
+This means every command functions here should have an equivalent in the __init__ module, more precisly in the IM.TCPIP class
 See test_tcpip.py in the repo's root directory for testing
 
 In TCP/IP vocabulary this script is on the client side, while the machine controller is the server
@@ -55,6 +56,23 @@ def getFeedbackAndParseValue(IM_TCPIP, cast=None):
 	"""Call the feedback and directly parse the value of interest"""
 	feedback = getFeedback(IM_TCPIP)
 	return parseValue(feedback, cast)
+
+def getBytesLength(baseLength, stringArgument):
+	"""Return a byte string communicating the length of a message, provided the message base length (an integer, everything except the argument) and a custom string argument."""
+	length    = baseLength + len(stringArgument)
+	lengthHex = format(length, '08X')            # decimal to Hexadecimal string of predefined length (8) ex "0000001F"
+	return bytes( bytearray.fromhex(lengthHex) ) # Hexadecimal string to bytes string
+
+def sendStringCommand(IM_TCPIP, baseLength, commandPrefix, stringArgument):
+	"""
+	Send a command with custom string argument to the IM.
+	baseLength     : int, length of the message without stringArgument
+	commandPrefix  : byteString, string for the message without the last \x03 tag, it should be the command corresponding to the baseLength
+	stringArgument : string, custom argument to path ex: a plate name. 
+	"""
+	sizeBytes = getBytesLength(baseLength, stringArgument)
+	IM_TCPIP._socket.send(sizeBytes)
+	IM_TCPIP._socket.send(commandPrefix + stringArgument.encode() + b'\x03')
 
 def getVersion(IM_TCPIP):
 	'''Get IM version'''
@@ -255,32 +273,23 @@ def setScriptFile(IM_TCPIP, scriptPath):
 	elif not ( scriptPath.endswith(".scpt") or scriptPath.endswith(".imsf") ):
 		raise TypeError("setScriptFile expects a path to a .scpt or .imsf file")
 		
-	# Get size of string to send
-	TotalSize = 25 + len(scriptPath)				# 25 (depends on timestamp) is the minimum on top of which len(Path) is added
-	sizeHex	  = format(TotalSize, '08X')			# dec -> Hex string of defined length (8)
-	sizeBytes = bytes( bytearray.fromhex(sizeHex) ) # Hex to bytes string
-	
-	# send command
-	IM_TCPIP._socket.send(sizeBytes)
-	IM_TCPIP._socket.send(b'\x02Set\x1fScriptFile\x1f2930926\x1f' + scriptPath.encode() + b'\x03')
+	sendStringCommand(IM_TCPIP, 25, b'\x02Set\x1fScriptFile\x1f2930926\x1f', scriptPath )
 	
 	# Bump feedback
 	getFeedback(IM_TCPIP)
 
 def setProject(IM_TCPIP, projectName):
-	"""Set the project name, corresponds to set Script Project in the VI."""
-	
-	# Get size of string to send
-	size = 31 + len(projectName)    # 31 (depends on timestamp) is the minimum on top of which len(Path) is added
-	sizeHex	  = format(size, '08X') # decimal to Hexadecimal string of defined length (8) ex: 0000001F
-	sizeBytes = bytes( bytearray.fromhex(sizeHex) ) # Hex (ex: 0000 001F) to bytes string
-	
-	# send command
-	IM_TCPIP._socket.send(sizeBytes)
-	IM_TCPIP._socket.send(b'\x02Set\x1fScriptProject\x1f1091397111\x1f' + projectName.encode() + b'\x03')
+	"""Set the project name (string), corresponds to set Script Project in the VI."""
+	sendStringCommand(IM_TCPIP, 31, b'\x02Set\x1fScriptProject\x1f1091397111\x1f', projectName)
+	getFeedback(IM_TCPIP)
+
+def setPlate(IM_TCPIP, plateName):
+	"""Set the plate name (string), corresponds to set Script Plate Name in the VI."""
+	sendStringCommand(IM_TCPIP, 33, b'\x02Set\x1fScriptPlateName\x1f1093819124\x1f', plateName)
+	getFeedback(IM_TCPIP)
 
 def startScript(IM_TCPIP):
-	'''Start a previously defined script (using setScript)'''
+	'''Start a previously defined script (using setScriptFile)'''
 	
 	# send command
 	IM_TCPIP._socket.send(b'\x00\x00\x00 ')
