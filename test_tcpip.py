@@ -11,8 +11,12 @@ import time
 im = IM.TCPIP()
 print(im) # should print status, version and port
 
+#%% image file
+print("Current image file", im.getImageFile())
+
 #%% Lid
 print("Lid position: ", im.getLidAxis())
+
 #%% Check XYZ-position
 def printPositions():
     print("") # new line
