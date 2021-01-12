@@ -152,10 +152,62 @@ class IM(object):
 		def setScriptFile(self, scriptPath):
 			"""Load a pre-configured .imsf script file."""
 			_IM.tcpip.setScriptFile(self, scriptPath)
+			
+		def setImageDirectory(self, dirPath):
+			"""
+			Set the main image directory that wil contain the project directories and plate subdirectories.
+			
+			Folder architecture
+			
+			Main directory
+				|-Project directory 1
+				|---- |-Plate Directory ex: timestamp1 + plateTest
+				|-----|------|- image1.tif
+				|-----|------|- image2.tif
+				|-----|
+				|-----|-PlateDirectory ex: timestamp2 + plateTest
+				|
+				|- Project directory 2
+			"""
+			_IM.tcpip.setImageDirectory(self, dirPath)
 		
 		def setProject(self, projectName):
-			"""Set the project name."""
+			"""
+			Set the project name (string) corresponding to a directory name that will contain a new unique plate directory for every new acquisition
+			The project name can be e.g. a user name, or the name of an assay that will be repeated for mulitple acquisitions (the plates).
+			
+			Folder architecture
+			
+			Main directory
+				|-Project directory 1
+				|---- |-Plate Directory ex: timestamp1 + plateTest
+				|-----|------|- image1.tif
+				|-----|------|- image2.tif
+				|-----|
+				|-----|-PlateDirectory ex: timestamp2 + plateTest
+				|
+				|- Project directory 2
+			"""
 			_IM.tcpip.setProject(self, projectName)
+		
+		def setPlate(self, plateName):
+			"""
+			Set the plate name (string), used to name the subdirectory where the images will be saved within the Project directory.
+			A unique subdirectory name will be formed for every new acquisition, by adding unique timestamp before the plate name provided here.
+			
+			Folder architecture
+			
+			Main directory
+				|-Project directory 1
+				|---- |-Plate Directory ex: timestamp1 + plateTest
+				|-----|------|- image1.tif
+				|-----|------|- image2.tif
+				|-----|
+				|-----|-PlateDirectory ex: timestamp2 + plateTest
+				|
+				|- Project directory 2
+			"""
+			_IM.tcpip.setPlate(self, plateName)
 		
 		def startScript(self):
 			"""Start a previously defined script (using setScript)."""
