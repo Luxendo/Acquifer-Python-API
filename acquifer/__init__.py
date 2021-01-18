@@ -374,7 +374,7 @@ class IM04(IM):
 			"""Extract the XY-axis coordinates (in mm) from the imageName (for IM4). The coordinates corresponds to the center of the image = objective position."""
 			# Parse string + do conversion
 			X0mm = int(imageName[65:71]) /1000 # >0
-			Y0mm = int(imageName[74:80]) /1000			
+			Y0mm = int(imageName[74:80]) /1000
 			return X0mm, Y0mm
 
 		@staticmethod
