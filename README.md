@@ -1,6 +1,8 @@
 # IM-Python-API
 
-This repo contain the python module with the IM class to control the machine from a python script using the TCP/IP interface
+This repo contain the python module with the IM class to control the machine from a python script using the TCP/IP interface.  
+It should work in python 2 AND 3 environment, however it will not work in jython within Fiji (no more module socket).  
+In Fiji, the java package acquifer-core will be used for that purpose.  
 
 # Missing functionnalities:
 - set and get Objective()
