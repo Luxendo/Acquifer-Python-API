@@ -1,0 +1,1 @@
+from . import metadata, tcpip # allows "import acquifer.im04" to display metadata and tcpip with dir command or auto-completion
