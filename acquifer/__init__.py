@@ -9,8 +9,8 @@ from acquifer import IM, IM03, IM04
 IM is the mother class for IM03 and IM04, it contains default implementations for functions that works both with IM03 and IM04
 IM03 and IM04 classes inherit the IM class, therefore only what differs between IM03 and IM04 needs rewriting in the IM03 and IM04 classes
 
-The IM (and descendant) classes are nested with inner classes such as Metadata and TCPIP to allow
-IM.Metadata.getWellName()
+The IM (and descendant) classes are nested with inner classes such as MetadataParser and TCPIP to allow
+IM.MetadataParser.getWellName()
 or
 im = IM.TCPIP() # create a new IM object for control over TCP/IP with default IP adress and port
 
@@ -25,13 +25,13 @@ import socket, string
 class IM(object):
 	"""Mother class of all IMs: implement default behaviour."""
 	
-	class metadata(object):
+	class MetadataParser(object):
 		"""contains static method to extract metadata from the filenames."""
 		
 		pixelSizeToMag = {3.25:2, 
-				  1.625:4, 
-				  0.650:10, 
-				  0.325:20} # Pixel size (um) to objective magn.
+						  1.625:4, 
+						  0.650:10, 
+						  0.325:20} # Pixel size (um) to objective magn.
 
 		pixelSizeToNA = {3.25:0.06, 
 						 1.625:0.13, 
@@ -239,7 +239,7 @@ class IM(object):
 class IM03(IM):
 	"""Implement functionality specific to IM03 model."""
 	
-	class metadata(IM.metadata):
+	class MetadataParser(IM.MetadataParser):
 		"""
 		Extract metadata from IM03 filenames.
 		
@@ -275,17 +275,17 @@ class IM03(IM):
 		def getObjectiveMagnification(imageName):
 			"""Get the magnification as integer."""
 			pixSize = IM03.getPixelSize_um(imageName)
-			if pixSize in IM03.metadata.pixelSizeToMag: # pixelSizeToMag inherited from IM
-				return IM03.metadata.pixelSizeToMag[pixSize]
+			if pixSize in IM03.MetadataParser.pixelSizeToMag: # pixelSizeToMag inherited from IM
+				return IM03.MetadataParser.pixelSizeToMag[pixSize]
 			else:
 				raise KeyError("No pixel size matching in the pixelSizeToMag dictionnary")
 		
 		@staticmethod
 		def getObjectiveNA(imageName):
 			"""Return the Numerical Aperture of the objective."""
-			pixSize = IM03.metadata.getPixelSize_um(imageName)
-			if pixSize in IM03.metadata.pixelSizeToNA:
-				return IM03.metadata.pixelSizeToNA[pixSize]
+			pixSize = IM03.MetadataParser.getPixelSize_um(imageName)
+			if pixSize in IM03.MetadataParser.pixelSizeToNA:
+				return IM03.MetadataParser.pixelSizeToNA[pixSize]
 			else:
 				raise KeyError("No pixel size matching in the pixelSizeToNA dictionnary")
 		
@@ -361,7 +361,7 @@ class IM03(IM):
 class IM04(IM):
 	"""Implement functionality for the IM04."""
 	
-	class metadata(IM.metadata):
+	class MetadataParser(IM.MetadataParser):
 		"""
 		Define static method functions to extract metadata from IM04 filenames.
 		
@@ -395,18 +395,18 @@ class IM04(IM):
 		@staticmethod
 		def getObjectiveMagnification(imageName):
 			"""Get the magnification as integer."""
-			pixSize = IM04.metadata.getPixelSize_um(imageName)
-			if pixSize in IM04.metadata.pixelSizeToMag:
-				return IM04.metadata.pixelSizeToMag[pixSize]
+			pixSize = IM04.MetadataParser.getPixelSize_um(imageName)
+			if pixSize in IM04.MetadataParser.pixelSizeToMag:
+				return IM04.MetadataParser.pixelSizeToMag[pixSize]
 			else:
 				raise KeyError("No pixel size matching in the pixelSizeToMag dictionnary")
 
 		@staticmethod
 		def getObjectiveNA(imageName):
 			"""Return the Numerical Aperture of the objective."""
-			pixSize = IM04.metadata.getPixelSize_um(imageName)
-			if pixSize in IM04.metadata.pixelSizeToNA:
-				return IM04.metadata.pixelSizeToNA[pixSize]
+			pixSize = IM04.MetadataParser.getPixelSize_um(imageName)
+			if pixSize in IM04.MetadataParser.pixelSizeToNA:
+				return IM04.MetadataParser.pixelSizeToNA[pixSize]
 			else:
 				raise KeyError("No pixel size matching in the pixelSizeToNA dictionnary")
 
