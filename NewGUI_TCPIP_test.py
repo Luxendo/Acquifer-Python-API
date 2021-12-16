@@ -21,15 +21,15 @@ class IM():
         self._socket.connect( (self._TCP_IP, self._TCP_PORT) )
 
     def sendCommand(self, stringCommand):
-    	return self._scoket.sendall(bytearray(stringCommand, "ascii"))
+        return self._socket.sendall(bytearray(stringCommand, "ascii"))
 
-	def getFeedback(self, size=256):
-		return self._socket.recv(size).decode("ascii")
+    def getFeedback(self, size=256):
+        return self._socket.recv(size).decode("ascii")
 
 
 def toByteArray(cmd):
-	"""Convert a string command to a byte array compatible with TCPIP communication"""
-	return bytearray(cmd, "ascii")
+    """Convert a string command to a byte array compatible with TCPIP communication"""
+    return bytearray(cmd, "ascii")
 
 
 # Create an IM instance and send a test command
