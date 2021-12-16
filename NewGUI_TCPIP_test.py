@@ -4,7 +4,7 @@ Start the IM GUI software, deactivate block exernal connection (restart if that 
 Then run this script in Fiji (jython) or in a normal python interpreter
 """
 
-import socket, os, sys, time
+import socket, time
 
 
 class IM():
