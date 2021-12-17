@@ -28,16 +28,16 @@ class IM(object):
         return self._socket.recv(size).decode("ascii")
 
 
+## TEST
+# Create an IM instance and call a test function
+myIM = IM()
 
-
-# Create an IM instance and send a test command
-myIM = IM() # fails
-#myIM = IM(6261)
-
-print( myIM.sendCommand("GetObjective()") ) # should print None
+cmd = "GotoXY(30, 30.003)"
+cmd = "GotoZ(2940.4)"
+print (myIM.sendCommand(cmd)) # should print None
 
 time.sleep(0.05) # wait 50ms
 
-print(myIM.getFeedback())
+#print (myIM.getFeedback())
 
 myIM._socket.close()
