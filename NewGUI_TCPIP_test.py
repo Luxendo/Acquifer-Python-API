@@ -28,9 +28,6 @@ class IM(object):
         return self._socket.recv(size).decode("ascii")
 
 
-def toByteArray(cmd):
-    """Convert a string command to a byte array compatible with TCPIP communication"""
-    return bytearray(cmd, "ascii")
 
 
 # Create an IM instance and send a test command
