@@ -10,16 +10,12 @@ import socket, time
 class IM(object):
     '''Object representing the IM from ACQUIFER defined with a list of methods to control it'''
     
-    def __init__(self, TCP_PORT=6200):
+    def __init__(self, port=6200):
         '''Initialise a TCP/IP socket for the exchange of commands'''
-  
-        self._TCP_IP  = socket.gethostbyname("localhost") # resolve to 127.0.0.1 typically
-        self._TCP_PORT = TCP_PORT
         
-        # Open a TCP/IP socket to communicate
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect( (self._TCP_IP, self._TCP_PORT) )
-
+        self._socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM) # IPv6 on latest IM 
+        self._socket.connect(("localhost", port))
+        
     def sendCommand(self, stringCommand):
         return self._socket.sendall(bytearray(stringCommand, "ascii"))
 
