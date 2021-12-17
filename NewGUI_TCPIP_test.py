@@ -7,7 +7,7 @@ Then run this script in Fiji (jython) or in a normal python interpreter
 import socket, time
 
 
-class IM():
+class IM(object):
     '''Object representing the IM from ACQUIFER defined with a list of methods to control it'''
     
     def __init__(self, TCP_PORT=6200):
