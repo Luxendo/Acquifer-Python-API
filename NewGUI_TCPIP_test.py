@@ -17,7 +17,12 @@ class IM(object):
         self._socket.connect(("localhost", port))
         
     def sendCommand(self, stringCommand):
-        return self._socket.sendall(bytearray(stringCommand, "ascii"))
+        """
+        Send a string command to the IM.
+        The command is converted to a bytearray before sending
+        """ 
+        self._socket.sendall(bytearray(stringCommand, "ascii"))
+        time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with getFeedback
 
     def getFeedback(self, size=256):
         return self._socket.recv(size).decode("ascii")
