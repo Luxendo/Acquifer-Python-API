@@ -126,11 +126,11 @@ class IM(object):
 
 	def getPositionY(self):
 		"""Return the current objective y-axis position in mm."""
-´		return self.getFloatValue("GetYPosition()")
+		return self.getFloatValue("GetYPosition()")
 	
 	def getPositionZ(self):
 		"""Return the current objective z-axis position in µm."""
-´		return self.getFloatValue("GetZPosition()")
+		return self.getFloatValue("GetZPosition()")
 
 	def goToXY(self,x,y):
 		"""Move to position x,y in mm, with 0.01 decimal precision."""
