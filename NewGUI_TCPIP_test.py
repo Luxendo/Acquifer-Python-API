@@ -185,15 +185,16 @@ if __name__ in ['__builtin__', '__main__']:
 	# Create an IM instance
 	myIM = IM()
 
-	# Loop over functions, calling the getter methods first
+	# Loop over functions, calling the getter/is methods first
 	for function in dir(myIM):
 
 		if not (function.startswith("get") or function.startswith("is")) :
 			continue # skip non getter
 
 		try :
-			print function , " : ", getattr(myIM, function)()
+			print function , " : ", getattr(myIM, function)() # Get the function object from the name and call it
 
+		# Print the exception and continue the execution
 		except Exception as e:
 			print e
 
