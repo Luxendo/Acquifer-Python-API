@@ -194,8 +194,8 @@ if __name__ in ['__builtin__', '__main__']:
 		try :
 			print function , " : ", getattr(myIM, function)()
 
-		except Exception:
-			print Exception
+		except Exception as e:
+			print e
 
 	# Error or not close the socket
 	myIM.closeSocket()
