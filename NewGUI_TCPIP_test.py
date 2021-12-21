@@ -133,8 +133,8 @@ class IM(object):
 		return self._getFloatValue("GetZPosition()")
 
 	def goToXY(self,x,y):
-		"""Move to position x,y in mm, with 0.01 decimal precision."""
-		cmd = "GotoXY({:.2f},{:.2f})".format(x,y) # force max 2 decimal positions
+		"""Move to position x,y in mm, with 0.001 decimal precision."""
+		cmd = "GotoXY({:.3f},{:.3f})".format(x,y) # force max 3 decimal positions
 		self.sendCommand(cmd)
 
 	def goToZ(self, z):
@@ -143,8 +143,8 @@ class IM(object):
 		self.sendCommand(cmd)
 	
 	def goToXYZ(self,x,y,z):
-		"""Move to x,y position (mm, 0.01 precision) and z-position in µm (0.1 precision)"""
-		cmd = "GotoXYZ({:.2f},{:.2f},{:.1f})".format(x,y,z)
+		"""Move to x,y position (mm, 0.001 precision) and z-position in µm (0.1 precision)"""
+		cmd = "GotoXYZ({:.3f},{:.3f},{:.1f})".format(x,y,z)
 		self.sendCommand(cmd)
 
 	def runScript(self, scriptPath):
