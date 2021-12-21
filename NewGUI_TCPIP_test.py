@@ -176,7 +176,7 @@ class IM(object):
 		if any(map(largerThan2048, bbox)) or any(map(negative, bbox)):
 			raise ValueError("x,y,width,height must be in range [0;2048]")
 		
-		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, **bbox))
+		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, *bbox))
 
 	def setObjective(self, index):
 		"""Set the objective based on the index (1 to 4)."""
