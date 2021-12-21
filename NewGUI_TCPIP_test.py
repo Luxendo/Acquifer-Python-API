@@ -197,8 +197,9 @@ if __name__ in ['__builtin__', '__main__']:
 		except Exception as e:
 			print e
 
-	# Error or not close the socket
-	myIM.closeSocket()
+		finally:
+			# Error or not close the socket
+			myIM.closeSocket()
 	
 	"""
 	cmd = "GotoXY(30, 30.003)"
