@@ -30,26 +30,26 @@ class IM(object):
 		The command is converted to a bytearray before sending.
 		""" 
 		self._socket.sendall(bytearray(stringCommand, "ascii"))
-		time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with getFeedback
+		time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with _getFeedback
 
-	def getFeedback(self, size=256):
+	def _getFeedback(self, size=256):
 		"""Read a value back from the IM after a "get" command."""
 		return self._socket.recv(size).decode("ascii")
 
 	def getValueAsType(self, command, cast):
 		"""Send a command, get the feedback and cast it to the type provided by the cast function ex: int."""
 		self.sendCommand(command)
-		return cast(self.getFeedback())
+		return cast(self._getFeedback())
 	
-	def getIntegerValue(self, command):
+	def _getIntegerValue(self, command):
 		"""Send a command and parse the feedback to an integer value."""
 		return self.getValueAsType(command, int)
 
-	def getFloatValue(self, command):
+	def _getFloatValue(self, command):
 		"""Send a command and parse the feedback to a float value."""
 		return self.getValueAsType(command, float)
 
-	def getBooleanValue(self, command):
+	def _getBooleanValue(self, command):
 		"""Send a command and parse the feedback to a boolean value."""
 		return self.getValueAsType(command, bool)
 		
@@ -75,30 +75,30 @@ class IM(object):
 
 	def isLidClosed(self):
 		"""Check if the lid is closed."""
-		return self.getBooleanValue("LidClosed()")
+		return self._getBooleanValue("LidClosed()")
 		
 	def isLidOpened(self):
 		"""Check if lid is opened."""
-		return self.getBooleanValue("LidOpened()")
+		return self._getBooleanValue("LidOpened()")
 		
 	def isLiveModeActive(self):
 		"""
 		Check if LiveMode is active.
 		LiveMode is needed for IP-commands to work.
 		"""
-		return self.getBooleanValue("LiveModeActive()")
+		return self._getBooleanValue("LiveModeActive()")
 		
 	def getAmbiantTemperature(self):
 		"""Return ambiant temperature in celsius degrees."""
-		return self.getFloatValue("GetAmbientTemperature(TemperatureUnit.Celsius)")
+		return self._getFloatValue("GetAmbientTemperature(TemperatureUnit.Celsius)")
 	
 	def getSampleTemperature(self):
 		"""Return the sample temperature in celsius degrees."""
-		return self.getFloatValue("GetSampleTemperature(TemperatureUnit.Celsius)")
+		return self._getFloatValue("GetSampleTemperature(TemperatureUnit.Celsius)")
 
 	def getTargetTemperature(self):
 		"""Return the target temperature in celsius degrees."""
-		return self.getFloatValue("GetTargetTemperature(TemperatureUnit.Celsius)")
+		return self._getFloatValue("GetTargetTemperature(TemperatureUnit.Celsius)")
 
 	def setTargetTemperature(self, temp):
 		"""Set the target temperature to a given value in degree celsius, with 0.1 precision."""
@@ -110,27 +110,27 @@ class IM(object):
 
 	def getNumberOfColumns(self):
 		"""Return the number of plate columns."""
-		return self.getIntegerValue("GetCountWellsX()")
+		return self._getIntegerValue("GetCountWellsX()")
 
 	def getNumberOfRows(self):
 		"""Return the number of plate rows."""
-		return self.getIntegerValue("GetCountWellsY()")
+		return self._getIntegerValue("GetCountWellsY()")
 
 	def getObjectiveIndex(self):
 		"""Return the currently selected objective-index (1 to 4)."""
-		return self.getIntegerValue("GetObjective()")
+		return self._getIntegerValue("GetObjective()")
 
 	def getPositionX(self):
 		"""Return the current objective x-axis position in mm."""
-		return self.getFloatValue("GetXPosition()")
+		return self._getFloatValue("GetXPosition()")
 
 	def getPositionY(self):
 		"""Return the current objective y-axis position in mm."""
-		return self.getFloatValue("GetYPosition()")
+		return self._getFloatValue("GetYPosition()")
 	
 	def getPositionZ(self):
 		"""Return the current objective z-axis position in µm."""
-		return self.getFloatValue("GetZPosition()")
+		return self._getFloatValue("GetZPosition()")
 
 	def goToXY(self,x,y):
 		"""Move to position x,y in mm, with 0.01 decimal precision."""
@@ -188,8 +188,8 @@ if __name__ in ['__builtin__', '__main__']:
 	# Loop over functions, calling the getter methods first
 	for function in dir(myIM):
 
-		if function == "getFeedback" or not function.startswith("get"):
-			continue # skip getFeedback and the non getter
+		if not function.startswith("get"):
+			continue # skip non getter
 
 		try :
 			print function , " : ", getattr(myIM, function)()
