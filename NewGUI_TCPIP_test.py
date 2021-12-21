@@ -188,7 +188,7 @@ if __name__ in ['__builtin__', '__main__']:
 	# Loop over functions, calling the getter methods first
 	for function in dir(myIM):
 
-		if not function.startswith("get"):
+		if not (function.startswith("get") or function.startswith("is")) :
 			continue # skip non getter
 
 		try :
