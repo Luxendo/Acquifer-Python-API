@@ -50,8 +50,8 @@ class IM(object):
 		return self.getValueAsType(command, float)
 
 	def _getBooleanValue(self, command):
-		"""Send a command and parse the feedback to a boolean value."""
-		return self.getValueAsType(command, bool)
+		"""Send a command and parse the feedback to a boolean value (0/1)."""
+		return self.getValueAsType(command, int) # dont use bool, bool of a non-empty string is always true, even bool("0")
 		
 	def acquire(self, nSlices, zSliceHeight, zStackCenter, saveDirectory=""):
 		"""
