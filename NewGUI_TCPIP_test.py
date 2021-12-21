@@ -188,8 +188,8 @@ if __name__ in ['__builtin__', '__main__']:
 	# Loop over functions, calling the getter methods first
 	for function in dir(myIM):
 
-		if not function.startswith("get"):
-			continue # skip the non getter
+		if function == "getFeedback" or not function.startswith("get"):
+			continue # skip getFeedback and the non getter
 
 		try :
 			print function , " : ", getattr(myIM, function)()
