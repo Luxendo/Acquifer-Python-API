@@ -43,15 +43,15 @@ class IM(object):
 	
 	def getIntegerValue(self, command):
 		"""Send a command and parse the feedback to an integer value."""
-		return getValueAsType(self, command, int)
+		return self.getValueAsType(command, int)
 
 	def getFloatValue(self, command):
 		"""Send a command and parse the feedback to a float value."""
-		return getValueAsType(self, command, float)
+		return self.getValueAsType(command, float)
 
 	def getBooleanValue(self, command):
 		"""Send a command and parse the feedback to a boolean value."""
-		return getValueAsType(self, command, bool)
+		return self.getValueAsType(command, bool)
 		
 	def acquire(self, nSlices, zSliceHeight, zStackCenter, saveDirectory=""):
 		"""
