@@ -180,14 +180,28 @@ class IM(object):
 		
 
 ## TEST
-# Create an IM instance and call a test function
-myIM = IM()
+if __name__ in ['__builtin__', '__main__']:
 
-cmd = "GotoXY(30, 30.003)"
-cmd = "GotoZ(2940.4)"
-print (myIM.sendCommand(cmd)) # should print None
+	# Create an IM instance
+	myIM = IM()
 
+	# Loop over functions, calling the getter methods first
+	for function in dir(myIM):
 
-#print (myIM.getFeedback())
+		if not function.startswith("get"):
+			continue # skip the non getter
 
-myIM._socket.close()
+		try :
+			print function , " : ", getattr(myIM, function)
+
+		except Exception:
+			print Exception
+
+	# Error or not close the socket
+	myIM.closeSocket()
+	
+	"""
+	cmd = "GotoXY(30, 30.003)"
+	cmd = "GotoZ(2940.4)"
+	print (myIM.sendCommand(cmd)) # should print None
+	"""
