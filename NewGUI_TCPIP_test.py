@@ -60,10 +60,10 @@ class IM(object):
 		If saveDirectory is "", default to DefaultAcquireFolder
 		"""
 		if saveDirectory:
-			cmd = "Acquire({},{},{},{})".format(nSlices, zSliceHeight, zSliceCenter, saveDirectory)
+			cmd = "Acquire({},{},{},{})".format(nSlices, zSliceHeight, zStackCenter, saveDirectory)
 		
 		else:
-			cmd = "Acquire({},{},{})".format(nSlices, zSliceHeight, zSliceCenter)
+			cmd = "Acquire({},{},{})".format(nSlices, zSliceHeight, zStackCenter)
 		
 		self.sendCommand(cmd)
 
