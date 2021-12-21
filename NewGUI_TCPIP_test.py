@@ -192,7 +192,7 @@ if __name__ in ['__builtin__', '__main__']:
 			continue # skip the non getter
 
 		try :
-			print function , " : ", getattr(myIM, function)
+			print function , " : ", getattr(myIM, function)()
 
 		except Exception:
 			print Exception
