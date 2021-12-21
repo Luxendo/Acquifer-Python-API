@@ -4,7 +4,7 @@ Start the IM GUI software, deactivate block exernal connection (restart if that 
 Then run this script in Fiji (jython) or in a normal python interpreter
 """
 
-import socket, time
+import socket, time, os
 
 
 class IM(object):
@@ -150,8 +150,16 @@ class IM(object):
 	def runScript(self, scriptPath):
 		"""
 		Start a script.
+		Start a .imsf or .cs script to run an acquisition.
 		This command can be called only if no script is running.
 		"""
+
+		if not (scriptPath.endswith(".imsf") or scriptPath.endswith(".cs")):
+			raise ValueError("Script must be a .imsf or .cs file.")
+
+		if not os.path.exists(scriptPath):
+			raise ValueError("Script file not existing : {}".format(scriptPath))
+			
 		cmd = "RunScript({})".format(scriptPath)
 		self.sendCommand(cmd)
 
