@@ -88,19 +88,19 @@ class IM(object):
 		"""
 		return self._getBooleanValue("LiveModeActive()")
 		
-	def getAmbiantTemperature(self):
+	def getTemperatureAmbiant(self):
 		"""Return ambiant temperature in celsius degrees."""
 		return self._getFloatValue("GetAmbientTemperature(TemperatureUnit.Celsius)")
 	
-	def getSampleTemperature(self):
+	def getTemperatureSample(self):
 		"""Return the sample temperature in celsius degrees."""
 		return self._getFloatValue("GetSampleTemperature(TemperatureUnit.Celsius)")
 
-	def getTargetTemperature(self):
+	def getTemperatureTarget(self):
 		"""Return the target temperature in celsius degrees."""
 		return self._getFloatValue("GetTargetTemperature(TemperatureUnit.Celsius)")
 
-	def setTargetTemperature(self, temp):
+	def setTemperatureTarget(self, temp):
 		"""Set the target temperature to a given value in degree celsius, with 0.1 precision."""
 		
 		if (temp < 18 or temp > 34):
