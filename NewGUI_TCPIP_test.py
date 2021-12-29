@@ -101,12 +101,12 @@ class IM(object):
 		return self._getFloatValue("GetTargetTemperature(TemperatureUnit.Celsius)")
 
 	def setTemperatureTarget(self, temp):
-		"""Set the target temperature to a given value in degree celsius, with 0.1 precision."""
+		"""Set the target temperature to a given value in degree celsius (with 0.1 precision), and switch on temperature regulation."""
 		
 		if (temp < 18 or temp > 34):
 			raise ValueError("Target temperature must be in range [18;34].")
 			
-		self.sendCommand( "SetTargetTemperature({:.1f}, TemperatureUnit.Celsius".format(temp) )
+		self.sendCommand( "SetTargetTemperature({:.1f}, TemperatureUnit.Celsius)".format(temp) )
 
 	def getNumberOfColumns(self):
 		"""Return the number of plate columns."""
