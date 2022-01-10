@@ -205,8 +205,8 @@ if __name__ in ['__builtin__', '__main__']:
 	# Error or not, close the socket
 	myIM.closeSocket()
 	
-	"""
-	cmd = "GotoXY(30, 30.003)"
-	cmd = "GotoZ(2940.4)"
-	print (myIM.sendCommand(cmd)) # should print None
+	"""
+	cmd = "GotoXY(30, 30.003)" 
+	cmd = "GotoZ(2940.4)" 
+	print (myIM.sendCommand(cmd)) # should print None 
 	"""
