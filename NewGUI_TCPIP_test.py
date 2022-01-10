@@ -156,7 +156,10 @@ class IM(object):
 		self.sendCommand(cmd)
 
 	def setCamera(self, binning, x, y, width, height):
-		
+		"""
+		Set acquisition parameters of the camera (binning and/or acquisition-ROI).
+		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip). 		
+		"""
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
 
