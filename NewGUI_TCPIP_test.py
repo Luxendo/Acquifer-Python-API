@@ -36,22 +36,22 @@ class IM(object):
 		"""Read a value back from the IM after a "get" command."""
 		return self._socket.recv(size).decode("ascii")
 
-	def getValueAsType(self, command, cast):
+	def _getValueAsType(self, command, cast):
 		"""Send a command, get the feedback and cast it to the type provided by the cast function ex: int."""
 		self.sendCommand(command)
 		return cast(self._getFeedback())
 	
 	def _getIntegerValue(self, command):
 		"""Send a command and parse the feedback to an integer value."""
-		return self.getValueAsType(command, int)
+		return self._getValueAsType(command, int)
 
 	def _getFloatValue(self, command):
 		"""Send a command and parse the feedback to a float value."""
-		return self.getValueAsType(command, float)
+		return self._getValueAsType(command, float)
 
 	def _getBooleanValue(self, command):
 		"""Send a command and parse the feedback to a boolean value (0/1)."""
-		return self.getValueAsType(command, int) # dont use bool, bool of a non-empty string is always true, even bool("0")
+		return self._getValueAsType(command, int) # dont use bool, bool of a non-empty string is always true, even bool("0")
 		
 	def acquire(self, nSlices, zSliceHeight, zStackCenter, saveDirectory=""):
 		"""
