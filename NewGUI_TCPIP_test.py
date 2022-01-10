@@ -81,13 +81,19 @@ class IM(object):
 		"""Check if lid is opened."""
 		return self._getBooleanValue("LidOpened()")
 		
+	def isScriptRunning(self):
+		"""
+		Check if a script is running i.e when LiveMode is not active.
+		If a script is running, tcpip commands should not be sent (except to ask for the machine state).
+		"""
+		return not self._getBooleanValue("LiveModeActive()")
+
 	def isLiveModeActive(self):
 		"""
-		Check if LiveMode is active.
-		LiveMode is needed for IP-commands to work.
+		Check if live mode is active, ie no script is running and tcpip commands can be sent.
 		"""
 		return self._getBooleanValue("LiveModeActive()")
-		
+	
 	def getTemperatureAmbiant(self):
 		"""Return ambiant temperature in celsius degrees."""
 		return self._getFloatValue("GetAmbientTemperature(TemperatureUnit.Celsius)")
