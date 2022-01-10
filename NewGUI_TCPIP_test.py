@@ -52,20 +52,6 @@ class IM(object):
 	def _getBooleanValue(self, command):
 		"""Send a command and parse the feedback to a boolean value (0/1)."""
 		return self._getValueAsType(command, int) # dont use bool, bool of a non-empty string is always true, even bool("0")
-		
-	def acquire(self, nSlices, zSliceHeight, zStackCenter, saveDirectory=""):
-		"""
-		Acquire a Z-stack - NOT AVAILABLE IN TCPIP
-		zStackCenter in mm, with 0.1 precision.
-		If saveDirectory is "", default to DefaultAcquireFolder
-		"""
-		if saveDirectory:
-			cmd = "Acquire({},{},{},{})".format(nSlices, zSliceHeight, zStackCenter, saveDirectory)
-		
-		else:
-			cmd = "Acquire({},{},{})".format(nSlices, zSliceHeight, zStackCenter)
-		
-		self.sendCommand(cmd)
 
 	def openLid(self):
 		self.sendCommand("OpenLid()")
