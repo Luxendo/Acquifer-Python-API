@@ -218,6 +218,30 @@ class IM(object):
 		"""Update well number used to name image files for the next acquisitions."""
 		self._setImageFilenameAttribute("WE", number)
 
+	def acquire(self, nSlices, zStepSize, zStackCenter, saveDirectory=""):
+		"""
+		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
+
+		Images are named according to the IM filenaming convention, and saved in saveDirectory, or in the default acquisition directory if none is mentioned.
+		Use setWellID, setWellSubposition, setLoopIteration to update image-metadata used for filenaming before calling acquire.
+		
+		For the stack, the center position is typically the one found by autofocus.
+		Each slice is distant from the next by zStepSize.
+		For odd number of slices, the center slice is acquired at Z-position zStackCenter and (nSlices-1)/2 are acquired above and below this center slice.
+		For even number of slices, nSlices/2 slices are acquired above and below the center position. No images is acquired for the center position.
+		
+		zStepSize    : distance between slices in µm with 0.1 precision
+		zStackCenter : center position of the Z-stack in µm, with 0.1 precision.
+		"""
+		if saveDirectory:
+			cmd = "Acquire({},{:.1f},{:.1f},{})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
+
+		
+		else:
+			cmd = "Acquire({},{:.1f},{:.1f})".format(nSlices, zStepSize, zStackCenter)
+
+		
+		self.sendCommand(cmd)
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
