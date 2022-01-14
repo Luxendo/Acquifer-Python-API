@@ -79,6 +79,9 @@ class IM(object):
 		Check if live mode is active, ie no script is running and tcpip commands can be sent.
 		"""
 		return self._getBooleanValue("LiveModeActive()")
+
+	def isTemperatureRegulated(self):
+		return self._getBooleanValue("GetTemperatureRegulation()")
 	
 	def getTemperatureAmbiant(self):
 		"""Return ambiant temperature in celsius degrees."""
@@ -92,9 +95,22 @@ class IM(object):
 		"""Return the target temperature in celsius degrees."""
 		return self._getFloatValue("GetTargetTemperature(TemperatureUnit.Celsius)")
 
-	def setTemperatureTarget(self, temp):
-		"""Set the target temperature to a given value in degree celsius (with 0.1 precision), and switch on temperature regulation."""
+	def setTemperatureRegulation(self, state):
+		"""
+		Activate (state=True) or deactivate (state=False) temperature regulation.
+		"""
+		if state :
+			self.sendCommand("SetTemperatureRegulation(1)")
 		
+		else :
+			self.sendCommand("SetTemperatureRegulation(0)")
+		
+	def setTemperatureTarget(self, temp):
+		"""
+		Set the target temperature to a given value in degree celsius (with 0.1 precision).
+		Note : This does NOT switch on temperature regulation !
+		Call setTemperatureRegulation(True) to activate the regulation.
+		"""
 		if (temp < 18 or temp > 34):
 			raise ValueError("Target temperature must be in range [18;34].")
 			
