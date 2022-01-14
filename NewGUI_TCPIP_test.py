@@ -171,6 +171,10 @@ class IM(object):
 		cmd = "RunScript({})".format(scriptPath)
 		self.sendCommand(cmd)
 
+	def stopScript(self):
+		"""Stop any script currently running."""
+		self.sendCommand("StopScript()")
+
 	def setCamera(self, binning, x, y, width, height):
 		"""
 		Set acquisition parameters of the camera (binning and/or acquisition-ROI).
@@ -196,7 +200,10 @@ class IM(object):
 			raise ValueError("Objective index must be in range [1,4].") 
 		
 		self.sendCommand( "SetObjective({})".format(index) )
-		
+
+
+def testRunScript(im):
+	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
 
 ## TEST
 if __name__ in ['__builtin__', '__main__']:
