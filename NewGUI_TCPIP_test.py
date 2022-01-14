@@ -201,6 +201,23 @@ class IM(object):
 		
 		self.sendCommand( "SetObjective({})".format(index) )
 
+	def _setImageFilenameAttribute(self, prefix, value):
+
+		listPrefix = ("WE", "PO", "LO", "CO")
+		if not (prefix in listPrefix ):
+			raise ValueError("Prefix must be one of " + listPrefix)
+
+		if not isinstance(value, int):
+			raise ValueError("Value for image attribute must be an integer.""")
+		
+		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(prefix, value)
+		print cmd
+		self.sendCommand(cmd)
+		
+	def setWellNumber(self, number):
+		"""Update well number used to name image files for the next acquisitions."""
+		self._setImageFilenameAttribute("WE", number)
+
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
