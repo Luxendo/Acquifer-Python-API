@@ -21,9 +21,13 @@ class IM(object):
 		Close the socket, making it available to other resources.
 		After closing the socket, no commands can be sent anymore via this IM instance. 
 		This should be called at the end of external scripts.
+		It also switches back to 'live' mode in case the machine is in script mode.
 		"""
-		self._socket.close()
+		if self.getMode() == "script":
+			self.setMode("live")
 		
+		self._socket.close()
+
 	def sendCommand(self, stringCommand):
 		"""
 		Send a string command to the IM and wait 50ms for processing of the command.
@@ -66,7 +70,11 @@ class IM(object):
 	def isLidOpened(self):
 		"""Check if lid is opened."""
 		return self._getBooleanValue("LidOpened()")
-		
+	
+	def getMode(self):
+		"""Return current acquisition mode either "live" or "script"."""
+		return "live" if self._getBooleanValue("LiveModeActive()") else "script"
+
 	def isScriptRunning(self):
 		"""
 		Check if a script is running i.e when LiveMode is not active.
@@ -235,13 +243,24 @@ class IM(object):
 		"""
 		if saveDirectory:
 			cmd = "Acquire({},{:.1f},{:.1f},{})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
-
-		
 		else:
 			cmd = "Acquire({},{:.1f},{:.1f})".format(nSlices, zStepSize, zStackCenter)
-
 		
 		self.sendCommand(cmd)
+
+	def setMode(self, mode):
+		"""Set the acquisition mode to either "live" or "script."""
+		
+		mode = mode.lower()
+		
+		if mode == "script":
+			self.sendCommand("SetScriptMode(1)")
+		
+		elif mode == "live":
+			self.sendCommand("SetScriptMode(0)")
+		
+		else:
+			raise ValueError("Mode can be either 'script' or 'live'.")
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
