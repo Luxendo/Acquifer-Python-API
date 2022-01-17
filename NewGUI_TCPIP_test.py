@@ -259,6 +259,14 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("PO", subposition)
 
+	def setTimepoint(self, timepoint):
+		"""Update the timepoint (or loop iteration) index, used to name the image files for the next acquisitions (LO tag)."""
+
+		if not isinstance(timepoint, int) or timepoint < 1:
+			raise ValueError("Timepoint must be a strictly positive integer.""")
+		
+		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
+
 	def acquire(self, nSlices, zStepSize, zStackCenter, saveDirectory=""):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
