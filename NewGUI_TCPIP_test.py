@@ -251,6 +251,14 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("Coordinate", wellID)
 
+	def setSubposition(self, subposition):
+		"""Update the well subposition index (within a given well), used to name the image files for the next acquisitions."""
+		
+		if not isinstance(subposition, int) or subposition < 0:
+			raise ValueError("Subposition must be a positive integer.""")
+		
+		self._setImageFilenameAttribute("PO", subposition)
+
 	def acquire(self, nSlices, zStepSize, zStackCenter, saveDirectory=""):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
