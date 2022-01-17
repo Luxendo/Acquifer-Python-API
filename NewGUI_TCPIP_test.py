@@ -261,6 +261,8 @@ class IM(object):
 		
 		else:
 			raise ValueError("Mode can be either 'script' or 'live'.")
+		
+		return self._getFeedback()
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
