@@ -45,6 +45,13 @@ class IM(object):
 	def _getFeedback(self, size=256):
 		"""Read a value back from the IM after a "get" command."""
 		return self._socket.recv(size).decode("ascii")
+	
+	def _waitForFinished(self):
+		"""
+		This function calls getfeedback with the correct size corresponding to "finished". 
+		It will pause code execution until this amount of bytes can be read.
+		"""
+		self._getFeedback(10) # TODO adjust value "finished"
 
 	def _getValueAsType(self, command, cast):
 		"""Send a command, get the feedback and cast it to the type provided by the cast function ex: int."""
@@ -268,7 +275,7 @@ class IM(object):
 		else:
 			raise ValueError("Mode can be either 'script' or 'live'.")
 		
-		return self._getFeedback()
+		self._waitForFinished()
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
