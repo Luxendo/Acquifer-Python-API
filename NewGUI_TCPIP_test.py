@@ -240,6 +240,17 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("WE", number)
 
+	def setWellId(self, wellID):
+		"""Update the well ID (ex: "A001"), used to name the image files for the next acquisitions."""
+		
+		if not isinstance(wellID, string):
+			raise ValueError("WellID must be a string ex: 'A001'.")
+		
+		if not wellID[0].isalpha():
+			raise ValueError("WellID must start with a letter, example of well ID 'A001'.")
+		
+		self._setImageFilenameAttribute("Coordinate", wellID)
+
 	def acquire(self, nSlices, zStepSize, zStackCenter, saveDirectory=""):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
