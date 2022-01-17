@@ -14,7 +14,13 @@ class IM(object):
 		"""Initialize a TCP/IP socket for the exchange of commands."""
 		
 		self._socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM) # IPv6 on latest IM 
-		self._socket.connect(("localhost", port))
+		try:
+			self._socket.connect(("localhost", port))
+
+		except socket.error:
+			msg = ("Cannot connect to IM GUI.\nMake sure an IM is available, powered-on and the IM program is running.\n" +
+			"Also make sure that the option 'Block remote connection' of the admin panel is deactivated, and that the port numbers match (port 6200 is used by default in IM constructor if none specified).")
+			raise socket.error(msg)
 
 	def closeSocket(self):
 		"""
