@@ -225,7 +225,7 @@ class IM(object):
 			raise ValueError("Value for image attribute must be an integer.""")
 		
 		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(prefix, value)
-		print cmd
+		print(cmd)
 		self.sendCommand(cmd)
 		
 	def setWellNumber(self, number):
@@ -286,11 +286,11 @@ if __name__ in ['__builtin__', '__main__']:
 			continue # skip non getter
 
 		try :
-			print function , " : ", getattr(myIM, function)() # Get the function object from the name and call it
+			print(function , " : ", getattr(myIM, function)()) # Get the function object from the name and call it
 
 		# Print the exception and continue the execution
 		except Exception as e:
-			print e
+			print(e)
 
 	
 	# Error or not, close the socket
