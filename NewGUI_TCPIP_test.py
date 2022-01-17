@@ -224,12 +224,9 @@ class IM(object):
 
 	def _setImageFilenameAttribute(self, prefix, value):
 
-		listPrefix = ("WE", "PO", "LO", "CO")
+		listPrefix = ("WE", "PO", "LO", "CO", "Coordinate") # Coordinate is the wellID
 		if not (prefix in listPrefix ):
 			raise ValueError("Prefix must be one of " + listPrefix)
-
-		if not isinstance(value, int):
-			raise ValueError("Value for image attribute must be an integer.""")
 		
 		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(prefix, value)
 		print(cmd)
@@ -237,6 +234,10 @@ class IM(object):
 		
 	def setWellNumber(self, number):
 		"""Update well number used to name image files for the next acquisitions."""
+		
+		if not isinstance(number, int) or number < 0:
+			raise ValueError("Well number must be a positive integer.""")
+		
 		self._setImageFilenameAttribute("WE", number)
 
 	def acquire(self, nSlices, zStepSize, zStackCenter, saveDirectory=""):
