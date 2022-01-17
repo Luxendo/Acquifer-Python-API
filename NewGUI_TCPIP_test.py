@@ -9,14 +9,14 @@ import socket, time, os
 
 class IM(object):
 	"""Object representing the IM from ACQUIFER defined with a list of methods to control it."""
-	
+
 	def __init__(self, port=6200):
 		"""Initialize a TCP/IP socket for the exchange of commands."""
 		
 		self._socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM) # IPv6 on latest IM 
 		try:
 			self._socket.connect(("localhost", port))
-
+		
 		except socket.error:
 			msg = ("Cannot connect to IM GUI.\nMake sure an IM is available, powered-on and the IM program is running.\n" +
 			"Also make sure that the option 'Block remote connection' of the admin panel is deactivated, and that the port numbers match (port 6200 is used by default in IM constructor if none specified).")
@@ -37,7 +37,7 @@ class IM(object):
 	def sendCommand(self, stringCommand):
 		"""
 		Send a string command to the IM and wait 50ms for processing of the command.
-		The command is converted to a bytearray before sending.
+		The command is converted to a bytearray before sending.
 		""" 
 		self._socket.sendall(bytearray(stringCommand, "ascii"))
 		time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with _getFeedback
@@ -45,10 +45,10 @@ class IM(object):
 	def _getFeedback(self, size=256):
 		"""Read a value back from the IM after a "get" command."""
 		return self._socket.recv(size).decode("ascii")
-	
+
 	def _waitForFinished(self):
 		"""
-		This function calls getfeedback with the correct size corresponding to "finished". 
+		This function calls getFeedback with the correct size corresponding to "finished". 
 		It will pause code execution until this amount of bytes can be read.
 		"""
 		self._getFeedback(10) # TODO adjust value "finished"
@@ -57,7 +57,7 @@ class IM(object):
 		"""Send a command, get the feedback and cast it to the type provided by the cast function ex: int."""
 		self.sendCommand(command)
 		return cast(self._getFeedback())
-	
+
 	def _getIntegerValue(self, command):
 		"""Send a command and parse the feedback to an integer value."""
 		return self._getValueAsType(command, int)
@@ -79,11 +79,11 @@ class IM(object):
 	def isLidClosed(self):
 		"""Check if the lid is closed."""
 		return self._getBooleanValue("LidClosed()")
-		
+
 	def isLidOpened(self):
 		"""Check if lid is opened."""
 		return self._getBooleanValue("LidOpened()")
-	
+
 	def getMode(self):
 		"""Return current acquisition mode either "live" or "script"."""
 		return "live" if self._getBooleanValue("LiveModeActive()") else "script"
@@ -125,7 +125,7 @@ class IM(object):
 		
 		else :
 			self.sendCommand("SetTemperatureRegulation(0)")
-		
+
 	def setTemperatureTarget(self, temp):
 		"""
 		Set the target temperature to a given value in degree celsius (with 0.1 precision).
@@ -134,7 +134,7 @@ class IM(object):
 		"""
 		if (temp < 18 or temp > 34):
 			raise ValueError("Target temperature must be in range [18;34].")
-			
+		
 		self.sendCommand( "SetTargetTemperature({:.1f}, TemperatureUnit.Celsius)".format(temp) )
 
 	def getNumberOfColumns(self):
@@ -156,7 +156,7 @@ class IM(object):
 	def getPositionY(self):
 		"""Return the current objective y-axis position in mm."""
 		return self._getFloatValue("GetYPosition()")
-	
+
 	def getPositionZ(self):
 		"""Return the current objective z-axis position in µm."""
 		return self._getFloatValue("GetZPosition()")
@@ -170,7 +170,7 @@ class IM(object):
 		"""Move to Z-position in µm with 0.1 precision."""
 		cmd = "GotoZ({:.1f})".format(z)
 		self.sendCommand(cmd)
-	
+
 	def goToXYZ(self,x,y,z):
 		"""Move to x,y position (mm, 0.001 precision) and z-position in µm (0.1 precision)"""
 		cmd = "GotoXYZ({:.3f},{:.3f},{:.1f})".format(x,y,z)
@@ -182,10 +182,10 @@ class IM(object):
 		Start a .imsf or .cs script to run an acquisition.
 		This command can be called only if no script is running.
 		"""
-
+		
 		if not (scriptPath.endswith(".imsf") or scriptPath.endswith(".cs")):
 			raise ValueError("Script must be a .imsf or .cs file.")
-
+		
 		if not os.path.exists(scriptPath):
 			raise ValueError("Script file not existing : {}".format(scriptPath))
 			
@@ -203,7 +203,7 @@ class IM(object):
 		"""
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
-
+		
 		largerThan2048 = lambda value : value > 2048
 		negative	   = lambda value : value < 0 
 		
@@ -223,7 +223,7 @@ class IM(object):
 		self.sendCommand( "SetObjective({})".format(index) )
 
 	def _setImageFilenameAttribute(self, prefix, value):
-
+		
 		listPrefix = ("WE", "PO", "LO", "CO", "Coordinate") # Coordinate is the wellID
 		if not (prefix in listPrefix ):
 			raise ValueError("Prefix must be one of " + listPrefix)
@@ -231,7 +231,7 @@ class IM(object):
 		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(prefix, value)
 		print(cmd)
 		self.sendCommand(cmd)
-		
+
 	def setWellNumber(self, number):
 		"""Update well number used to name image files for the next acquisitions."""
 		
