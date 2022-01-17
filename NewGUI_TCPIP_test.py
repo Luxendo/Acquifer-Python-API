@@ -233,10 +233,10 @@ class IM(object):
 		self.sendCommand(cmd)
 
 	def setWellNumber(self, number):
-		"""Update well number used to name image files for the next acquisitions."""
+		"""Update well number used to name image files for the next acquisitions (WE tag)."""
 		
-		if not isinstance(number, int) or number < 0:
-			raise ValueError("Well number must be a positive integer.""")
+		if not isinstance(number, int) or number < 1:
+			raise ValueError("Well number must be a strictly positive integer.""")
 		
 		self._setImageFilenameAttribute("WE", number)
 
@@ -252,10 +252,10 @@ class IM(object):
 		self._setImageFilenameAttribute("Coordinate", wellID)
 
 	def setSubposition(self, subposition):
-		"""Update the well subposition index (within a given well), used to name the image files for the next acquisitions."""
+		"""Update the well subposition index (within a given well), used to name the image files for the next acquisitions (PO tag)."""
 		
-		if not isinstance(subposition, int) or subposition < 0:
-			raise ValueError("Subposition must be a positive integer.""")
+		if not isinstance(subposition, int) or subposition < 1:
+			raise ValueError("Subposition must be a strictly positive integer.""")
 		
 		self._setImageFilenameAttribute("PO", subposition)
 
