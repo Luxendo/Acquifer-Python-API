@@ -6,6 +6,18 @@ Then run this script in Fiji (jython) or in a normal python interpreter
 
 import socket, time, os
 
+def isPositiveInteger(input):
+	"""Return false if the input is not a strictly positive >0 integer."""
+	
+	if not isinstance(input, int) or input < 1 :
+		return False
+	
+	return True
+
+def isNumber(input):
+	"""Test if an input is a number ie int or float."""
+	return isinstance(input, (int, float))
+
 
 class IM(object):
 	"""Object representing the IM from ACQUIFER defined with a list of methods to control it."""
