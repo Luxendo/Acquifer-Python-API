@@ -278,7 +278,7 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 
-	def acquire(self, nSlices, zStepSize, zStackCenter, saveDirectory=""):
+	def acquire(self, zStackCenter, nSlices, zStepSize, saveDirectory=""):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
 
@@ -322,6 +322,27 @@ class IM(object):
 			raise ValueError("Mode can be either 'script' or 'live'.")
 		
 		self._waitForFinished()
+	
+	def runSoftwareAutofocus(self, zStackCenter, nSlices, zStepSize):
+		"""
+		Run a software autofocus based on a stack centred on a given Z-position, with nSlices each separated by zStepSize.
+		zStackCenter : centre of the stack, position in µm with 0.1 precision.
+		zStepSize    : distance between slices of the stack, in µm with 0.1 precision.
+		"""
+		
+		if not isPositiveInteger(nSlices):
+			raise ValueError("Number of slice must be a strictly positive integer.")
+		
+		if not isNumber(zStackCenter) or zStackCenter < 0 :
+			raise ValueError("zStackCenter must be a positive number.")
+		
+		if not isNumber(zStepSize) or zStepSize < 0 :
+			raise ValueError("zStepSize must be a positive number.")
+		
+		cmd = "SoftwareAutofocus({:.1f}, {}, {:.1f})".format(zStackCenter, nSlices, zStepSize)
+		print(cmd)
+		
+		return self._getFloatValue(cmd)
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
