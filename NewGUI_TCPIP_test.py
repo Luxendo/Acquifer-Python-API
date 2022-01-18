@@ -49,7 +49,8 @@ class IM(object):
 		This function calls getFeedback with the correct size corresponding to "finished". 
 		It will pause code execution until this amount of bytes can be read.
 		"""
-		self._getFeedback(10) # TODO adjust value "finished"
+		if self._getFeedback(10) == "error": # chose 10 but could be another value
+			raise Exception("Could not execute command.")
 
 	def _getValueAsType(self, command, cast):
 		"""Send a command, get the feedback and cast it to the type provided by the cast function ex: int."""
