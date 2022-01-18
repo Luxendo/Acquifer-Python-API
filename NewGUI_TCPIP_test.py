@@ -18,6 +18,20 @@ def isNumber(value):
 	"""Test if an input is a number ie int or float."""
 	return isinstance(value, (int, float))
 
+def checkIntensity(intensity):
+	"""Throw a ValueError if the intensity is not an integer in range 0-100."""
+	
+	if not isinstance(intensity, int):
+		raise ValueError("Intensity must be an integer value.")
+
+	if intensity < 0 or intensity > 100 :
+		raise ValueError("Intensity must be in range [0-100].")
+
+def checkExposure(exposure):
+	"""Throw a ValueError if the exposure is not an positive integer value."""
+	if not isinstance(exposure, int) or exposure < 0 :
+		raise ValueError("Exposure must be a positive integer value.")
+
 
 class IM(object):
 	"""Object representing the IM from ACQUIFER defined with a list of methods to control it."""
