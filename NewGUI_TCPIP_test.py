@@ -32,6 +32,26 @@ def checkExposure(exposure):
 	if not isinstance(exposure, int) or exposure < 0 :
 		raise ValueError("Exposure must be a positive integer value.")
 
+def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
+	"""
+	Utility function to heck the validity of parameters for the setBrightfield and setFluoChannel functions.
+	Raise a ValueError if there is an issue with any of the parameters.
+	"""
+	if not isPositiveInteger(channelNumber):
+		raise ValueError("Channel number must be a strictly positive integer.")
+
+	if not detectionFilter in (1,2,3,4) : 
+		raise ValueError("Filter index must be one of 1,2,3,4.")
+	
+	if not isNumber(offsetAF):
+		raise ValueError("Autofocus offset must be a number, passed : {}.".format(offsetAF))
+	
+	if not isinstance(lightConstantOn, bool):
+		raise ValueError("lightConstantOn must be a boolean value (True/False).")
+		
+	checkIntensity(intensity)
+	checkExposure(exposure)
+
 
 class IM(object):
 	"""Object representing the IM from ACQUIFER defined with a list of methods to control it."""
@@ -297,36 +317,22 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 
-	def setBrightField(self, channelNumber, filterIndex, intensity, exposure, offsetAF, lightConstantOn):
+	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
 		"""
 		Activate the brightfield channel with a given intensity, exposure time and using the detection filter at the given positional index.
-		In Live mode, the channel is directly switched on, and must be switched off using the setBrightFieldOff command.
-		In script mode, the channel is switched on synchronously with the camera, with the next acquire commands.
+		In live mode, the channel is directly switched on, and must be switched off using the setBrightFieldOff command.
+		In script mode, the channel is switched on with the next acquire command, synchronously with the camera.
 		- channelNumber : this value is used for the image file name (tag CO)
-		- filterIndex   : positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		- detectionFilter  : positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
 		- intensity     : intensity for the brightfield light source
 		- exposure      : exposure time in ms, used by the camera when imaging this channel 
 		- offsetAF
 		- lightConstantOn : if true, the light is constantly on (only during the acquisition in script mode)
 							otherwise the light source is synchronised with the camera exposure, and thus is blinking.
 		"""
-		if not isPositiveInteger(channelNumber):
-			raise ValueError("Channel number must be a strictly positive integer.")
-
-		if not filterIndex in (1,2,3,4) : 
-			raise ValueError("Filter index must be one of 1,2,3,4.")
-		
-		if not isNumber(offsetAF):
-			raise ValueError("Autofocus offset must be a number, passed : {}.".format(offsetAF))
-		
-		if not isinstance(lightConstantOn, bool):
-			raise ValueError("lightConstantOn must be a boolean value (True/False).")
-			
-		checkIntensity(intensity)
-		checkExposure(exposure)
-		
+		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
-		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, filterIndex, intensity, exposure, offsetAF, lightConstantOn) )
+		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn) )
 
 	def setBrightFieldOff(self):
 		"""
