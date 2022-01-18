@@ -6,17 +6,17 @@ Then run this script in Fiji (jython) or in a normal python interpreter
 
 import socket, time, os
 
-def isPositiveInteger(input):
+def isPositiveInteger(value):
 	"""Return false if the input is not a strictly positive >0 integer."""
 	
-	if not isinstance(input, int) or input < 1 :
+	if not isinstance(value, int) or value < 1 :
 		return False
 	
 	return True
 
-def isNumber(input):
+def isNumber(value):
 	"""Test if an input is a number ie int or float."""
-	return isinstance(input, (int, float))
+	return isinstance(value, (int, float))
 
 
 class IM(object):
