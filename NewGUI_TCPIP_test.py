@@ -66,9 +66,13 @@ class IM(object):
 		self._socket.sendall(bytearray(stringCommand, "ascii"))
 		time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with _getFeedback
 
-	def _getFeedback(self, size=256):
-		"""Read a value back from the IM after a "get" command."""
-		return self._socket.recv(size).decode("ascii")
+	def _getFeedback(self, nbytes=256):
+		"""
+		Tries to read at max nbytes back from IM and convert to a string.
+		This should be called after "get" commands.
+		Calling this function will block execution (ie the function wont return), until at least one byte is available for reading.
+		"""
+		return self._socket.recv(nbytes).decode("ascii")
 
 	def _waitForFinished(self):
 		"""
