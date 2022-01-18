@@ -29,9 +29,7 @@ class IM(object):
 		This should be called at the end of external scripts.
 		It also switches back to 'live' mode in case the machine is in script mode.
 		"""
-		if self.getMode() == "script":
-			self.setMode("live")
-		
+		self.setMode("live")
 		self._socket.close()
 
 	def sendCommand(self, stringCommand):
@@ -290,9 +288,16 @@ class IM(object):
 		self.sendCommand(cmd)
 
 	def setMode(self, mode):
-		"""Set the acquisition mode to either "live" or "script."""
+		"""
+		Set the acquisition mode to either "live" or "script.
+		This function first check the current mode before changing it if needed.
+		"""
 		
 		mode = mode.lower()
+		
+		# Check current mode, this prevent error message from IM when switching to current mode
+		if mode == self.getMode():
+			return
 		
 		if mode == "script":
 			self.sendCommand("SetScriptMode(1)")
