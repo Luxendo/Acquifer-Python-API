@@ -319,16 +319,31 @@ class IM(object):
 
 	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
 		"""
-		Activate the brightfield channel with a given intensity, exposure time and using the detection filter at the given positional index.
-		In live mode, the channel is directly switched on, and must be switched off using the setBrightFieldOff command.
-		In script mode, the channel is switched on with the next acquire command, synchronously with the camera.
-		- channelNumber : this value is used for the image file name (tag CO)
-		- detectionFilter  : positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
-		- intensity     : intensity for the brightfield light source
-		- exposure      : exposure time in ms, used by the camera when imaging this channel 
-		- offsetAF
-		- lightConstantOn : if true, the light is constantly on (only during the acquisition in script mode)
-							otherwise the light source is synchronised with the camera exposure, and thus is blinking.
+		Activate the brightfield light source.
+		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setBrightFieldOff command.
+		In script mode, the "channel" is switched on with the next acquire commands, synchronously with the camera.
+
+		Parameters
+		----------
+		channelNumber : int (>0)
+			this value is used for the image file name (tag CO).
+		
+		detectionFilter : int (between 1 and 4)
+			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		
+		intensity : int between 0 and 100
+			intensity for the brightfield light source.
+		
+		exposure : int
+			exposure time in ms, used by the camera when imaging/previewing this channel.
+			In live mode, a value of 0 will freeze the preview image.
+		
+		offsetAF : float
+			DESCRIPTION.
+		
+		lightConstantOn : bool
+			if true, the light is constantly on (only during the acquisition in script mode)
+			if false, the light source is synchronised with the camera exposure, and thus is blinking.
 		"""
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
@@ -337,6 +352,7 @@ class IM(object):
 	def setBrightFieldOff(self):
 		"""
 		Switch the brightfield channel off in live mode, by setting intensity and exposure time to 0.
+		This also freezes the image preview (exposure=0).
 		In script mode this has no utility : on/off switching is synchronized with the camera acquisition.
 		"""
 		if self.getMode() == "live":
@@ -344,9 +360,9 @@ class IM(object):
 	
 	def setFluoChannel(self, channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
 		"""
-		Activate a fluorescent channel with a given intensity, exposure time and using the detection filter at the given positional index.
-		In live mode, the channel is directly switched on, and must be switched off using the setFluoChannelOff command.
-		In script mode, the channel is switched on with the next acquire commands, synchronously with the camera.
+		Activate one or multiple LED light sources for fluorecence imaging.
+		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
+		In script mode, the "channel" is switched on with the next acquire commands, synchronously with the camera.
 
 		Parameters
 		----------
@@ -364,7 +380,8 @@ class IM(object):
 			With multiple light sources, this is the power used for each of them.
 		
 		exposure : int
-			exposure time in ms, used by the camera when imaging this channel.
+			exposure time in ms, used by the camera when imaging/previewing this channel.
+			In live mode, a value of 0 will freeze the preview image.
 		
 		offsetAF : float
 			DESCRIPTION.
