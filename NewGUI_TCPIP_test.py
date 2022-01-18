@@ -224,7 +224,8 @@ class IM(object):
 	def setCamera(self, binning, x, y, width, height):
 		"""
 		Set acquisition parameters of the camera (binning and/or acquisition-ROI).
-		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip). 		
+		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip).
+		Exposure time are defined for each channel using the setBrightfield or setFluo commands.
 		"""
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
@@ -292,6 +293,45 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 
+	def setBrightField(self, channelNumber, filterIndex, intensity, exposure, offsetAF, lightConstantOn):
+		"""
+		Activate the brightfield channel with a given intensity, exposure time and using the detection filter at the given positional index.
+		In Live mode, the channel is directly switched on, and must be switched off using the setBrightFieldOff command.
+		In script mode, the channel is switched on synchronously with the camera, with the next acquire commands.
+		- channelNumber : this value is used for the image file name (tag CO)
+		- filterIndex   : positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		- intensity     : intensity for the brightfield light source
+		- exposure      : exposure time in ms, used by the camera when imaging this channel 
+		- offsetAF
+		- lightConstantOn : if true, the light is constantly on (only during the acquisition in script mode)
+							otherwise the light source is synchronised with the camera exposure, and thus is blinking.
+		"""
+		if not isPositiveInteger(channelNumber):
+			raise ValueError("Channel number must be a strictly positive integer.")
+
+		if not filterIndex in (1,2,3,4) : 
+			raise ValueError("Filter index must be one of 1,2,3,4.")
+		
+		if not isNumber(offsetAF):
+			raise ValueError("Autofocus offset must be a number, passed : {}.".format(offsetAF))
+		
+		if not isinstance(lightConstantOn, bool):
+			raise ValueError("lightConstantOn must be a boolean value (True/False).")
+			
+		checkIntensity(intensity)
+		checkExposure(exposure)
+		
+		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
+		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, filterIndex, intensity, exposure, offsetAF, lightConstantOn) )
+
+	def setBrightFieldOff(self):
+		"""
+		Switch the brightfield channel off in live mode, by setting intensity and exposure time to 0.
+		In script mode this has no utility : on/off switching is synchronized with the camera acquisition.
+		"""
+		if self.getMode() == "live":
+			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
+
 	def acquire(self, zStackCenter, nSlices, zStepSize, saveDirectory=""):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
@@ -340,6 +380,7 @@ class IM(object):
 	def runSoftwareAutofocus(self, zStackCenter, nSlices, zStepSize):
 		"""
 		Run a software autofocus with current channel and objective settings.
+		Return the Z-position of the focused slice.
 		If no channel is currently active the autofocus returns the zStackCenter value.
 		The focused planed is chosen as the most focused slice from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
 		zStackCenter : centre of the stack, position in µm with 0.1 precision.
