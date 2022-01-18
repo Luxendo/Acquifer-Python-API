@@ -389,6 +389,15 @@ class IM(object):
 		#print(cmd)
 		self.sendCommand(cmd)
 
+	def setFluoChannelOff(self):
+		"""
+		Switch off all the LED light sources (fluorecence) by setting the intensities to 0%.
+		This also freezes the image preview (exposure=0).
+		This is effective in live mode only, in scrit mode on/off switching occurs automatically with the acquire commands.
+		"""
+		if self.getMode() == "live":
+			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
+
 	def acquire(self, zStackCenter, nSlices, zStepSize, saveDirectory=""):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
