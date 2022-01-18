@@ -73,9 +73,11 @@ class IM(object):
 		Close the socket, making it available to other resources.
 		After closing the socket, no commands can be sent anymore via this IM instance. 
 		This should be called at the end of external scripts.
-		It also switches back to 'live' mode in case the machine is in script mode.
+		It also switches back to 'live' mode in case the machine is in script mode, and switch off all channels.
 		"""
 		self.setMode("live")
+		self.setBrightFieldOff()
+		self.setFluoChannelOff()
 		self._socket.close()
 
 	def sendCommand(self, stringCommand):
