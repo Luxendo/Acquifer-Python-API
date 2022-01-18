@@ -269,7 +269,7 @@ class IM(object):
 	def setWellId(self, wellID):
 		"""Update the well ID (ex: "A001"), used to name the image files for the next acquisitions."""
 		
-		if not isinstance(wellID, string):
+		if not isinstance(wellID, str):
 			raise ValueError("WellID must be a string ex: 'A001'.")
 		
 		if not wellID[0].isalpha():
@@ -397,7 +397,6 @@ class IM(object):
 			raise ValueError("zStepSize must be a positive number.")
 		
 		cmd = "SoftwareAutofocus({:.1f}, {}, {:.1f})".format(zStackCenter, nSlices, zStepSize)
-		print(cmd)
 		
 		return self._getFloatValue(cmd)
 
