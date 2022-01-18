@@ -341,6 +341,53 @@ class IM(object):
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
+	
+	def setFluoChannel(self, channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
+		"""
+		Activate a fluorescent channel with a given intensity, exposure time and using the detection filter at the given positional index.
+		In live mode, the channel is directly switched on, and must be switched off using the setFluoChannelOff command.
+		In script mode, the channel is switched on with the next acquire commands, synchronously with the camera.
+
+		Parameters
+		----------
+		channelNumber : int (>0)
+			this value is used for the image file name (tag CO).
+		
+		ledmask : string
+			this should be a 6-character string of 0 and 1, corresponding to the LED light source to activate. Ex : "010000" will activate the 2nd light source, while 010001 will activate both the second and last light sources..
+		
+		detectionFilter : int (between 1 and 4)
+			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		
+		intensity : int between 0 and 100
+			intensity for the LED fluorecent light source(s).
+			With multiple light sources, this is the power used for each of them.
+		
+		exposure : int
+			exposure time in ms, used by the camera when imaging this channel.
+		
+		offsetAF : float
+			DESCRIPTION.
+		
+		lightConstantOn : bool
+			if true, the light is constantly on (only during the acquisition in script mode)
+			if false, the light source is synchronised with the camera exposure, and thus is blinking.
+		"""
+		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
+		
+		ledMaskError = ValueError("ledmask should be a 6-character long string of 0 or 1. ex: 010000")
+		if not isinstance(ledmask, str) or len(ledmask) != 6:
+			raise ledMaskError
+		
+		for char in ledmask:
+			if not (char == "0" or char =="1"):
+				raise ledMaskError
+		
+		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
+		
+		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
+		#print(cmd)
+		self.sendCommand(cmd)
 
 	def acquire(self, zStackCenter, nSlices, zStepSize, saveDirectory=""):
 		"""
