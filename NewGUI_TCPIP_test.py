@@ -325,7 +325,9 @@ class IM(object):
 	
 	def runSoftwareAutofocus(self, zStackCenter, nSlices, zStepSize):
 		"""
-		Run a software autofocus based on a stack centred on a given Z-position, with nSlices each separated by zStepSize.
+		Run a software autofocus with current channel and objective settings.
+		If no channel is currently active the autofocus returns the zStackCenter value.
+		The focused planed is chosen as the most focused slice from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
 		zStackCenter : centre of the stack, position in µm with 0.1 precision.
 		zStepSize    : distance between slices of the stack, in µm with 0.1 precision.
 		"""
