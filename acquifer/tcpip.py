@@ -278,15 +278,12 @@ class IM(object):
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
 		
-		largerThan2048 = lambda value : value > 2048
-		negative	   = lambda value : value < 0 
+		for value in (x,y,width,height) : 
 		
-		bbox = map(int, (x,y,width,height)) # Make sure they are integer
+			if not isinstance(value, int) or value < 0 or value > 2048 :
+				raise ValueError("x,y,width,height must be integer values in range [0;2048].")
 		
-		if any(map(largerThan2048, bbox)) or any(map(negative, bbox)):
-			raise ValueError("x,y,width,height must be in range [0;2048]")
-		
-		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, *bbox))
+		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
 		self._waitForFinished()
 
 	def setObjective(self, index):
