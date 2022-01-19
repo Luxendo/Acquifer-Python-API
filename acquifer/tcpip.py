@@ -335,16 +335,28 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("WE", number)
 
-	def setWellId(self, wellID):
-		"""Update the well ID (ex: "A001"), used to name the image files for the next acquisitions."""
+	def setWellId(self, wellID, leadingChar = "-"):
+		"""
+		Update the well ID (ex: "A001"), used to name the image files for the next acquisitions.
+		The well ID must start with a letter.
+		
+		Parameters
+		----------
+		leadingChar, string
+		Character added before the well id, at the beginning of the filename.
+		By default this is a slash (-) for compatibility with acquifer software suite, but it could be replaced by another character.
+		"""
 		
 		if not isinstance(wellID, str):
 			raise ValueError("WellID must be a string ex: 'A001'.")
 		
+		if len(wellID) != 4 : 
+			raise ValueError("WellId should be a 4-character long string to assure compatibility with the acquifer software suite. Ex : 'A001'")
+		
 		if not wellID[0].isalpha():
 			raise ValueError("WellID must start with a letter, example of well ID 'A001'.")
 		
-		self._setImageFilenameAttribute("Coordinate", wellID)
+		self._setImageFilenameAttribute("Coordinate", leadingChar + wellID)
 
 	def setSubposition(self, subposition):
 		"""Update the well subposition index (within a given well), used to name the image files for the next acquisitions (PO tag)."""
