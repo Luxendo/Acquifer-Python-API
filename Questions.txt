@@ -1,0 +1,49 @@
+- SoftwareAutofocus in live mode 
+The AF is executed, the plot is shown and the centre value is returned.
+But the gui seems to freeze, the axis are responsive but not the camera.
+Quitting the GUI (no need to kill it), and restarting works then.
+
+> print im.runSoftwareAutofocus(50, 10, 5)
+SoftwareAutofocus(50.0, 10, 5.0)
+32.5
+> print im.getMode()
+live
+
+- following sequence works
+```
+setScriptMode(1)
+setBrightField()
+acquire()
+```
+this one freeze the GUI (have to kill it)
+```
+setScriptMode(0) # configuring channel in live mode
+setBrightField()
+setScriptMode(1) # switching to script mode before camera acquisition
+acquire()
+```
+
+- SofwareAutofocus in script mode is not returning anything
+is it used by the next acquire command automatically ?
+
+- SetImageFileNameAttribute
+For the Coordinate attribute, the user would have to specify the leading slash,
+Should we force it ? or optional as part of python
+
+- offsetAF for SetBrightField
+Does this value affect the autofocus/acquire ? 
+Since for both autofocus/acquire one defines the zStackCenter, the offset could be encoded manually
+
+ex : 
+zCenter = SoftwareAutofocus()
+acquire(zCenter-offset, ...) 
+
+- after hard-reboot (IP steckdose off/on), empty wellId, well number X,Y, and temperature with acquire via tcpip, ex:
+PO01--LO001--CO1--SL001--PX32500--PW0080--IN0120--TM000--X000000--Y000000--Z002200--T1925973109--WE00000.tif
+
+After setting a custom well id, well number, subposition and timepoint iteration
+X,Y and temperature still blank
+-B012--PO10--LO002--CO1--SL002--PX32500--PW0080--IN0120--TM000--X000000--Y000000--Z002100--T1926287248--WE00010.tif
+
+After moving XY via the GUI, the value is correctly populated
+Same after switching on temperature regulation the TM tag is populated
