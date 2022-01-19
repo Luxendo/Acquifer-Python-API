@@ -412,6 +412,7 @@ class IM(object):
 		Switch the brightfield channel off in live mode, by setting intensity and exposure time to 0.
 		This also freezes the image preview (exposure=0).
 		In script mode this has no utility : on/off switching is synchronized with the camera acquisition.
+		This function thus first check if live mode is active.
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
@@ -471,6 +472,7 @@ class IM(object):
 		Switch off all the LED light sources (fluorecence) by setting the intensities to 0%.
 		This also freezes the image preview (exposure=0).
 		This is effective in live mode only, in scrit mode on/off switching occurs automatically with the acquire commands.
+		This function thus first check if live mode is active.
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
