@@ -269,7 +269,7 @@ class IM(object):
 		self.sendCommand("StopScript()")
 		self._waitForFinished()
 
-	def setCamera(self, binning, x, y, width, height):
+	def setCamera(self, x, y, width, height, binning=1):
 		"""
 		Set acquisition parameters of the camera (binning and/or acquisition-ROI).
 		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip).
@@ -343,7 +343,7 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 
-	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
+	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, offsetAF=0, lightConstantOn=False):
 		"""
 		Activate the brightfield light source.
 		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setBrightFieldOff command.
@@ -386,7 +386,7 @@ class IM(object):
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
 			self._waitForFinished()
 		
-	def setFluoChannel(self, channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
+	def setFluoChannel(self, channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF=0, lightConstantOn=False):
 		"""
 		Activate one or multiple LED light sources for fluorecence imaging.
 		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
