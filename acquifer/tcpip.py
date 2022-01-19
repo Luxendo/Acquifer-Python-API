@@ -304,9 +304,19 @@ class IM(object):
 		if not (prefix in listPrefix ):
 			raise ValueError("Prefix must be one of " + listPrefix)
 		
+		if (prefix == "PO" and value > 99):
+			raise ValueError("Subpositions are limited to max 99 to have a constant filename length.")
+		
+		if (prefix == "LO" and value > 999):
+			raise ValueError("Timepoints are limited to max 999 to have a constant filename length.")
+		
+		if (prefix == "CO" and (value < 0 or value > 9) ):
+			raise ValueError("Channel index ('CO') must be in range [1,9].")
+		
 		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(prefix, value)
-		print(cmd)
+		#print(cmd)
 		self.sendCommand(cmd)
+		self._waitForFinished()
 
 	def setWellNumber(self, number):
 		"""Update well number used to name image files for the next acquisitions (WE tag)."""
