@@ -293,7 +293,11 @@ class IM(object):
 		
 		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
 		self._waitForFinished()
-
+	
+	def resetCamera(self):
+		"""Reset camera to full-size field of view (2048x2048 pixels) and no binning."""
+		self.setCamera(0,0,2048,2048)
+	
 	def setObjective(self, index):
 		"""Set the objective based on the index (1 to 4)."""
 		
