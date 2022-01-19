@@ -278,10 +278,18 @@ class IM(object):
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
 		
+		# Check that the values are integer in range 0,2048
 		for value in (x,y,width,height) : 
 		
 			if not isinstance(value, int) or value < 0 or value > 2048 :
 				raise ValueError("x,y,width,height must be integer values in range [0;2048].")
+		
+		# Check that x+width, y+height < 2048
+		if (x + width) > 2048 :
+			raise ValueError("x + width exceeds the maximal value of 2048.")
+		
+		if (y + height) > 2048 :
+			raise ValueError("y + height exceeds the maximal value of 2048.")
 		
 		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
 		self._waitForFinished()
