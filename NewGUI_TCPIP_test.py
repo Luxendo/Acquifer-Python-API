@@ -123,9 +123,11 @@ class IM(object):
 
 	def openLid(self):
 		self.sendCommand("OpenLid()")
+		self._waitForFinished()
 
 	def closeLid(self):
 		self.sendCommand("CloseLid()")
+		self._waitForFinished()
 
 	def isLidClosed(self):
 		"""Check if the lid is closed."""
@@ -176,7 +178,9 @@ class IM(object):
 		
 		else :
 			self.sendCommand("SetTemperatureRegulation(0)")
-
+		
+		self._waitForFinished()
+		
 	def setTemperatureTarget(self, temp):
 		"""
 		Set the target temperature to a given value in degree celsius (with 0.1 precision).
@@ -187,7 +191,8 @@ class IM(object):
 			raise ValueError("Target temperature must be in range [18;34].")
 		
 		self.sendCommand( "SetTargetTemperature({:.1f}, TemperatureUnit.Celsius)".format(temp) )
-
+		self._waitForFinished()
+		
 	def getNumberOfColumns(self):
 		"""Return the number of plate columns."""
 		return self._getIntegerValue("GetCountWellsX()")
@@ -213,25 +218,40 @@ class IM(object):
 		return self._getFloatValue("GetZPosition()")
 
 	def goToXY(self,x,y):
-		"""Move to position x,y in mm, with 0.001 decimal precision."""
+		"""
+		Move to position x,y in mm, with 0.001 decimal precision.
+		This commands blocks code execution until the position is reached.
+		"""
 		cmd = "GotoXY({:.3f},{:.3f})".format(x,y) # force max 3 decimal positions
 		self.sendCommand(cmd)
+		self._waitForFinished()
 
 	def goToZ(self, z):
-		"""Move to Z-position in µm with 0.1 precision."""
+		"""
+		Move to Z-position in µm with 0.1 precision.
+		This commands blocks code execution until the position is reached.
+		"""
 		cmd = "GotoZ({:.1f})".format(z)
 		self.sendCommand(cmd)
+		self._waitForFinished()
+
 
 	def goToXYZ(self,x,y,z):
-		"""Move to x,y position (mm, 0.001 precision) and z-position in µm (0.1 precision)"""
+		"""
+		Move to x,y position (mm, 0.001 precision) and z-position in µm (0.1 precision).
+		This commands blocks code execution until the position is reached.
+		"""
 		cmd = "GotoXYZ({:.3f},{:.3f},{:.1f})".format(x,y,z)
 		self.sendCommand(cmd)
+		self._waitForFinished()
+
 
 	def runScript(self, scriptPath):
 		"""
-		Start a script.
 		Start a .imsf or .cs script to run an acquisition.
-		This command can be called only if no script is running.
+		This command can be called only if no script is currently running.
+		The command blocks further commands execution until the script has finished running.
+		The script that was started can only be stopped in the IM gui, in the run tab.
 		"""
 		
 		if not (scriptPath.endswith(".imsf") or scriptPath.endswith(".cs")):
@@ -242,10 +262,12 @@ class IM(object):
 			
 		cmd = "RunScript({})".format(scriptPath)
 		self.sendCommand(cmd)
+		self._waitForFinished()
 
 	def stopScript(self):
 		"""Stop any script currently running."""
 		self.sendCommand("StopScript()")
+		self._waitForFinished()
 
 	def setCamera(self, binning, x, y, width, height):
 		"""
@@ -265,6 +287,7 @@ class IM(object):
 			raise ValueError("x,y,width,height must be in range [0;2048]")
 		
 		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, *bbox))
+		self._waitForFinished()
 
 	def setObjective(self, index):
 		"""Set the objective based on the index (1 to 4)."""
@@ -273,6 +296,7 @@ class IM(object):
 			raise ValueError("Objective index must be in range [1,4].") 
 		
 		self.sendCommand( "SetObjective({})".format(index) )
+		self._waitForFinished()
 
 	def _setImageFilenameAttribute(self, prefix, value):
 		
@@ -350,7 +374,8 @@ class IM(object):
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
 		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn) )
-
+		self._waitForFinished()
+		
 	def setBrightFieldOff(self):
 		"""
 		Switch the brightfield channel off in live mode, by setting intensity and exposure time to 0.
@@ -359,7 +384,8 @@ class IM(object):
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
-	
+			self._waitForFinished()
+		
 	def setFluoChannel(self, channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
 		"""
 		Activate one or multiple LED light sources for fluorecence imaging.
@@ -407,6 +433,7 @@ class IM(object):
 		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		#print(cmd)
 		self.sendCommand(cmd)
+		self._waitForFinished()
 
 	def setFluoChannelOff(self):
 		"""
@@ -416,6 +443,7 @@ class IM(object):
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
+			self._waitForFinished()
 
 	def acquire(self, zStackCenter, nSlices, zStepSize, saveDirectory=""):
 		"""
@@ -438,7 +466,8 @@ class IM(object):
 			cmd = "Acquire({},{:.1f},{:.1f})".format(nSlices, zStepSize, zStackCenter)
 		
 		self.sendCommand(cmd)
-
+		self._waitForFinished()
+		
 	def setMode(self, mode):
 		"""
 		Set the acquisition mode to either "live" or "script.
