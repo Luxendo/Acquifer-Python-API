@@ -34,19 +34,24 @@ def checkExposure(exposure):
 
 def checkLightSource(source):
 	
-	SourceError = ValueError("Light source should be either 'brightfield'/'BF' or a 6-character long string of 0 and 1 for fluorescent light sources ex : '010000'.")
+	msg = "Light source should be either 'brightfield'/'BF' or a 6-character long string of 0 and 1 for fluorescent light sources ex : '010000'."
 	
 	if not isinstance(source, str) : 
-		raise SourceError
-		
+		raise TypeError(msg)
+	
+	if source == "000000":
+		raise ValueError("At least one fluorescent light source should be selected.")
+	
 	if not source.lower() in ("bf", "brightfield"): # then it should be a fluo light source
 		
+		# Check that it`s 6 character long
 		if len(source) != 6:
-			raise SourceError
+			raise ValueError(msg)
 		
+		# Check that it`s a succession of 0/1
 		for char in source:
 			if not (char == "0" or char =="1"):
-				raise SourceError
+				raise ValueError(msg)
 
 def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
 	"""
