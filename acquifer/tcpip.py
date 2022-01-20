@@ -503,14 +503,14 @@ class IM(object):
 		
 	def setMode(self, mode):
 		"""
-		Set the acquisition mode to either "live" or "script.
+		Set the acquisition mode to either "live", "script", or "settingOn"/"settingOff".
 		This function first check the current mode before changing it if needed.
 		"""
 		
-		mode = mode.lower()
+		mode = mode.lower() # make it case-insensitive
 		
 		# Check current mode, this prevent error message from IM when switching to current mode
-		if mode == self.getMode():
+		if mode == self.getMode(): # actually returns only live/script not setting
 			return
 		
 		if mode == "script":
@@ -519,8 +519,14 @@ class IM(object):
 		elif mode == "live":
 			self.sendCommand("SetScriptMode(0)")
 		
+		elif mode == "settingon": # compare to lower case version !
+			self.sendCommand("SettingModeOn()")
+		
+		elif mode == "settingoff":
+			self.sendCommand("SettingModeOn()")
+		
 		else:
-			raise ValueError("Mode can be either 'script' or 'live'.")
+			raise ValueError("Mode can be either 'script', 'live', 'settingOn', 'settingOn'.")
 		
 		self._waitForFinished()
 	
