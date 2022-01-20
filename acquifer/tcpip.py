@@ -32,24 +32,24 @@ def checkExposure(exposure):
 	if not isinstance(exposure, int) or exposure < 0 :
 		raise ValueError("Exposure must be a positive integer value.")
 
-def checkLightSource(source):
+def checkLightSource(lightSource):
 	
-	msg = "Light source should be either 'brightfield'/'BF' or a 6-character long string of 0 and 1 for fluorescent light sources ex : '010000'."
+	msg = "Light lightSource should be either 'brightfield'/'BF' or a 6-character long string of 0 and 1 for fluorescent light sources ex : '010000'."
 	
-	if not isinstance(source, str) : 
+	if not isinstance(lightSource, str) : 
 		raise TypeError(msg)
 	
-	if source == "000000":
-		raise ValueError("At least one fluorescent light source should be selected.")
+	if lightSource == "000000":
+		raise ValueError("At least one fluorescent light lightSource should be selected.")
 	
-	if not source.lower() in ("bf", "brightfield"): # then it should be a fluo light source
+	if not lightSource.lower() in ("bf", "brightfield"): # then it should be a fluo light lightSource
 		
 		# Check that it`s 6 character long
-		if len(source) != 6:
+		if len(lightSource) != 6:
 			raise ValueError(msg)
 		
 		# Check that it`s a succession of 0/1
-		for char in source:
+		for char in lightSource:
 			if not (char == "0" or char =="1"):
 				raise ValueError(msg)
 
@@ -394,7 +394,7 @@ class IM(object):
 
 	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
-		Activate the brightfield light source.
+		Activate the brightfield light lightSource.
 		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setBrightFieldOff command.
 		In script mode, the "channel" is switched on with the next acquire commands, synchronously with the camera.
 
@@ -407,7 +407,7 @@ class IM(object):
 			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
-			intensity for the brightfield light source.
+			intensity for the brightfield light lightSource.
 		
 		exposure : int
 			exposure time in ms, used by the camera when imaging/previewing this channel.
@@ -415,7 +415,7 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false, the light source is synchronised with the camera exposure, and thus is blinking.
+			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
 		"""
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		
@@ -436,7 +436,7 @@ class IM(object):
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
 			self._waitForFinished()
 		
-	def setFluoChannel(self, channelNumber, source, detectionFilter, intensity, exposure, lightConstantOn=False):
+	def setFluoChannel(self, channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
 		Activate one or multiple LED light sources for fluorecence imaging.
 		In live mode, the resulting "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
@@ -447,14 +447,14 @@ class IM(object):
 		channelNumber : int (>0)
 			this value is used for the image file name (tag CO).
 		
-		source : string
-			this should be a 6-character string of 0 and 1, corresponding to the LED light source to activate. Ex : "010000" will activate the 2nd light source, while 010001 will activate both the second and last light sources..
+		lightSource : string
+			this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources..
 		
 		detectionFilter : int (between 1 and 4)
 			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
-			intensity for the LED fluorecent light source(s).
+			intensity for the LED fluorecent light lightSource(s).
 			With multiple light sources, this is the power used for each of them.
 		
 		exposure : int
@@ -463,15 +463,15 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false, the light source is synchronised with the camera exposure, and thus is blinking.
+			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
 		"""
-		checkLightSource(source)
+		checkLightSource(lightSource)
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
 		offsetAF = 0 # if one wants to apply an offset, directly do it in the acquire command
 		
-		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, source, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
+		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, lightSource, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		#print(cmd)
 		self.sendCommand(cmd)
 		self._waitForFinished()
