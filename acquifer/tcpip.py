@@ -53,7 +53,7 @@ def checkLightSource(source):
 			if not (char == "0" or char =="1"):
 				raise ValueError(msg)
 
-def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
+def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn):
 	"""
 	Utility function to heck the validity of parameters for the setBrightfield and setFluoChannel functions.
 	Raise a ValueError if there is an issue with any of the parameters.
@@ -64,11 +64,8 @@ def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, 
 	if not detectionFilter in (1,2,3,4) : 
 		raise ValueError("Filter index must be one of 1,2,3,4.")
 	
-	if not isNumber(offsetAF):
-		raise ValueError("Autofocus offset must be a number, passed : {}.".format(offsetAF))
-	
 	if not isinstance(lightConstantOn, bool):
-		raise ValueError("lightConstantOn must be a boolean value (True/False).")
+		raise TypeError("lightConstantOn must be a boolean value (True/False).")
 		
 	checkIntensity(intensity)
 	checkExposure(exposure)
@@ -395,7 +392,7 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 
-	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, offsetAF=0, lightConstantOn=False):
+	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
 		Activate the brightfield light source.
 		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setBrightFieldOff command.
@@ -416,15 +413,15 @@ class IM(object):
 			exposure time in ms, used by the camera when imaging/previewing this channel.
 			In live mode, a value of 0 will freeze the preview image.
 		
-		offsetAF : float
-			DESCRIPTION.
-		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
 			if false, the light source is synchronised with the camera exposure, and thus is blinking.
 		"""
-		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
+		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
+		
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
+		offsetAF = 0 # if one wants to apply an offset, directly do it in the acquire command
+		
 		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn) )
 		self._waitForFinished()
 		
@@ -439,10 +436,10 @@ class IM(object):
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
 			self._waitForFinished()
 		
-	def setFluoChannel(self, channelNumber, source, detectionFilter, intensity, exposure, offsetAF=0, lightConstantOn=False):
+	def setFluoChannel(self, channelNumber, source, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
 		Activate one or multiple LED light sources for fluorecence imaging.
-		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
+		In live mode, the resulting "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
 		In script mode, the "channel" is switched on with the next acquire commands, synchronously with the camera.
 
 		Parameters
@@ -464,17 +461,15 @@ class IM(object):
 			exposure time in ms, used by the camera when imaging/previewing this channel.
 			In live mode, a value of 0 will freeze the preview image.
 		
-		offsetAF : float
-			DESCRIPTION.
-		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
 			if false, the light source is synchronised with the camera exposure, and thus is blinking.
 		"""
 		checkLightSource(source)
-		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
+		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
+		offsetAF = 0 # if one wants to apply an offset, directly do it in the acquire command
 		
 		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, source, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		#print(cmd)
