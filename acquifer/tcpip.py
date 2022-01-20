@@ -487,21 +487,82 @@ class IM(object):
 			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
 			self._waitForFinished()
 
-	def acquire(self, zStackCenter, nSlices, zStepSize, saveDirectory=""):
+	def acquire(self, channelNumber, 
+					  lightSource, 
+					  detectionFilter, 
+					  intensity, 
+					  exposure, 
+					  zStackCenter,
+					  nSlices, 
+					  zStepSize, 
+					  lightConstantOn=False, 
+					  saveDirectory=""):
 		"""
-		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective, channel and camera settings.
-
+		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective and camera settings.
+		
 		Images are named according to the IM filenaming convention, and saved in saveDirectory, or in the default acquisition directory if none is mentioned.
 		Use setWellID, setWellSubposition, setLoopIteration to update image-metadata used for filenaming before calling acquire.
 		
-		For the stack, the center position is typically the one found by autofocus.
-		Each slice is distant from the next by zStepSize.
-		For odd number of slices, the center slice is acquired at Z-position zStackCenter and (nSlices-1)/2 are acquired above and below this center slice.
-		For even number of slices, nSlices/2 slices are acquired above and below the center position. No images is acquired for the center position.
+		Parameters
+		----------
+		channelNumber : int (>0)
+			this value is used for the image file name (tag CO).
 		
-		zStepSize    : distance between slices in µm with 0.1 precision
-		zStackCenter : center position of the Z-stack in µm, with 0.1 precision.
+		lightSource : string
+			light-source used for the acquisition.
+			
+			For brightfield, it should be 'brightfield' or 'bf' (not case-sensitive)
+			
+			For fluorecent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
+			Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources.
+		
+		detectionFilter : int (between 1 and 4)
+			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		
+		intensity : int between 0 and 100
+			relative intensity for the light-source(s).
+			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
+		
+		exposure : int
+			exposure time in ms, used by the camera when imaging/previewing this channel.
+			In live mode, a value of 0 will freeze the preview image.
+		
+		zStackCenter : float
+			center position of the Z-stack in µm, with 0.1 precision.
+			One typically uses the value returned by the autofocus (+/- some offset eventually).
+		
+		nSlices : int
+			Number of slice composing the stack	
+			
+			For odd number of slices, the center slice is acquired at Z-position zStackCenter and (nSlices-1)/2 are acquired above and below this center slice.
+			
+			For even number of slices, nSlices/2 slices are acquired above and below the center position. No images is acquired for the center position.
+		
+		zStepSize : float
+			distance between slices in µm with 0.1 precision
+		
+		lightConstantOn : bool
+			if true, the light is constantly on (only during the acquisition in script mode)
+			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
 		"""
+		# This implementation of acquire always switch to script mode(if not the case already) 
+		# and systematically set the channel before each acquire command
+		# This is to prevent issue of not having set the channel while being in script mode
+		
+		# check parameters type and value
+		checkLightSource(lightSource)
+		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
+		
+		mode0 = self.getMode() # if we want to go back to live mode
+		
+		self.setMode("script") # for acquire to work both channel and acquire needs to be run in script mode
+		
+		if lightSource.lower() in ("brightfield", "bf") :
+			self.setBrightField(channelNumber, detectionFilter, intensity, exposure,  lightConstantOn)
+		
+		else:
+			self.setFluoChannel(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
+		
 		if saveDirectory:
 			cmd = "Acquire({},{:.1f},{:.1f},{})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
 		else:
@@ -509,6 +570,9 @@ class IM(object):
 		
 		self.sendCommand(cmd)
 		self._waitForFinished()
+		
+		if mode0 == "live":
+			self.setMode("live") # go back to live mode if originally in live mode
 		
 	def setMode(self, mode):
 		"""
