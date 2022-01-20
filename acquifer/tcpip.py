@@ -506,6 +506,8 @@ class IM(object):
 		Set the acquisition mode to either "live", "script", or "settingOn"/"settingOff".
 		This function first check the current mode before changing it if needed.
 		"""
+		if not isinstance(mode, str):
+			raise ValueError("Mode should be a string, and one of 'script', 'live', 'settingOn', 'settingOff'.")
 		
 		mode = mode.lower() # make it case-insensitive
 		
@@ -526,7 +528,7 @@ class IM(object):
 			self.sendCommand("SettingModeOn()")
 		
 		else:
-			raise ValueError("Mode can be either 'script', 'live', 'settingOn', 'settingOn'.")
+			raise ValueError("Mode can be either 'script', 'live', 'settingOn', 'settingOff'.")
 		
 		self._waitForFinished()
 	
