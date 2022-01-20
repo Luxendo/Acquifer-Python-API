@@ -1,15 +1,8 @@
 - SoftwareAutofocus in live mode 
-The AF is executed, the plot is shown and the centre value is returned.
-But the gui seems to freeze, the axis are responsive but not the camera.
-Quitting the GUI (no need to kill it), and restarting works then.
-
-> print im.runSoftwareAutofocus(50, 10, 5)
-SoftwareAutofocus(50.0, 10, 5.0)
-32.5
-> print im.getMode()
-live
+-> switch setting mode should fix it
 
 - following sequence works
+-> need to define channel in script mode before (use a instance variable holding current state)
 ```
 setScriptMode(1)
 setBrightField()
@@ -26,9 +19,6 @@ acquire()
 - SofwareAutofocus in script mode is not returning anything
 is it used by the next acquire command automatically ?
 
-- SetImageFileNameAttribute
-For the Coordinate attribute, the user would have to specify the leading slash,
-Should we force it ? or optional as part of python
 
 - offsetAF for SetBrightField
 Does this value affect the autofocus/acquire ? 
