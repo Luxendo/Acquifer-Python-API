@@ -32,6 +32,22 @@ def checkExposure(exposure):
 	if not isinstance(exposure, int) or exposure < 0 :
 		raise ValueError("Exposure must be a positive integer value.")
 
+def checkLightSource(source):
+	
+	SourceError = ValueError("Light source should be either 'brightfield'/'BF' or a 6-character long string of 0 and 1 for fluorescent light sources ex : '010000'.")
+	
+	if not isinstance(source, str) : 
+		raise SourceError
+		
+	if not source.lower() in ("bf", "brightfield"): # then it should be a fluo light source
+		
+		if len(source) != 6:
+			raise SourceError
+		
+		for char in source:
+			if not (char == "0" or char =="1"):
+				raise SourceError
+
 def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn):
 	"""
 	Utility function to heck the validity of parameters for the setBrightfield and setFluoChannel functions.
@@ -39,7 +55,7 @@ def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, 
 	"""
 	if not isPositiveInteger(channelNumber):
 		raise ValueError("Channel number must be a strictly positive integer.")
-
+	
 	if not detectionFilter in (1,2,3,4) : 
 		raise ValueError("Filter index must be one of 1,2,3,4.")
 	
@@ -418,7 +434,7 @@ class IM(object):
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
 			self._waitForFinished()
 		
-	def setFluoChannel(self, channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF=0, lightConstantOn=False):
+	def setFluoChannel(self, channelNumber, source, detectionFilter, intensity, exposure, offsetAF=0, lightConstantOn=False):
 		"""
 		Activate one or multiple LED light sources for fluorecence imaging.
 		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
@@ -429,7 +445,7 @@ class IM(object):
 		channelNumber : int (>0)
 			this value is used for the image file name (tag CO).
 		
-		ledmask : string
+		source : string
 			this should be a 6-character string of 0 and 1, corresponding to the LED light source to activate. Ex : "010000" will activate the 2nd light source, while 010001 will activate both the second and last light sources..
 		
 		detectionFilter : int (between 1 and 4)
@@ -450,19 +466,12 @@ class IM(object):
 			if true, the light is constantly on (only during the acquisition in script mode)
 			if false, the light source is synchronised with the camera exposure, and thus is blinking.
 		"""
+		checkLightSource(source)
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
-		
-		ledMaskError = ValueError("ledmask should be a 6-character long string of 0 or 1. ex: 010000")
-		if not isinstance(ledmask, str) or len(ledmask) != 6:
-			raise ledMaskError
-		
-		for char in ledmask:
-			if not (char == "0" or char =="1"):
-				raise ledMaskError
 		
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
 		
-		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, ledmask, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
+		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, source, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		#print(cmd)
 		self.sendCommand(cmd)
 		self._waitForFinished()
