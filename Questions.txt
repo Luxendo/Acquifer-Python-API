@@ -29,6 +29,11 @@ zCenter = SoftwareAutofocus()
 acquire(zCenter-offset, ...) 
 
 - after hard-reboot (IP steckdose off/on), empty wellId, well number X,Y, and temperature with acquire via tcpip, ex:
+
+Default metadata tags, defined in the ImageFilenameAttribute ? 
+https://github.com/acquifer/700-ImageMachine-2.0-GUI/blob/42f92f1566470318f2e394b00d96dc8e84dc0cb5/dev/imgui/imgui.Camera/Classes/RecordingBuffer.cs#L187
+https://github.com/acquifer/700-ImageMachine-2.0-GUI/blob/8d664cff6f211a75cb3e53d01a70274621eb50f2/dev/imgui/imgui.Utilities/Imaging/FileNameAttributes.cs#L45
+
 PO01--LO001--CO1--SL001--PX32500--PW0080--IN0120--TM000--X000000--Y000000--Z002200--T1925973109--WE00000.tif
 
 After setting a custom well id, well number, subposition and timepoint iteration
