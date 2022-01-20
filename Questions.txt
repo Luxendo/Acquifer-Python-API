@@ -1,5 +1,12 @@
 - SoftwareAutofocus in live mode 
--> switch setting mode should fix it
+```
+Live mode ON
+SettingMode ON
+SetLightON ?
+Autofocus
+SettingsMode OFF
+```
+Define a function python for autofocus that takes the light parameters directly ?
 
 - following sequence works
 -> need to define channel in script mode before (use a instance variable holding current state)
