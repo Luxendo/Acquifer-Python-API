@@ -556,6 +556,16 @@ class IM(object):
 		else:
 			self.setFluoChannel(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
 
+	def setLightSourceOff(self, lightSource):
+		"""Switch-off the light-source."""
+		checkLightSource(lightSource)
+		
+		if lightSource.lower() in ("bf","brightfield"):
+			self.setBrightFieldOff()
+		
+		else:
+			self.setFluoChannelOff()
+	
 	def acquire(self, channelNumber, 
 					  lightSource, 
 					  detectionFilter, 
