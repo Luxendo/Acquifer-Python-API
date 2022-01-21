@@ -750,7 +750,7 @@ class IM(object):
 		
 		self._waitForFinished()
 	
-	def runSoftwareAutofocus(self, 
+	def runSoftwareAutoFocus(self, 
 							  lightSource, 
 							  detectionFilter, 
 							  intensity, 
@@ -792,6 +792,46 @@ class IM(object):
 			self._setSettingMode(False)
 		
 		return zFocus
+
+	def runHardwareAutoFocus(self, objective, detectionFilter, zCenter, offset = 0) :
+		"""
+		Run a hardware autofocus and return the Z-position found.
+		
+		Parameters
+		----------
+		objective : int
+			Objective index used for autofocus, one of 1,2,3,4.
+			The indexes are almost always ordered by increasing objective magnification. 
+		
+		detectionFilter : int
+			Positional index of the detection filter used for the autofocus.
+		
+		zCenter : float
+			Starting position for the autofocus search.
+			
+		offset : float, optional
+			The default is 0.
+		
+		Returns
+		-------
+		float
+			The Z-position found by the autofocus.
+		"""
+		if not objective in (1,2,3,4):
+			raise ValueError("Objective index should be one of 1,2,3,4.")
+		
+		if not detectionFilter in (1,2,3,4) : 
+			raise ValueError("Filter index must be one of 1,2,3,4.")
+		
+		if not isNumber(zCenter) or zCenter < 0:
+			raise ValueError("zCenter must be a positive number.")
+		
+		if not isNumber(offset) or offset < 0:
+			raise ValueError("Offset must be a positive number.")
+		
+		cmd = "HardwareAutofocus({:.1f}, {:.1f}, {}, {})".format(zCenter, offset, objective, detectionFilter)
+		return self._getFloatValue(cmd)
+
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
