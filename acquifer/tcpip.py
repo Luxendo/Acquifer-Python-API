@@ -100,6 +100,7 @@ class IM(object):
 			"Also make sure that the option 'Block remote connection' of the admin panel is deactivated, and that the port numbers match (port 6200 is used by default in IM constructor if none specified).")
 			raise socket.error(msg)
 		
+		self.isConnected = True # only False once socket is closed
 		print("Connected to IM on port {}, in {} mode.".format(port, self.getMode()))
 
 	def closeSocket(self):
@@ -113,6 +114,7 @@ class IM(object):
 		self.setBrightFieldOff()
 		self.setFluoChannelOff()
 		self._socket.close()
+		self.isConnected = False
 		print("Closed connection with IM.\nNOTE : no more commands can be sent via this IM object.")
 
 	def sendCommand(self, stringCommand):
@@ -120,6 +122,9 @@ class IM(object):
 		Send a string command to the IM and wait 50ms for processing of the command.
 		The command is converted to a bytearray before sending.
 		""" 
+		if not self.isConnected:
+			raise socket.error("Connection to IM was closed. Create a new IM object to establish a new connection.")
+		
 		self._socket.sendall(bytearray(stringCommand, "ascii"))
 		time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with _getFeedback
 
