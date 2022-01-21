@@ -99,6 +99,8 @@ class IM(object):
 			msg = ("Cannot connect to IM GUI.\nMake sure an IM is available, powered-on and the IM program is running.\n" +
 			"Also make sure that the option 'Block remote connection' of the admin panel is deactivated, and that the port numbers match (port 6200 is used by default in IM constructor if none specified).")
 			raise socket.error(msg)
+		
+		print("Connected to IM on port {}, in {} mode.".format(port, self.getMode()))
 
 	def closeSocket(self):
 		"""
@@ -111,6 +113,7 @@ class IM(object):
 		self.setBrightFieldOff()
 		self.setFluoChannelOff()
 		self._socket.close()
+		print("Closed connection with IM.\nNOTE : no more commands can be sent via this IM object.")
 
 	def sendCommand(self, stringCommand):
 		"""
@@ -633,18 +636,17 @@ class IM(object):
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		checkZstackParameters(zStackCenter, nSlices, zStepSize)
 		
-		mode0 = self.getMode() # if we want to go back to live mode
-		
-		self.setMode("script") # for acquire to work both channel and acquire needs to be run in script mode
-		
-		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
-
 		if saveDirectory:
 			cmd = "Acquire({},{:.1f},{:.1f},{})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
 		else:
 			cmd = "Acquire({},{:.1f},{:.1f})".format(nSlices, zStepSize, zStackCenter)
 		
-		self.sendCommand(cmd)
+		print(cmd) # Should appear as top-level command before subcommands are called within Acquire
+		
+		mode0 = self.getMode() # if we want to go back to live mode
+		self.setMode("script") # for acquire to work both channel and acquire needs to be run in script mode
+		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
+		self.sendCommand(cmd)  # send the acquire command
 		self._waitForFinished()
 		
 		# Go back to live mode if originally in live mode
@@ -657,7 +659,7 @@ class IM(object):
 		This function first check the current mode before changing it if needed.
 		"""
 		if not isinstance(mode, str):
-			raise ValueError("Mode should be a string, and one of 'script', 'live', 'settingOn', 'settingOff'.")
+			raise TypeError("Mode should be a string, and one of 'script', 'live', 'settingOn', 'settingOff'.")
 		
 		mode = mode.lower() # make it case-insensitive
 		
@@ -667,10 +669,12 @@ class IM(object):
 		
 		if mode == "script":
 			self.sendCommand("SetScriptMode(1)")
+			print("Switch to 'script' mode.\nNOTE : interaction with the GUI are suspended until 'live' mode is reactivated.")
 		
 		elif mode == "live":
 			self.sendCommand("SetScriptMode(0)")
-		
+			print("Switch to 'live' mode.")
+
 		elif mode == "settingon": # compare to lower case version !
 			self.sendCommand("SettingModeOn()")
 		
@@ -694,7 +698,7 @@ class IM(object):
 		"""
 		Run a software autofocus with a custom channel and current objective and camera settings.
 		Return the Z-position of the most focused slice, from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
-		
+		This function works with both 'live' and 'script' modes.
 		zStackCenter : centre of the stack, position in µm with 0.1 precision.
 		zStepSize    : distance between slices of the stack, in µm with 0.1 precision.
 		"""
@@ -715,6 +719,7 @@ class IM(object):
 		
 		# Send autofocus command and read feedback
 		cmd = "SoftwareAutofocus({:.1f}, {}, {:.1f})".format(zStackCenter, nSlices, zStepSize)
+		print(cmd)
 		zFocus = self._getFloatValue(cmd)
 		
 		# In live mode, switch-off light and exit setting mode
