@@ -657,14 +657,26 @@ class IM(object):
 		# Go back to live mode if originally in live mode
 		if mode0 == "live":
 			self.setMode("live") 
+
+	def _setSettingMode(self, state):
+		"""
+		Switch to setting mode true/false, needed by software AF in live mode.
+		Does not do anything is script mode.
+		"""
+		if self.getMode() == "script":
+			return
 		
+		cmd = "SettingModeOn()" if state else "SettingModeOff()"
+		self.sendCommand(cmd)
+		self._waitForFinished()
+
 	def setMode(self, mode):
 		"""
-		Set the acquisition mode to either "live", "script", or "settingOn"/"settingOff".
+		Set the acquisition mode to either "live" or "script".
 		This function first check the current mode before changing it if needed.
 		"""
 		if not isinstance(mode, str):
-			raise TypeError("Mode should be a string, and one of 'script', 'live', 'settingOn', 'settingOff'.")
+			raise TypeError("Mode should be either 'script' or 'live'.")
 		
 		mode = mode.lower() # make it case-insensitive
 		
@@ -679,15 +691,9 @@ class IM(object):
 		elif mode == "live":
 			self.sendCommand("SetScriptMode(0)")
 			print("Switch to 'live' mode.")
-
-		elif mode == "settingon": # compare to lower case version !
-			self.sendCommand("SettingModeOn()")
-		
-		elif mode == "settingoff":
-			self.sendCommand("SettingModeOff()")
 		
 		else:
-			raise ValueError("Mode can be either 'script', 'live', 'settingOn', 'settingOff'.")
+			raise ValueError("Mode can be either 'script' or 'live'.")
 		
 		self._waitForFinished()
 	
@@ -717,7 +723,7 @@ class IM(object):
 		mode = self.getMode()
 		
 		if mode == "live":
-			self.setMode("settingOn") # in live mode, setting must be on
+			self._setSettingMode(True) # in live mode, setting must be on
 		
 		# Switch-on light
 		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
@@ -730,7 +736,7 @@ class IM(object):
 		# In live mode, switch-off light and exit setting mode
 		if mode == "live":
 			self.setLightSourceOff(lightSource)
-			self.setMode("settingOff")
+			self._setSettingMode(False)
 		
 		return zFocus
 
