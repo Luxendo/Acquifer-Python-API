@@ -518,6 +518,44 @@ class IM(object):
 			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
 			self._waitForFinished()
 
+	def setLightSource(self, channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn = False):
+		"""
+		Switch-on light source, brightfield or fluorescent one(s).
+		
+		Parameters
+		----------
+		channelNumber : int (>0)
+			this value is used for the image file name (tag CO).
+		
+		lightSource : string
+			light-source used for the acquisition.
+			
+			For brightfield, it should be 'brightfield' or 'bf' (not case-sensitive)
+			
+			For fluorecent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
+			Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources.
+		
+		detectionFilter : int (between 1 and 4)
+			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		
+		intensity : int between 0 and 100
+			relative intensity for the light-source(s).
+			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
+		
+		exposure : int
+			exposure time in ms, used by the camera when imaging/previewing this channel.
+			In live mode, a value of 0 will freeze the preview image.
+		
+		lightConstantOn : bool
+			if true, the light is constantly on (only during the acquisition in script mode)
+			if false (default), the light lightSource is synchronised with the camera exposure, and thus is blinking.
+		"""
+		if lightSource.lower() in ("brightfield", "bf") :
+			self.setBrightField(channelNumber, detectionFilter, intensity, exposure,  lightConstantOn)
+		
+		else:
+			self.setFluoChannel(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
+
 	def acquire(self, channelNumber, 
 					  lightSource, 
 					  detectionFilter, 
@@ -589,12 +627,8 @@ class IM(object):
 		
 		self.setMode("script") # for acquire to work both channel and acquire needs to be run in script mode
 		
-		if lightSource.lower() in ("brightfield", "bf") :
-			self.setBrightField(channelNumber, detectionFilter, intensity, exposure,  lightConstantOn)
-		
-		else:
-			self.setFluoChannel(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
-		
+		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
+
 		if saveDirectory:
 			cmd = "Acquire({},{:.1f},{:.1f},{})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
 		else:
@@ -603,8 +637,9 @@ class IM(object):
 		self.sendCommand(cmd)
 		self._waitForFinished()
 		
+		# Go back to live mode if originally in live mode
 		if mode0 == "live":
-			self.setMode("live") # go back to live mode if originally in live mode
+			self.setMode("live") 
 		
 	def setMode(self, mode):
 		"""
