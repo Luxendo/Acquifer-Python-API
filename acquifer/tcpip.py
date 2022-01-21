@@ -328,15 +328,15 @@ class IM(object):
 		"""
 		cmd = "GotoXYZ({:.3f},{:.3f},{:.1f})".format(x,y,z)
 		self.sendCommand(cmd)
+		print(cmd)
 		self._waitForFinished()
-
 
 	def runScript(self, scriptPath):
 		"""
 		Start a .imsf or .cs script to run an acquisition.
 		This command can be called only if no script is currently running.
 		The command blocks further commands execution until the script has finished running.
-		The script that was started can only be stopped in the IM gui, in the run tab.
+		The script that was started can only be stopped in the IM software, in the 'Run' tab.
 		"""
 		
 		if not (scriptPath.endswith(".imsf") or scriptPath.endswith(".cs")):
@@ -344,9 +344,11 @@ class IM(object):
 		
 		if not os.path.exists(scriptPath):
 			raise ValueError("Script file not existing : {}".format(scriptPath))
-			
+		
 		cmd = "RunScript({})".format(scriptPath)
 		self.sendCommand(cmd)
+		print(cmd)
+		print("Note : Running script cannot be stopped by tcpip, only via the IM software, in the 'Run' tab.")
 		self._waitForFinished()
 
 	def stopScript(self):
@@ -395,20 +397,25 @@ class IM(object):
 		
 		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
 		self._waitForFinished()
+		print("Updated camera settings.")
 	
 	def resetCamera(self):
 		"""Reset camera to full-size field of view (2048x2048 pixels) and no binning."""
 		self.setCamera(0,0,2048,2048)
 	
 	def setObjective(self, index):
-		"""Set the objective based on the index (1 to 4)."""
-		
+		"""
+		Set the objective based on the index (1 to 4).
+		Objective indexes are sorted with increasing magnification (ex : 1:2X, 4:20X).
+		"""
 		if index not in (1,2,3,4):
-			raise ValueError("Objective index must be in range [1,4].") 
+			raise ValueError("Objective index must be one of 1,2,3,4.") 
 		
-		self.sendCommand( "SetObjective({})".format(index) )
+		cmd =  "SetObjective({})".format(index)
+		self.sendCommand(cmd)
 		self._waitForFinished()
-
+		print(cmd)
+	
 	def _setImageFilenameAttribute(self, attribute, value):
 		"""
 		Update one of the filename attribute among :
