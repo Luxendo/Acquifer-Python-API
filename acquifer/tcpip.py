@@ -274,6 +274,7 @@ class IM(object):
 		
 		cmd = "GotoXY({:.3f}, {:.3f}, {})".format(x, y, goToMode)
 		self.sendCommand(cmd)
+		print(cmd)
 		self._waitForFinished()
 
 	def moveXYto(self, x, y):
@@ -306,6 +307,7 @@ class IM(object):
 		
 		cmd = "GotoZ({:.1f}, {})".format(z, goToMode)
 		self.sendCommand(cmd)
+		print(cmd)
 		self._waitForFinished()
 
 	def moveZto(self, z):
@@ -522,6 +524,7 @@ class IM(object):
 		offsetAF = 0 # if one wants to apply an offset, directly do it in the acquire command
 		
 		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn) )
+		print("Switched-on brightfield light-source - filter :{} - {}% - {}ms".format(detectionFilter, intensity, exposure))
 		self._waitForFinished()
 		
 	def setBrightFieldOff(self):
@@ -533,6 +536,7 @@ class IM(object):
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
+			print("Switched-off brightfield light-source.")
 			self._waitForFinished()
 		
 	def setFluoChannel(self, channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn=False):
@@ -573,6 +577,7 @@ class IM(object):
 		cmd = "SetFluoChannel({}, \"{}\", {}, {}, {}, {}, {})".format(channelNumber, lightSource, detectionFilter, intensity, exposure, offsetAF, lightConstantOn)
 		#print(cmd)
 		self.sendCommand(cmd)
+		print("Switched-on fluorescent light source - filter:{} - {}% - {}ms".format(detectionFilter, intensity, exposure))
 		self._waitForFinished()
 
 	def setFluoChannelOff(self):
@@ -584,6 +589,7 @@ class IM(object):
 		"""
 		if self.getMode() == "live":
 			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
+			print("Switch-off fluorescent light sources.")
 			self._waitForFinished()
 
 	def setLightSource(self, channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn = False):
@@ -648,7 +654,10 @@ class IM(object):
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective and camera settings.
 		
 		Images are named according to the IM filenaming convention, and saved in saveDirectory, or in the default acquisition directory if none is mentioned.
-		Use setWellID, setWellSubposition, setLoopIteration to update image-metadata used for filenaming before calling acquire.
+		Use setMetadata to update image-metadata used for filenaming before calling acquire.
+		
+		In live mode, this function first switch to script mode (needed for acquire commands) and switch back to live mode after acquisition.
+		First call setMode("script") to stay in script mode, and avoid switching back and forth for successive acquire commands.
 		
 		Parameters
 		----------
@@ -860,6 +869,7 @@ if __name__ in ['__builtin__', '__main__']:
 
 		# Print the exception and continue the execution
 		except Exception as e:
+			print("Exception with ", function)
 			print(e)
 
 	
