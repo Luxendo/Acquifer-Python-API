@@ -55,7 +55,7 @@ def checkLightSource(lightSource):
 
 def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn):
 	"""
-	Utility function to heck the validity of parameters for the setBrightfield and setFluoChannel functions.
+	Utility function to check the validity of parameters for the setBrightfield and setFluoChannel functions.
 	Raise a ValueError if there is an issue with any of the parameters.
 	"""
 	if not isPositiveInteger(channelNumber):
@@ -69,6 +69,20 @@ def checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, 
 		
 	checkIntensity(intensity)
 	checkExposure(exposure)
+
+def checkZstackParameters(zStackCenter, nSlices, zStepSize):
+	"""
+	Check the validity of parameters for command involving z-stack (acquire/AF).
+	Raise a ValueError if there is an issue with any of the parameters.
+	"""
+	if not isPositiveInteger(nSlices):
+		raise ValueError("Number of slice must be a strictly positive integer.")
+	
+	if not isNumber(zStackCenter) or zStackCenter < 0 :
+		raise ValueError("zStackCenter must be a positive number.")
+	
+	if not isNumber(zStepSize) or zStepSize < 0 :
+		raise ValueError("zStepSize must be a positive number.")
 
 
 class IM(object):
@@ -569,6 +583,7 @@ class IM(object):
 		# check parameters type and value
 		checkLightSource(lightSource)
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
+		checkZstackParameters(zStackCenter, nSlices, zStepSize)
 		
 		mode0 = self.getMode() # if we want to go back to live mode
 		
