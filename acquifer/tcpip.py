@@ -675,7 +675,7 @@ class IM(object):
 			self.sendCommand("SettingModeOn()")
 		
 		elif mode == "settingoff":
-			self.sendCommand("SettingModeOn()")
+			self.sendCommand("SettingModeOff()")
 		
 		else:
 			raise ValueError("Mode can be either 'script', 'live', 'settingOn', 'settingOff'.")
