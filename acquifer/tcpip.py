@@ -409,35 +409,51 @@ class IM(object):
 		self.sendCommand( "SetObjective({})".format(index) )
 		self._waitForFinished()
 
-	def _setImageFilenameAttribute(self, prefix, value):
+	def _setImageFilenameAttribute(self, attribute, value):
+		"""
+		Update one of the filename attribute among :
+			- WE : well number
+			- PO : subposition
+			- LO : timepoint/loop iteration
+			- CO : channel number (COlor).
+			- Coordinate : the well id (ex: "A001" )
+		"""
+		listAttribute = ("WE", "PO", "LO", "CO", "Coordinate") # Coordinate is the wellID
+		if not (attribute in listAttribute ):
+			raise ValueError("attribute must be one of " + listAttribute)
 		
-		listPrefix = ("WE", "PO", "LO", "CO", "Coordinate") # Coordinate is the wellID
-		if not (prefix in listPrefix ):
-			raise ValueError("Prefix must be one of " + listPrefix)
+		if attribute == "WE" and ( not isinstance(value, int) or value < 1 ):
+			raise ValueError("Well number must be a strictly positive integer.""")
 		
-		if (prefix == "PO" and value > 99):
-			raise ValueError("Subpositions are limited to max 99 to have a constant filename length.")
+		if (attribute == "PO" and 
+			( not isinstance(value, int) or value < 1 or value > 99 ) ):
+			raise ValueError("Subpositions must be in range [1;99].")
+			# The PO tag should only have 2 digit t have a fixed filename length.
 		
-		if (prefix == "LO" and value > 999):
-			raise ValueError("Timepoints are limited to max 999 to have a constant filename length.")
+		if (attribute == "LO" and 
+			(not isinstance(value, int) or value < 1 or value > 999) ):
+			raise ValueError("Timepoints must be in range [1;999].")
 		
-		if (prefix == "CO" and (value < 0 or value > 9) ):
+		if attribute == "CO" and (value < 0 or value > 9) :
 			raise ValueError("Channel index ('CO') must be in range [1,9].")
 		
-		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(prefix, value)
+		cmd = "SetImageFileNameAttribute(ImageFileNameAttribute.{}, {})".format(attribute, value)
 		#print(cmd)
 		self.sendCommand(cmd)
 		self._waitForFinished()
 
-	def setWellNumber(self, number):
+	def setMetadata(self, wellId, wellNumber, subposition=1, timepoint=1):
+		"""Update multiple metadata at once, used to name image files for the next acquisition(s)."""
+		self.setMetadataWellId(wellId)
+		self.setMetadataWellNumber(wellNumber)
+		self.setMetadataSubposition(subposition)
+		self.setMetadataTimepoint(timepoint)
+
+	def setMetadataWellNumber(self, number):
 		"""Update well number used to name image files for the next acquisitions (WE tag)."""
-		
-		if not isinstance(number, int) or number < 1:
-			raise ValueError("Well number must be a strictly positive integer.""")
-		
 		self._setImageFilenameAttribute("WE", number)
 
-	def setWellId(self, wellID, leadingChar = "-"):
+	def setMetadataWellId(self, wellID, leadingChar = "-"):
 		"""
 		Update the well ID (ex: "A001"), used to name the image files for the next acquisitions.
 		The well ID must start with a letter.
@@ -450,7 +466,7 @@ class IM(object):
 		"""
 		
 		if not isinstance(wellID, str):
-			raise ValueError("WellID must be a string ex: 'A001'.")
+			raise TypeError("WellID must be a string ex: 'A001'.")
 		
 		if len(wellID) != 4 : 
 			raise ValueError("WellId should be a 4-character long string to assure compatibility with the acquifer software suite. Ex : 'A001'")
@@ -460,20 +476,12 @@ class IM(object):
 		
 		self._setImageFilenameAttribute("Coordinate", leadingChar + wellID)
 
-	def setSubposition(self, subposition):
+	def setMetadataSubposition(self, subposition):
 		"""Update the well subposition index (within a given well), used to name the image files for the next acquisitions (PO tag)."""
-		
-		if not isinstance(subposition, int) or subposition < 1:
-			raise ValueError("Subposition must be a strictly positive integer.""")
-		
 		self._setImageFilenameAttribute("PO", subposition)
 
-	def setTimepoint(self, timepoint):
+	def setMetadataTimepoint(self, timepoint):
 		"""Update the timepoint (or loop iteration) index, used to name the image files for the next acquisitions (LO tag)."""
-
-		if not isinstance(timepoint, int) or timepoint < 1:
-			raise ValueError("Timepoint must be a strictly positive integer.""")
-		
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 
 	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, lightConstantOn=False):
