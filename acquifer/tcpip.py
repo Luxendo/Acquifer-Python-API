@@ -719,7 +719,7 @@ class IM(object):
 		
 		# In live mode, switch-off light and exit setting mode
 		if mode == "live":
-			self.setLightSourceOff()
+			self.setLightSourceOff(lightSource)
 			self.setMode("settingOff")
 		
 		return zFocus
