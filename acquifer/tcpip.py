@@ -257,24 +257,69 @@ class IM(object):
 		"""Return the current objective z-axis position in µm."""
 		return self._getFloatValue("GetZPosition()")
 
-	def goToXY(self,x,y):
+	def _moveXY(self, x, y, mode="absolute"):
+		"""
+		Move XY-position to an absolute X,Y position (mode=absolute), 
+		or increment the position by a given step (mode=relative).
+		This function blocks until the position is reached.
+		"""
+		if mode == "absolute":
+			goToMode = "GotoMode.Abs"
+		
+		elif mode == "relative":
+			goToMode = "GotoMode.Rel"
+		
+		else :
+			raise ValueError("mode is 'absolute' or 'relative'.")
+		
+		cmd = "GotoXY({:.3f}, {:.3f}, {})".format(x, y, goToMode)
+		self.sendCommand(cmd)
+		self._waitForFinished()
+
+	def moveXYto(self, x, y):
 		"""
 		Move to position x,y in mm, with 0.001 decimal precision.
 		This commands blocks code execution until the position is reached.
 		"""
-		cmd = "GotoXY({:.3f},{:.3f})".format(x,y) # force max 3 decimal positions
+		if (x<0 or y<0):
+			raise ValueError("x,y positions must be positive.")
+		
+		self._moveXY(x,y)
+
+	def moveXYby(self, xStep, yStep):
+		"""Increment/Decrement the x, y position by a given step in mm, with 0.001 decimal precision."""
+		self._moveXY(xStep, yStep, mode = "relative")
+
+	def _moveZ(self, z, mode="absolute"):
+		"""
+		Move the Z-position to an absolute axis position (mode=absolute, default),
+		or increment/decrement the Z-position (mode=relative).
+		"""
+		if mode == "absolute":
+			goToMode = "GotoMode.Abs"
+		
+		elif mode == "relative":
+			goToMode = "GotoMode.Rel"
+		
+		else :
+			raise ValueError("mode is 'absolute' or 'relative'.")
+		
+		cmd = "GotoZ({:.1f}, {})".format(z, goToMode)
 		self.sendCommand(cmd)
 		self._waitForFinished()
 
-	def goToZ(self, z):
+	def moveZto(self, z):
 		"""
 		Move to Z-position in µm with 0.1 precision.
 		This commands blocks code execution until the position is reached.
 		"""
-		cmd = "GotoZ({:.1f})".format(z)
-		self.sendCommand(cmd)
-		self._waitForFinished()
+		if z<0:
+			raise ValueError("Z-position must be a positive value.")
+		self._moveZ(z)
 
+	def moveZby(self, zStep):
+		"""Increment/Decrement the Z-axis position by a given step size."""
+		self._moveZ(zStep, mode = "relative")
 
 	def goToXYZ(self,x,y,z):
 		"""
