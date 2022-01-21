@@ -682,28 +682,47 @@ class IM(object):
 		
 		self._waitForFinished()
 	
-	def runSoftwareAutofocus(self, zStackCenter, nSlices, zStepSize):
+	def runSoftwareAutofocus(self, 
+							  lightSource, 
+							  detectionFilter, 
+							  intensity, 
+							  exposure, 
+							  zStackCenter,
+							  nSlices, 
+							  zStepSize, 
+							  lightConstantOn=False):
 		"""
-		Run a software autofocus with current channel and objective settings.
-		Return the Z-position of the focused slice.
-		If no channel is currently active the autofocus returns the zStackCenter value.
-		The focused planed is chosen as the most focused slice from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
+		Run a software autofocus with a custom channel and current objective and camera settings.
+		Return the Z-position of the most focused slice, from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
+		
 		zStackCenter : centre of the stack, position in µm with 0.1 precision.
 		zStepSize    : distance between slices of the stack, in µm with 0.1 precision.
 		"""
 		
-		if not isPositiveInteger(nSlices):
-			raise ValueError("Number of slice must be a strictly positive integer.")
+		# check parameters type and value
+		checkLightSource(lightSource)
+		channelNumber = 1 # not important for the autofocus, no filename is saved
+		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
+		checkZstackParameters(zStackCenter, nSlices, zStepSize )
 		
-		if not isNumber(zStackCenter) or zStackCenter < 0 :
-			raise ValueError("zStackCenter must be a positive number.")
+		mode = self.getMode()
 		
-		if not isNumber(zStepSize) or zStepSize < 0 :
-			raise ValueError("zStepSize must be a positive number.")
+		if mode == "live":
+			self.setMode("settingOn") # in live mode, setting must be on
 		
+		# Switch-on light
+		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
+		
+		# Send autofocus command and read feedback
 		cmd = "SoftwareAutofocus({:.1f}, {}, {:.1f})".format(zStackCenter, nSlices, zStepSize)
+		zFocus = self._getFloatValue(cmd)
 		
-		return self._getFloatValue(cmd)
+		# In live mode, switch-off light and exit setting mode
+		if mode == "live":
+			self.setLightSourceOff()
+			self.setMode("settingOff")
+		
+		return zFocus
 
 def testRunScript(im):
 	im.runScript("C:\\Users\\Administrator\\Desktop\\Laurent\\laurent_test_tcpip.imsf")
