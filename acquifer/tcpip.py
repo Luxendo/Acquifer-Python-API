@@ -289,9 +289,26 @@ class IM(object):
 
 	def setCamera(self, x, y, width, height, binning=1):
 		"""
-		Set acquisition parameters of the camera (binning and/or acquisition-ROI).
+		Set acquisition parameters of the camera (binning and/or rectangular Region Of Interest for the acquisition).
 		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip).
 		Exposure time are defined for each channel using the setBrightfield or setFluo commands.
+
+		Parameters
+		----------
+		x : int
+			Horizontal coordinate of the top left corner of the rectangular region of interest, in the coordinate system of the camera sensor (when no binning).
+		
+		y : int
+			Vertical coordinate of the top left corner of the rectangular region of interest, in the coordinate system of the camera sensor (when no binning).
+		
+		width : int
+			Width of the rectangular region of interest, in the coordinate system of the camera sensor (when no binning).
+		
+		height : int
+			Height of the rectangular region of interest, in the coordinate system of the camera sensor (when no binning).
+		
+		binning : int, optional
+			Binning factor for width/height. One of 1,2,4 The default is 1 (no binning).
 		"""
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
