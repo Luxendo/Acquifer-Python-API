@@ -275,7 +275,10 @@ class IM(object):
 		cmd = "GotoXY({:.3f}, {:.3f}, {})".format(x, y, goToMode)
 		self.sendCommand(cmd)
 		print(cmd)
-		self._waitForFinished()
+		
+		# Feedback
+		if self._getFeedback() == "out of range":
+			raise ValueError("X,Y position out of range.")
 
 	def moveXYto(self, x, y):
 		"""
