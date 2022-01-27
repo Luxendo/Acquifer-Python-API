@@ -774,7 +774,9 @@ class IM(object):
 							  zStackCenter,
 							  nSlices, 
 							  zStepSize, 
-							  lightConstantOn=False):
+							  lightConstantOn=False,
+							  cameraROI=None,
+							  resetCameraROI=True):
 		"""
 		Run a software autofocus with a custom channel and current objective and camera settings.
 		Return the Z-position of the most focused slice, from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
@@ -782,7 +784,6 @@ class IM(object):
 		zStackCenter : centre of the stack, position in µm with 0.1 precision.
 		zStepSize    : distance between slices of the stack, in µm with 0.1 precision.
 		"""
-		
 		# check parameters type and value
 		checkLightSource(lightSource)
 		channelNumber = 1 # not important for the autofocus, no filename is saved
@@ -797,10 +798,23 @@ class IM(object):
 		# Switch-on light
 		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
 		
+		# Check if ROI for the autofocus
+		if cameraROI:
+			
+			if not isinstance(cameraROI, (tuple, list)) or not len(cameraROI) in (4,5):
+				raise ValueError("CameraROI should be a tuple/list (x,y,width,height) or (x,y,width,height,binning.")
+			
+			binning = 1 if len(cameraROI) == 4 else cameraROI[4]
+			self.setCamera(**cameraROI, binning=binning)
+		
 		# Send autofocus command and read feedback
 		cmd = "SoftwareAutofocus({:.1f}, {}, {:.1f})".format(zStackCenter, nSlices, zStepSize)
 		print(cmd)
 		zFocus = self._getFloatValue(cmd)
+		
+		# Reset camera if needed
+		if cameraROI and resetCameraROI:
+			self.resetCamera()
 		
 		# In live mode, switch-off light and exit setting mode
 		if mode == "live":
