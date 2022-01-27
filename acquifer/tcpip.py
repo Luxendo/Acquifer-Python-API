@@ -257,6 +257,11 @@ class IM(object):
 		"""Return the current objective z-axis position in µm."""
 		return self._getFloatValue("GetZPosition()")
 
+	def log(self, message):
+		"""Log a message to display in the imgui log."""
+		self.sendCommand("Log({})".format(message))
+		self._waitForFinished()
+
 	def _moveXY(self, x, y, mode="absolute"):
 		"""
 		Move XY-position to an absolute X,Y position (mode=absolute), 
