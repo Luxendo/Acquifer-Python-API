@@ -425,7 +425,17 @@ class IM(object):
 		self.sendCommand(cmd)
 		self._waitForFinished()
 		print(cmd)
-	
+
+	def setDefaultProjectFolder(self, folder):
+		"""
+		Set the default project folder. Images will be saved in unique subdirectories within this parent folder.
+		Currently this should be called in script mode otherwise it's overwritten by the value in the GUI when swtching to script mode.'
+		"""
+		cmd = "SetDefaultProjectFolder(@\"{}\")".format(folder)
+		self.sendCommand(cmd)
+		self._waitForFinished()
+		print(cmd)
+
 	def _setImageFilenameAttribute(self, attribute, value):
 		"""
 		Update one of the filename attribute among :
