@@ -431,7 +431,18 @@ class IM(object):
 		Set the default project folder. Images will be saved in unique subdirectories within this parent folder.
 		Currently this should be called in script mode otherwise it's overwritten by the value in the GUI when swtching to script mode.'
 		"""
-		cmd = "SetDefaultProjectFolder(@\"{}\")".format(folder)
+		if not isinstance(folder ,str):
+			raise TypeError("Folder must be a string.")
+		
+		cmd = "SetDefaultProjectFolder(\"{}\")".format(folder)
+		#self.cmd = cmd # this was just to inspect the sent command without having a print version but really the string object
+		self.sendCommand(cmd)
+		self._waitForFinished()
+		print(cmd)
+
+	def setPlateId(self, plateId):
+		"""Set the plateId. Images will be saved within a unique-name sub-directory "timestamp_plateID" within the Project directory."""
+		cmd = "SetPlateId(\"{}\")".format(plateId)
 		self.sendCommand(cmd)
 		self._waitForFinished()
 		print(cmd)
