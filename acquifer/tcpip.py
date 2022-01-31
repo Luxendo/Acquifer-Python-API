@@ -430,7 +430,7 @@ class IM(object):
 	def setDefaultProjectFolder(self, folder):
 		r"""
 		Set the default project folder, used when no path is specified for the acquire command. 
-		Use \\ delimiter or raw strings with single \ delimiter ex: r"a\b".
+		Use double-backslash \\, single forward slash or raw strings with single backslash \ ex: r"a\b" as delimiter between path elements.
 		Images will be saved in subfolders of this default project folder, in unique subfolders named with a timestamp, followed by the PlateId.
 		i.e DefaultProjectFolder > timestamp_PlateId
 		"""
@@ -746,6 +746,9 @@ class IM(object):
 		
 		saveDirectory : string, default=""
 			Custom directory where the images should be saved. 
+			
+			Use double-backslash \\, single forward slash or raw strings with single backslash \ ex: r"a\b" as delimiter between path elements.
+			
 			If not specified the images are saved within the default project directory, in a subdirectory named with a unique timestamp and the default plateID.
 			Use setDefaultProjectFolder and setPlateId to define the default values for these fields.
 		"""
