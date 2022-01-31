@@ -497,6 +497,7 @@ class IM(object):
 	def setMetadataWellNumber(self, number):
 		"""Update well number used to name image files for the next acquisitions (WE tag)."""
 		self._setImageFilenameAttribute("WE", number)
+		print("Set metadata well number - WE:" + str(number))
 
 	def setMetadataWellId(self, wellID, leadingChar = "-"):
 		"""
@@ -520,14 +521,18 @@ class IM(object):
 			raise ValueError("WellID must start with a letter, example of well ID 'A001'.")
 		
 		self._setImageFilenameAttribute("Coordinate", leadingChar + wellID)
+		print("Set metadata wellID:" + wellID)
 
 	def setMetadataSubposition(self, subposition):
 		"""Update the well subposition index (within a given well), used to name the image files for the next acquisitions (PO tag)."""
 		self._setImageFilenameAttribute("PO", subposition)
+		print("Set metadata subposition - PO:" + str(subposition))
 
 	def setMetadataTimepoint(self, timepoint):
 		"""Update the timepoint (or loop iteration) index, used to name the image files for the next acquisitions (LO tag)."""
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
+		print("Set metadata timepoint - LO:" + str(timepoint))
+
 
 	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
@@ -560,7 +565,7 @@ class IM(object):
 		offsetAF = 0 # if one wants to apply an offset, directly do it in the acquire command
 		
 		self.sendCommand("SetBrightField({}, {}, {}, {}, {}, {})".format(channelNumber, detectionFilter, intensity, exposure, offsetAF, lightConstantOn) )
-		print("Switched-on brightfield light-source - filter :{} - {}% - {}ms".format(detectionFilter, intensity, exposure))
+		print("Switched-on brightfield light-source - filter:{} - {}% - {}ms".format(detectionFilter, intensity, exposure))
 		self._waitForFinished()
 		
 	def setBrightFieldOff(self):
@@ -695,6 +700,8 @@ class IM(object):
 		In live mode, this function first switch to script mode (needed for acquire commands) and switch back to live mode after acquisition.
 		First call setMode("script") to stay in script mode, and avoid switching back and forth for successive acquire commands.
 		
+		Note : different camera settings can be used between autofocus and acquisition, use setCamera before the respective commands.
+		
 		Parameters
 		----------
 		channelNumber : int (>0)
@@ -716,8 +723,7 @@ class IM(object):
 			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
 		
 		exposure : int
-			exposure time in ms, used by the camera when imaging/previewing this channel.
-			In live mode, a value of 0 will freeze the preview image.
+			exposure time in ms.
 		
 		zStackCenter : float
 			center position of the Z-stack in µm, with 0.1 precision.
@@ -736,6 +742,11 @@ class IM(object):
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
 			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
+		
+		saveDirectory : string, default=""
+			Custom directory where the images should be saved. 
+			If not specified the images are saved within the default project directory, in a subdirectory named with a unique timestamp and the default plateID.
+			Use setDefaultProjectFolder and setPlateId to define the default values for these fields.
 		"""
 		# This implementation of acquire always switch to script mode(if not the case already) 
 		# and systematically set the channel before each acquire command
@@ -747,9 +758,9 @@ class IM(object):
 		checkZstackParameters(zStackCenter, nSlices, zStepSize)
 		
 		if saveDirectory:
-			cmd = "Acquire({},{:.1f},{:.1f},{})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
+			cmd = "Acquire({}, {:.1f}, {:.1f}, {})".format(nSlices, zStepSize, zStackCenter, saveDirectory)
 		else:
-			cmd = "Acquire({},{:.1f},{:.1f})".format(nSlices, zStepSize, zStackCenter)
+			cmd = "Acquire({}, {:.1f}, {:.1f})".format(nSlices, zStepSize, zStackCenter)
 		
 		print(cmd) # Should appear as top-level command before subcommands are called within Acquire
 		
@@ -801,7 +812,7 @@ class IM(object):
 			raise ValueError("Mode can be either 'script' or 'live'.")
 		
 		self._waitForFinished()
-	
+
 	def runSoftwareAutoFocus(self, 
 							  lightSource, 
 							  detectionFilter, 
@@ -813,12 +824,53 @@ class IM(object):
 							  lightConstantOn=False):
 		"""
 		Run a software autofocus with a custom channel and current objective and camera settings.
-		Return the Z-position of the most focused slice, from a stack centred on a given Z-position, with nSlices each separated by zStepSize.
+		Return the Z-position of the most focused slice, within a stack centred on a given Z-position, with nSlices each separated by zStepSize.
 		This function works with both 'live' and 'script' modes.
-		zStackCenter : centre of the stack, position in µm with 0.1 precision.
-		zStepSize    : distance between slices of the stack, in µm with 0.1 precision.
-		"""
+		NOTE : Different camera settings can be used between the autofocus and the acquisition, use setCamera before each command respectively.
 		
+		Parameters
+		----------
+		lightSource : string
+			light-source used for the autofocus.
+			
+			For brightfield, it should be 'brightfield' or 'bf' (not case-sensitive)
+			
+			For fluorecent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
+			Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources.
+		
+		detectionFilter : int (between 1 and 4)
+			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+		
+		intensity : int between 0 and 100
+			relative intensity for the light-source(s).
+			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
+		
+		exposure : int
+			exposure time in ms
+		
+		zStackCenter : float
+			center position of the Z-stack in µm, with 0.1 precision.
+		
+		nSlices : int
+			Number of slice composing the stack.
+			
+			For odd number of slices, the center slice is acquired at Z-position zStackCenter and (nSlices-1)/2 are acquired above and below this center slice.
+			
+			For even number of slices, nSlices/2 slices are acquired above and below the center position. No images is acquired for the center position.
+		
+		zStepSize : float
+			distance between slices in µm with 0.1 precision
+		
+		lightConstantOn : bool
+			if true, the light is constantly on (only during the acquisition in script mode)
+			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
+		
+		Returns
+		-------
+		zFocus : float
+			The position of the most focused slice within the stack, in µm with 0.1 precision.
+
+		"""
 		# check parameters type and value
 		checkLightSource(lightSource)
 		channelNumber = 1 # not important for the autofocus, no filename is saved
@@ -837,6 +889,7 @@ class IM(object):
 		cmd = "SoftwareAutofocus({:.1f}, {}, {:.1f})".format(zStackCenter, nSlices, zStepSize)
 		print(cmd)
 		zFocus = self._getFloatValue(cmd)
+		print("Z-focus = {} µm".format(zFocus))
 		
 		# In live mode, switch-off light and exit setting mode
 		if mode == "live":
