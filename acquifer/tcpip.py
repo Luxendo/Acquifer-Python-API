@@ -427,8 +427,9 @@ class IM(object):
 		print(cmd)
 
 	def setDefaultProjectFolder(self, folder):
-		"""
+		r"""
 		Set the default project folder, used when no path is specified for the acquire command. 
+		Use \\ delimiter or raw strings with single \ delimiter ex: r"a\b".
 		Images will be saved in subfolders of this default project folder, in unique subfolders named with a timestamp, followed by the PlateId.
 		i.e DefaultProjectFolder > timestamp_PlateId
 		"""
