@@ -6,24 +6,30 @@ from acquifer import tcpip
 
 #%% Open tcpip communication and switch to script mode
 im = tcpip.IM()
+im.setDefaultProjectFolder(r"C:\Users\Administrator\Desktop\Laurent\test")
+im.setPlateId("pythonTest")
+#im.setPlateId("?wfw\#:")
 
+#%% Run autofocus on Brightfield
+im.setCamera(256, 256, 512, 512) # Use ROI for autofocus
+zFocus = im.runSoftwareAutoFocus("bf", 2, 50, 100, 200, 10, 10)
 
 #%% Acquire an image
-print("Set Metadata and start acquisition.")
+#print("Set Metadata")
 
-im.setSubposition(3)
+im.setMetadataSubposition(3)
 #im.setBrightField(6, 2, 50, 100)
-im.setFluoChannel(1, "010000", 3, 40, 120)
+#im.setFluoChannel(1, "010000", 3, 40, 120)
+#im.setFluoChannel(1, "001000", 3, 80, 120)
 
-im._setImageFilenameAttribute("CO", 1) # overwrite channel number define when imaging
-im.setSubposition(10)
-im.setWellNumber(3)
-im.setWellId("B001")
-im.setTimepoint(2)
+#im._setImageFilenameAttribute("CO", 1) # overwrite channel number define when imaging
+im.setMetadataWellNumber(3)
+im.setMetadataWellId("B001")
+im.setMetadataTimepoint(2)
 
-im.acquire(1, "BF", 4, 50, 100, 200, 10, 5, False, r"C:\Users\Administrator\Desktop\Laurent")
+im.resetCamera()
+im.acquire(1, "001000", 3, 80, 120, zFocus, 10, 5)
 
 
 #%% Close socket at the end
-print("\nClose connection port, go back to live mode.")
 im.closeSocket()
