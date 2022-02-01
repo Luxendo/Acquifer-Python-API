@@ -902,9 +902,10 @@ class IM(object):
 		
 		return zFocus
 
-	def runHardwareAutoFocus(self, objective, detectionFilter, zCenter, offset = 0) :
+	def runHardwareAutoFocus(self, objective, detectionFilter, zStart) :
 		"""
 		Run a hardware autofocus and return the Z-position found.
+		The hardware autofocus uses a dedicated laser for focusing.
 		
 		Parameters
 		----------
@@ -915,11 +916,8 @@ class IM(object):
 		detectionFilter : int
 			Positional index of the detection filter used for the autofocus.
 		
-		zCenter : float
+		zStart : float
 			Starting position for the autofocus search.
-			
-		offset : float, optional
-			The default is 0.
 		
 		Returns
 		-------
@@ -932,13 +930,14 @@ class IM(object):
 		if not detectionFilter in (1,2,3,4) : 
 			raise ValueError("Filter index must be one of 1,2,3,4.")
 		
-		if not isNumber(zCenter) or zCenter < 0:
-			raise ValueError("zCenter must be a positive number.")
-		
+		if not isNumber(zStart) or zStart < 0:
+			raise ValueError("zStart must be a positive number.")
+		"""
 		if not isNumber(offset) or offset < 0:
 			raise ValueError("Offset must be a positive number.")
-		
-		cmd = "HardwareAutofocus({:.1f}, {:.1f}, {}, {})".format(zCenter, offset, objective, detectionFilter)
+		"""
+		offset = 0 # offset to returned zValue can be added manually in the code
+		cmd = "HardwareAutofocus({:.1f}, {:.1f}, {}, {})".format(zStart, offset, objective, detectionFilter)
 		return self._getFloatValue(cmd)
 
 
