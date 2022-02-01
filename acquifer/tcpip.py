@@ -793,7 +793,11 @@ class IM(object):
 	def setMode(self, mode):
 		"""
 		Set the acquisition mode to either "live" or "script".
-		This function first check the current mode before changing it if needed.
+		This function first checks the current mode before changing it if needed.
+		
+		In live mode, interaction with the GUI are possible.
+		In script mode, interaction with the GUI are not possible. It is used for acquisition with the camera.
+		For successive camera acquisitions, switching to script mode is recommended to avoid switching back and forth between script and live mode. 
 		"""
 		if not isinstance(mode, str):
 			raise TypeError("Mode should be either 'script' or 'live'.")
