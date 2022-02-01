@@ -6,8 +6,12 @@ from acquifer import tcpip
 
 #%% Open tcpip communication and switch to script mode
 im = tcpip.IM()
-im.setDefaultProjectFolder(r"C:\Users\Administrator\Desktop\Laurent\test")
-im.setPlateId("pythonTest")
+
+mode = "script"
+#mode = "live"
+im.setMode(mode)
+im.setDefaultProjectFolder(r"C:\Users\Administrator\Desktop\Laurent\test2")
+im.setPlateId("test_{}_mode".format(mode))
 #im.setPlateId("?wfw\#:")
 
 #%% Run autofocus on Brightfield
