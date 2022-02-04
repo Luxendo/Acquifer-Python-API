@@ -332,7 +332,7 @@ class IM(object):
 		"""Increment/Decrement the Z-axis position by a given step size."""
 		self._moveZ(zStep, mode = "relative")
 
-	def goToXYZ(self,x,y,z):
+	def moveXYZto(self, x, y, z):
 		"""
 		Move to x,y position (mm, 0.001 precision) and z-position in µm (0.1 precision).
 		This commands blocks code execution until the position is reached.
