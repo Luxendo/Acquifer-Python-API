@@ -2,11 +2,12 @@
 Test the TCPIP port of the IM
 Make sure to set the active directory to the root of the repo using cd in the command prompt
 """
+#%% Import and open tcpip communication
 from acquifer import tcpip
 
-#%% Open tcpip communication and switch to script mode
 im = tcpip.IM()
 
+#%% Set project folder and plate ID
 mode = "script"
 #mode = "live"
 im.setMode(mode)
