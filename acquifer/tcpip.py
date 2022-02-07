@@ -256,7 +256,7 @@ class IM(object):
 
 	def getPositionZ(self):
 		"""Return the current objective z-axis position in µm."""
-		return self._getFloatValue("GetZPosition()")
+		return round(self._getFloatValue("GetZPosition()"), 1) # keep 0.1 precision only, although returned with 3-digit position (but alternating)
 
 	def log(self, message):
 		"""Log a message to display in the imgui log."""
