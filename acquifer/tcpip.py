@@ -413,10 +413,10 @@ class IM(object):
 		
 		# Check that x+width, y+height < 2048
 		if (x + width) > 2048 :
-			raise ValueError("x + width exceeds the maximal value of 2048.")
+			raise ValueError("x + width exceeds the maximal value of 2048 for the camera sensor area.")
 		
 		if (y + height) > 2048 :
-			raise ValueError("y + height exceeds the maximal value of 2048.")
+			raise ValueError("y + height exceeds the maximal value of 2048 for the camera sensor area.")
 		
 		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
 		self._waitForFinished()
