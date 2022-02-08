@@ -128,6 +128,11 @@ class IM(object):
 		self._socket.sendall(bytearray(stringCommand, "ascii"))
 		time.sleep(0.05) # wait 50ms, before sending another command (which is usually whats done next, e.g. with _getFeedback
 
+	def checkLidClosed(self):
+		"""Throw an exception if the lid is opened.""" 
+		if self.isLidOpened():
+			raise Exception("Lid is opened !")
+
 	def _getFeedback(self, nbytes=256):
 		"""
 		Tries to read at max nbytes back from IM and convert to a string.
@@ -269,6 +274,8 @@ class IM(object):
 		or increment the position by a given step (mode=relative).
 		This function blocks until the position is reached.
 		"""
+		self.checkLidClosed()
+		
 		if mode == "absolute":
 			goToMode = "GotoMode.Abs"
 		
@@ -305,6 +312,8 @@ class IM(object):
 		Move the Z-position to an absolute axis position (mode=absolute, default),
 		or increment/decrement the Z-position (mode=relative).
 		"""
+		self.checkLidClosed()
+		
 		if mode == "absolute":
 			goToMode = "GotoMode.Abs"
 		
@@ -349,6 +358,7 @@ class IM(object):
 		The command blocks further commands execution until the script has finished running.
 		The script that was started can only be stopped in the IM software, in the 'Run' tab.
 		"""
+		self.checkLidClosed()
 		
 		if not (scriptPath.endswith(".imsf") or scriptPath.endswith(".cs")):
 			raise ValueError("Script must be a .imsf or .cs file.")
@@ -390,6 +400,8 @@ class IM(object):
 		binning : int, optional
 			Binning factor for width/height. One of 1,2,4 The default is 1 (no binning).
 		"""
+		self.checkLidClosed()
+		
 		if binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
 		
@@ -423,6 +435,8 @@ class IM(object):
 		Set the objective based on the index (1 to 4).
 		Objective indexes are sorted with increasing magnification (ex : 1:2X, 4:20X).
 		"""
+		self.checkLidClosed()
+		
 		if index not in (1,2,3,4):
 			raise ValueError("Objective index must be one of 1,2,3,4.") 
 		
@@ -538,7 +552,6 @@ class IM(object):
 		self._setImageFilenameAttribute("LO", timepoint) # LO for LOOP
 		print("Set metadata timepoint - LO:" + str(timepoint))
 
-
 	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
 		Activate the brightfield light lightSource.
@@ -564,6 +577,7 @@ class IM(object):
 			if true, the light is constantly on (only during the acquisition in script mode)
 			if false, the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		"""
+		self.checkLidClosed()
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		
 		lightConstantOn = "true" if lightConstantOn else "false" # just making sure to use a lower case for true : python boolean is True
@@ -580,6 +594,8 @@ class IM(object):
 		In script mode this has no utility : on/off switching is synchronized with the camera acquisition.
 		This function thus first check if live mode is active.
 		"""
+		self.checkLidClosed()
+		
 		if self.getMode() == "live":
 			self.sendCommand("SetBrightField(1, 1, 0, 0, 0, false)") # any channel, filter should do, as long as intensity is 0
 			print("Switched-off brightfield light-source.")
@@ -614,6 +630,7 @@ class IM(object):
 			if true, the light is constantly on (only during the acquisition in script mode)
 			if false, the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		"""
+		self.checkLidClosed()
 		checkLightSource(lightSource)
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		
@@ -633,6 +650,8 @@ class IM(object):
 		This is effective in live mode only, in script mode on/off switching occurs automatically with the acquire commands.
 		This function thus first check if live mode is active.
 		"""
+		self.checkLidClosed()
+		
 		if self.getMode() == "live":
 			self.sendCommand("SetFluoChannel(1, \"111111\", 1, 0, 0, 0, false)")
 			print("Switch-off fluorescent light sources.")
@@ -759,6 +778,7 @@ class IM(object):
 		# This implementation of acquire always switch to script mode(if not the case already) 
 		# and systematically set the channel before each acquire command
 		# This is to prevent issue of not having set the channel while being in script mode
+		self.checkLidClosed()
 		
 		# check parameters type and value
 		checkLightSource(lightSource)
@@ -881,8 +901,9 @@ class IM(object):
 		-------
 		zFocus : float
 			The position of the most focused slice within the stack, in µm with 0.1 precision.
-
 		"""
+		self.checkLidClosed()
+		
 		# check parameters type and value
 		checkLightSource(lightSource)
 		channelNumber = 1 # not important for the autofocus, no filename is saved
@@ -932,6 +953,8 @@ class IM(object):
 		float
 			The Z-position found by the autofocus.
 		"""
+		self.checkLidClosed()
+		
 		if not objective in (1,2,3,4):
 			raise ValueError("Objective index should be one of 1,2,3,4.")
 		
