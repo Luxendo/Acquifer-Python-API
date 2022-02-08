@@ -369,7 +369,7 @@ class IM(object):
 
 	def setCamera(self, x, y, width, height, binning=1):
 		"""
-		Set acquisition parameters of the camera (binning and/or rectangular Region Of Interest for the acquisition).
+		Set acquisition parameters of the camera (binning and/or sensor region for the acquisition).
 		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip).
 		Exposure time are defined for each channel using the setBrightfield or setFluo commands.
 
@@ -409,7 +409,11 @@ class IM(object):
 		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
 		self._waitForFinished()
 		print("Updated camera settings.")
-	
+
+	def setCameraBinning(self, binning):
+		"""Set the binning factor for the camera. Also resets the camera sensor region to the full frame 2048x2048."""
+		self.setCamera(0, 0, 2048, 2048, binning)
+
 	def resetCamera(self):
 		"""Reset camera to full-size field of view (2048x2048 pixels) and no binning."""
 		self.setCamera(0,0,2048,2048)
