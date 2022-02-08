@@ -542,7 +542,7 @@ class IM(object):
 	def setBrightField(self, channelNumber, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
 		Activate the brightfield light lightSource.
-		In live mode, the resultng "channel" is directly switched on, and must be switched off using the setBrightFieldOff command.
+		In live mode, the resulting "channel" is directly switched on, and must be switched off using the setBrightFieldOff command.
 		In script mode, the "channel" is switched on with the next acquire commands, synchronously with the camera.
 
 		Parameters
@@ -551,10 +551,10 @@ class IM(object):
 			this value is used for the image file name (tag CO).
 		
 		detectionFilter : int (between 1 and 4)
-			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+			positional index of the detection filter (1 to 4), depending on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
-			intensity for the brightfield light lightSource.
+			intensity for the brightfield light-source.
 		
 		exposure : int
 			exposure time in ms, used by the camera when imaging/previewing this channel.
@@ -562,7 +562,7 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
+			if false, the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		"""
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		
@@ -587,7 +587,7 @@ class IM(object):
 		
 	def setFluoChannel(self, channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn=False):
 		"""
-		Activate one or multiple LED light sources for fluorecence imaging.
+		Activate one or multiple LED light sources for fluorescence imaging.
 		In live mode, the resulting "channel" is directly switched on, and must be switched off using the setFluoChannelOff command.
 		In script mode, the "channel" is switched on with the next acquire commands, synchronously with the camera.
 
@@ -600,10 +600,10 @@ class IM(object):
 			this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources..
 		
 		detectionFilter : int (between 1 and 4)
-			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+			positional index of the detection filter (1 to 4), depending on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
-			intensity for the LED fluorecent light lightSource(s).
+			intensity for the LED fluorescent light lightSource(s).
 			With multiple light sources, this is the power used for each of them.
 		
 		exposure : int
@@ -612,7 +612,7 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
+			if false, the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		"""
 		checkLightSource(lightSource)
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
@@ -628,9 +628,9 @@ class IM(object):
 
 	def setFluoChannelOff(self):
 		"""
-		Switch off all the LED light sources (fluorecence) by setting the intensities to 0%.
+		Switch off all the LED light sources (fluorescence) by setting the intensities to 0%.
 		This also freezes the image preview (exposure=0).
-		This is effective in live mode only, in scrit mode on/off switching occurs automatically with the acquire commands.
+		This is effective in live mode only, in script mode on/off switching occurs automatically with the acquire commands.
 		This function thus first check if live mode is active.
 		"""
 		if self.getMode() == "live":
@@ -652,15 +652,15 @@ class IM(object):
 			
 			For brightfield, it should be 'brightfield' or 'bf' (not case-sensitive)
 			
-			For fluorecent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
+			For fluorescent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
 			Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources.
 		
 		detectionFilter : int (between 1 and 4)
-			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+			positional index of the detection filter (1 to 4), depending on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
 			relative intensity for the light-source(s).
-			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
+			If multiple fluorescent light sources are activated, this is the intensity used for each of them.
 		
 		exposure : int
 			exposure time in ms, used by the camera when imaging/previewing this channel.
@@ -668,7 +668,7 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false (default), the light lightSource is synchronised with the camera exposure, and thus is blinking.
+			if false (default), the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		"""
 		if lightSource.lower() in ("brightfield", "bf") :
 			self.setBrightField(channelNumber, detectionFilter, intensity, exposure,  lightConstantOn)
@@ -717,15 +717,15 @@ class IM(object):
 			
 			For brightfield, it should be 'brightfield' or 'bf' (not case-sensitive)
 			
-			For fluorecent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
+			For fluorescent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
 			Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources.
 		
 		detectionFilter : int (between 1 and 4)
-			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+			positional index of the detection filter (1 to 4), depending on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
 			relative intensity for the light-source(s).
-			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
+			If multiple fluorescent light sources are activated, this is the intensity used for each of them.
 		
 		exposure : int
 			exposure time in ms.
@@ -746,7 +746,7 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
+			if false, the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		
 		saveDirectory : string, default=""
 			Custom directory where the images should be saved. 
@@ -847,15 +847,15 @@ class IM(object):
 			
 			For brightfield, it should be 'brightfield' or 'bf' (not case-sensitive)
 			
-			For fluorecent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
+			For fluorescent light sources, this should be a 6-character string of 0 and 1, corresponding to the LED light lightSource to activate. 
 			Ex : "010000" will activate the 2nd light lightSource, while 010001 will activate both the second and last light sources.
 		
 		detectionFilter : int (between 1 and 4)
-			positional index of the detection filter (1 to 4), depeneding on the filter, the overall image intensity varies.
+			positional index of the detection filter (1 to 4), depending on the filter, the overall image intensity varies.
 		
 		intensity : int between 0 and 100
 			relative intensity for the light-source(s).
-			If multiple fluorescent light srouces are activated, this is the intensity used for each of them.
+			If multiple fluorescent light sources are activated, this is the intensity used for each of them.
 		
 		exposure : int
 			exposure time in ms
@@ -875,7 +875,7 @@ class IM(object):
 		
 		lightConstantOn : bool
 			if true, the light is constantly on (only during the acquisition in script mode)
-			if false, the light lightSource is synchronised with the camera exposure, and thus is blinking.
+			if false, the light lightSource is synchronized with the camera exposure, and thus is blinking.
 		
 		Returns
 		-------
