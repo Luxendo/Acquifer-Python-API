@@ -37,4 +37,4 @@ im.acquire(1, "001000", 3, 80, 120, zFocus, 10, 5)
 
 
 #%% Close socket at the end
-im.closeSocket()
+im.closeConnection()

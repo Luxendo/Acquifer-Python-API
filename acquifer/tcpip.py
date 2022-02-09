@@ -103,19 +103,19 @@ class IM(object):
 		self._isConnected = True # only False once socket is closed
 		print("Connected to IM on port {}, in {} mode.".format(port, self.getMode()))
 
-	def closeSocket(self):
+	def closeConnection(self):
 		"""
-		Close the socket, making it available to other resources.
+		Close the socket connection, making it available to other resources.
 		After closing the socket, no commands can be sent anymore via this IM instance. 
 		This should be called at the end of external scripts.
 		It also switches back to 'live' mode in case the machine is in script mode, and switch off all channels.
 		"""
+		print("Closing connection with the IM - going to LIVE mode and switching off all light-sources.\nNOTE : no more commands can be sent via this IM object.")
 		self.setMode("live")
 		self.setBrightFieldOff()
 		self.setFluoChannelOff()
 		self._socket.close()
 		self._isConnected = False
-		print("Closed connection with IM.\nNOTE : no more commands can be sent via this IM object.")
 
 	def sendCommand(self, stringCommand):
 		"""
