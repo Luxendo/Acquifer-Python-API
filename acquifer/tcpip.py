@@ -706,8 +706,8 @@ class IM(object):
 		else:
 			self.setFluoChannelOff()
 	
-	def acquire(self, objective,
-					  channelNumber, 
+	def acquire(self, channelNumber,
+					  objective,
 					  lightSource, 
 					  detectionFilter, 
 					  intensity, 
