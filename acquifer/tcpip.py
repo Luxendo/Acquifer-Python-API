@@ -110,12 +110,14 @@ class IM(object):
 		This should be called at the end of external scripts.
 		It also switches back to 'live' mode in case the machine is in script mode, and switch off all channels.
 		"""
-		print("Closing connection with the IM - going to LIVE mode and switching off all light-sources.\nNOTE : no more commands can be sent via this IM object.")
+		print("Closing connection with the IM - going to LIVE mode, resetting camera and switching off all light-sources.")
 		self.setMode("live")
+		self.resetCamera()
 		self.setBrightFieldOff()
 		self.setFluoChannelOff()
 		self._socket.close()
 		self._isConnected = False
+		print("Closed connection : no more commands can be sent via this IM object.")
 
 	def sendCommand(self, stringCommand):
 		"""
