@@ -433,6 +433,7 @@ class IM(object):
 	def setObjective(self, index):
 		"""
 		Set the objective based on the index (1 to 4).
+		If the objective given as argument is the current objective, the command has no effect.
 		Objective indexes are sorted with increasing magnification (ex : 1:2X, 4:20X).
 		"""
 		self.checkLidClosed()
@@ -705,7 +706,8 @@ class IM(object):
 		else:
 			self.setFluoChannelOff()
 	
-	def acquire(self, channelNumber, 
+	def acquire(self, objective,
+					  channelNumber, 
 					  lightSource, 
 					  detectionFilter, 
 					  intensity, 
@@ -728,6 +730,10 @@ class IM(object):
 		
 		Parameters
 		----------
+		objective : int
+			Objective index used for acquisition, one of 1,2,3,4.
+			The indexes are almost always ordered by increasing objective magnification. 
+		
 		channelNumber : int (>0)
 			this value is used for the image file name (tag CO).
 		
@@ -793,8 +799,13 @@ class IM(object):
 		print(cmd) # Should appear as top-level command before subcommands are called within Acquire
 		
 		mode0 = self.getMode() # if we want to go back to live mode
-		self.setMode("script") # for acquire to work both channel and acquire needs to be run in script mode
+		self.setMode("script") # for acquire to work, needs to be in script mode
+		
+		# Set objective and light source AFTER switching to script mode
+		# switching to script mode reset objective and light source otherwise
+		self.setObjective(objective)
 		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
+		
 		self.sendCommand(cmd)  # send the acquire command
 		self._waitForFinished()
 		
@@ -822,6 +833,7 @@ class IM(object):
 		In live mode, interaction with the GUI are possible.
 		In script mode, interaction with the GUI are not possible. It is used for acquisition with the camera.
 		For successive camera acquisitions, switching to script mode is recommended to avoid switching back and forth between script and live mode. 
+		Switching to script mode also resets the current objective to the one at index 1, as well as the light source setting.
 		"""
 		if not isinstance(mode, str):
 			raise TypeError("Mode should be either 'script' or 'live'.")
@@ -846,6 +858,7 @@ class IM(object):
 		self._waitForFinished()
 
 	def runSoftwareAutoFocus(self, 
+							  objective,
 							  lightSource, 
 							  detectionFilter, 
 							  intensity, 
@@ -862,6 +875,10 @@ class IM(object):
 		
 		Parameters
 		----------
+		objective : int
+			Objective index used for autofocus, one of 1,2,3,4.
+			The indexes are almost always ordered by increasing objective magnification. 
+		
 		lightSource : string
 			light-source used for the autofocus.
 			
@@ -910,6 +927,8 @@ class IM(object):
 		checkChannelParameters(channelNumber, detectionFilter, intensity, exposure, lightConstantOn)
 		checkZstackParameters(zStackCenter, nSlices, zStepSize )
 		
+		self.setObjective(objective)
+
 		mode = self.getMode()
 		
 		if mode == "live":
