@@ -15,9 +15,11 @@ im.setDefaultProjectFolder(r"C:\Users\Administrator\Desktop\Laurent\test2")
 im.setPlateId("test_{}_mode".format(mode))
 #im.setPlateId("?wfw\#:")
 
+objectiveIndex = 2 # 2 = 4X
+
 #%% Run autofocus on Brightfield
 im.setCamera(256, 256, 512, 512) # Use ROI for autofocus
-zFocus = im.runSoftwareAutoFocus("bf", 2, 50, 100, 200, 10, 10)
+zFocus = im.runSoftwareAutoFocus(objectiveIndex, "bf", 2, 50, 100, 200, 10, 10)
 
 #%% Acquire an image
 #print("Set Metadata")
@@ -33,7 +35,7 @@ im.setMetadataWellId("B001")
 im.setMetadataTimepoint(2)
 
 im.resetCamera()
-im.acquire(1, "001000", 3, 80, 120, zFocus, 10, 5)
+im.acquire(1, objectiveIndex, "001000", 3, 80, 120, zFocus, 10, 5)
 
 
 #%% Close socket at the end
