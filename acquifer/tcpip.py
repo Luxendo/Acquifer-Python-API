@@ -438,11 +438,14 @@ class IM(object):
 		If the objective given as argument is the current objective, the command has no effect.
 		Objective indexes are sorted with increasing magnification (ex : 1:2X, 4:20X).
 		"""
-		self.checkLidClosed()
+		if index == self.getObjectiveIndex():
+			return # already the selected objective : avoid the objective from moving up/down again
 		
 		if index not in (1,2,3,4):
 			raise ValueError("Objective index must be one of 1,2,3,4.") 
 		
+		self.checkLidClosed()
+
 		cmd =  "SetObjective({})".format(index)
 		self.sendCommand(cmd)
 		self._waitForFinished()
