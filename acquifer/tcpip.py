@@ -211,19 +211,19 @@ class TcpIp(object):
 
 	def isLiveModeActive(self):
 		"""
-		Check if live mode is active, ie no script is running and tcpip commands can be sent.
+		Check if live mode is active, i.e no script is running and tcpip commands can be sent.
 		"""
 		return self._getBooleanValue("LiveModeActive()")
 
 	def isTemperatureRegulated(self):
 		return self._getBooleanValue("GetTemperatureRegulation()")
 	
-	def getTemperatureAmbiant(self):
-		"""Return ambiant temperature in celsius degrees."""
+	def getTemperatureAmbient(self):
+		"""Return ambient temperature in Celsius degrees."""
 		return self._getFloatValue("GetAmbientTemperature(TemperatureUnit.Celsius)")
 	
 	def getTemperatureSample(self):
-		"""Return the sample temperature in celsius degrees."""
+		"""Return the sample temperature in Celsius degrees."""
 		return self._getFloatValue("GetSampleTemperature(TemperatureUnit.Celsius)")
 
 	def getTemperatureTarget(self):
