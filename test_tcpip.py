@@ -5,7 +5,7 @@ Make sure to set the active directory to the root of the repo using cd in the co
 #%% Import and open tcpip communication
 from acquifer import tcpip
 
-im = tcpip.IM()
+im = tcpip.TcpIp()
 
 #%% Set project folder and plate ID
 mode = "script"

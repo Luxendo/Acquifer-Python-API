@@ -97,8 +97,8 @@ def checkZstackParameters(zStackCenter, nSlices, zStepSize):
 		raise ValueError("zStepSize must be a positive number.")
 
 
-class IM(object):
-	"""Object representing the IM from ACQUIFER defined with a list of methods to control it."""
+class TcpIp(object):
+	"""Object representing an active TcpIp connection to the Imaging Machine Control Software for remote control."""
 
 	def __init__(self, port=6200):
 		"""Initialize a TCP/IP socket for the exchange of commands."""
@@ -1015,7 +1015,7 @@ def testRunScript(im):
 if __name__ in ['__builtin__', '__main__']:
 
 	# Create an IM instance
-	myIM = IM()
+	myIM = TcpIp()
 
 	# Loop over functions, calling the getter/is methods first
 	for function in dir(myIM):
