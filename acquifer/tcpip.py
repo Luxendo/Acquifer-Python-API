@@ -40,9 +40,9 @@ def checkIntensity(intensity):
 		raise ValueError("Intensity must be in range [0-100].")
 
 def checkExposure(exposure):
-	"""Throw a ValueError if the exposure is not an positive integer value."""
-	if not isinstance(exposure, int) or exposure < 0 :
-		raise ValueError("Exposure must be a positive integer value.")
+	"""Throw a ValueError if the exposure is not a strictly positive integer value."""
+	if not isinstance(exposure, int) or exposure <= 0 :
+		raise ValueError("Exposure must be a strictly positive integer value.")
 
 def checkLightSource(lightSource):
 	
