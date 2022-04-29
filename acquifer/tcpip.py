@@ -162,7 +162,8 @@ class TcpIp(object):
 		"""
 		feedback = self._getFeedback()
 		if feedback != "finished":
-			raise Exception(feedback)
+			self.setMode("live")      # come back to live in case it was in script
+			raise Exception(feedback) # this also interrupts execution
 
 	def _getValueAsType(self, command, cast):
 		"""Send a command, get the feedback and cast it to the type provided by the cast function ex: int."""
