@@ -1,7 +1,19 @@
 """
-Test script for the TCPIP connection.
-Start the IM GUI software, deactivate block exernal connection (restart if that was not deactivated)
-Then run this script in Fiji (jython) or in a normal python interpreter
+IM control via TCP/IP
+Python API to control the IM via TcpIp
+
+This file defines the IM object, which represents a TcpIp connection to the IM control software.
+The connection is established upon creation of the IM object.
+
+Requirements :
+- an IM must be attached to the PC running the code
+- the IM must be powered-on, and the IM control software opened
+- this script must be either installed via pip, or put in the python sys.PATH so that it can be imported 
+
+from acquifer.tcpip import IM
+
+myIM = IM() # create the connection
+myIM.openLid() # example
 """
 
 import socket, time, os
