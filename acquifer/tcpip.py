@@ -798,6 +798,10 @@ class TcpIp(object):
 			
 			If not specified the images are saved within the default project directory, in a subdirectory named with a unique timestamp and the default plateID.
 			Use setDefaultProjectFolder and setPlateId to define the default values for these fields.
+		
+		Return
+		------
+		The path to the directory where the images were saved
 		"""
 		# This implementation of acquire always switch to script mode(if not the case already) 
 		# and systematically set the channel before each acquire command
@@ -825,11 +829,15 @@ class TcpIp(object):
 		self.setLightSource(channelNumber, lightSource, detectionFilter, intensity, exposure, lightConstantOn)
 		
 		self.sendCommand(cmd)  # send the acquire command
+		outDirectory = self._getFeedback()
+		
 		self._waitForFinished()
 		
 		# Go back to live mode if originally in live mode
 		if mode0 == "live":
 			self.setMode("live") 
+		
+		return outDirectory
 
 	def _setSettingMode(self, state):
 		"""
