@@ -15,8 +15,12 @@ from acquifer.tcpip import IM
 myIM = IM() # create the connection
 myIM.openLid() # example
 """
-
+from __future__ import annotations # needed to avoid having type hint as string
+from typing import TYPE_CHECKING   
 import socket, time, os
+
+if TYPE_CHECKING:
+	from . import WellPosition # needed to avoid circular imports : acquifer.py __init__ importing tcpip, and tcpip importing the init in return
 
 def isPositiveInteger(value):
 	"""Return false if the input is not a strictly positive >0 integer."""
@@ -317,7 +321,15 @@ class TcpIp(object):
 			raise ValueError("x,y positions must be positive.")
 		
 		self._moveXY(x,y)
-
+	
+	def moveXYtoWellPosition(self, wellPosition:WellPosition):
+		"""
+		Move the objective to pre-defined well position, and update well/subposition metadata.
+		"""
+		self.moveXYto(wellPosition.x, wellPosition.y)
+		self.setMetadataWellId(wellPosition.wellID)
+		self.setMetadataSubposition(wellPosition.subposition)
+	
 	def moveXYby(self, xStep, yStep):
 		"""Increment/Decrement the x, y position by a given step in mm, with 0.001 decimal precision."""
 		self._moveXY(xStep, yStep, mode = "relative")
