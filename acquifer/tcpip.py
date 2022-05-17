@@ -18,6 +18,7 @@ myIM.openLid() # example
 from __future__ import annotations # needed to avoid having type hint as string
 from typing import TYPE_CHECKING   
 import socket, time, os
+from . import utils # if we need to use utils
 
 if TYPE_CHECKING:
 	from . import WellPosition # needed to avoid circular imports : acquifer.py __init__ importing tcpip, and tcpip importing the init in return
