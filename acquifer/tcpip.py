@@ -10,9 +10,9 @@ Requirements :
 - the IM must be powered-on, and the IM control software opened
 - this script must be either installed via pip, or put in the python sys.PATH so that it can be imported 
 
-from acquifer.tcpip import IM
+from acquifer.tcpip import TcpIp
 
-myIM = IM() # create the connection
+myIM = TcpIp() # create the connection
 myIM.openLid() # example
 """
 from __future__ import annotations # needed to avoid having type hint as string
