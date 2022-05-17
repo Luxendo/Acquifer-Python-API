@@ -1,4 +1,5 @@
 from . import tcpip # needed to be able to do from acquifer import tcpip
+from .version import __version__
 
 class WellPosition():
 	"""
