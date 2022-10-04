@@ -1,9 +1,9 @@
 '''
 This module implements the Imaging Machine (IM) class
-The class contains a set of funtions to control the IM using TCP/IP
+The class contains a set of functions to control the IM using TCP/IP
 In TCP/IP vocabulary this script is on the client side, while the machine controller is the server
 The TCP/IP works by exchanging strings of bytes.
-Read/Write actions are always preceeded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next (use len(byte string message)) to get the decimal value for the weight of the message, convert it to Hex and encode it in a byte string using bytes.fromhex
+Read/Write actions are always preceded by a first read/write, that sends/read a 4 byte string containing the size of the message to read/write next (use len(byte string message)) to get the decimal value for the weight of the message, convert it to Hex and encode it in a byte string using bytes.fromhex
 
 For new commands, take the "Send Len Hex" and "sent message Hex" decimal code from the labview VI and convert it to a byte using bytes.fromhex(str(hexcode))
 '''
@@ -15,7 +15,7 @@ class IM(object):
     
     
     def __init__(self, TCP_IP='127.0.0.1', TCP_PORT=6261):
-        '''Initialise a TCP/IP socket for the exchange of commands'''
+        '''Initialize a TCP/IP socket for the exchange of commands'''
         
         # local IP and port (constant)
         self._TCP_IP_ = TCP_IP
@@ -310,3 +310,7 @@ class IM(object):
     def closeSocket(self):
         '''Close TCP/IP port'''
         self._socket.close()
+
+if __name__ == "__main__":
+    im = IM() # create an instance of IM i.e connect to the IM
+    im.openLid()
