@@ -385,6 +385,10 @@ class TcpIp(object):
 		This command can be called only if no script is currently running.
 		The command blocks further commands execution until the script has finished running.
 		The script that was started can only be stopped in the IM software, in the 'Run' tab.
+		
+		Returns
+		=======
+		The directory where the images were last saved.
 		"""
 		self.checkLidClosed()
 		
@@ -398,7 +402,9 @@ class TcpIp(object):
 		self.sendCommand(cmd)
 		print(cmd)
 		print("Note : Running script cannot be stopped by tcpip, only via the IM software, in the 'Run' tab.")
-		self._waitForFinished()
+		
+		# Return the directory where the images were saved
+		return self._getFeedback()
 
 	def stopScript(self):
 		"""Stop any script currently running."""
