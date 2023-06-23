@@ -1,4 +1,4 @@
-from . import tcpip, utils # needed to be able to do from acquifer import tcpip
+from . import tcpip, utils, metadata # needed to be able to do from acquifer import tcpip, utils, metadata
 from .version import __version__
 
 class WellPosition():

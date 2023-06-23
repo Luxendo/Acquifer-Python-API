@@ -7,7 +7,7 @@ setuptools.setup(
 	name="acquifer",
 	version="0.0.1",
 	author="Laurent Thomas",
-	author_email="l.thomas@acquifer.de",
+	author_email="laurent.thomas@bruker.com",
 	description="Utilitary functions when working with image datasets acquired with an ACQUIFER Imaging Machine",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
