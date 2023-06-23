@@ -411,7 +411,7 @@ class TcpIp(object):
 		self.sendCommand("StopScript()")
 		self._waitForFinished()
 
-	def setCamera(self, x, y, width, height, binning=1):
+	def setCamera(self, x, y, width, height, binning=None):
 		"""
 		Set acquisition parameters of the camera (binning and/or sensor region for the acquisition).
 		The provided parameters will be used for the next "acquire" commands (sent via the gui or tcpip).
@@ -432,11 +432,11 @@ class TcpIp(object):
 			Height of the rectangular region of interest, in the coordinate system of the camera sensor (when no binning).
 		
 		binning : int, optional
-			Binning factor for width/height. One of 1,2,4 The default is 1 (no binning).
+			Binning factor for width/height. One of 1,2,4 The default is None, ie it wont change the current binning setting.
 		"""
 		self.checkLidClosed()
 		
-		if binning not in (1,2,4):
+		if binning and binning not in (1,2,4):
 			raise ValueError("Binning should be 1,2 or 4.")
 		
 		# Check that the values are integer in range 0,2048
@@ -452,13 +452,20 @@ class TcpIp(object):
 		if (y + height) > 2048 :
 			raise ValueError("y + height exceeds the maximal value of 2048 for the camera sensor area.")
 		
-		self.sendCommand("SetCamera({},{},{},{},{})".format(binning, x, y, width, height) )
+		if binning : 
+			cmd = "SetCamera({},{},{},{},{})".format(binning, x, y, width, height)
+		else:
+			cmd = "SetCamera({},{},{},{})".format(x, y, width, height)
+		
+		self.sendCommand(cmd)
 		self._waitForFinished()
 		print("Updated camera settings.")
 
 	def setCameraBinning(self, binning):
 		"""Set the binning factor for the camera. Also resets the camera sensor region to the full frame 2048x2048."""
-		self.setCamera(0, 0, 2048, 2048, binning)
+		self.sendCommand("SetBinning({})".format(binning))
+		self._waitForFinished()
+
 
 	def resetCamera(self):
 		"""Reset camera to full-size field of view (2048x2048 pixels) and no binning."""
