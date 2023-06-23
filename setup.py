@@ -2,10 +2,12 @@ import setuptools
 
 with open("README.md", "r") as fh:
 	long_description = fh.read()
+    
+exec(open('acquifer/version.py').read())
 
 setuptools.setup(
 	name="acquifer",
-	version="0.0.1",
+	version=__version__,
 	author="Laurent Thomas",
 	author_email="laurent.thomas@bruker.com",
 	description="Utilitary functions when working with image datasets acquired with an ACQUIFER Imaging Machine",
