@@ -757,7 +757,8 @@ class TcpIp(object):
 		"""
 		Acquire a Z-stack composed of nSlices, distributed evenly around a Z-center position, using current objective and camera settings.
 		
-		Images are named according to the IM filenaming convention, and saved in saveDirectory, or in the default acquisition directory if none is mentioned.
+		Images are named according to the IM filenaming convention, and saved in saveDirectory, or in the default project folder if none is mentioned.
+		Use setDefaultProject folder and setPlateID to define this directory and template for the created subdirectory name. 
 		Use setMetadata to update image-metadata used for filenaming before calling acquire.
 		
 		In live mode, this function first switch to script mode (needed for acquire commands) and switch back to live mode after acquisition.
