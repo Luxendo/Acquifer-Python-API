@@ -44,7 +44,12 @@ def checkWellID(wellID:str):
 DataArray = xr.core.dataarray.DataArray # this is just a type-alias used in function signature (shorter than the full thing)
 
 def array_from_directory(directory: str) -> DataArray:
-    return array_from_imagelist(os.listdir(directory), directory)
+    """
+    Create a multi-dimensional array from an IM dataset in a directory.
+    Works for original datasets of tif images only. 
+    """
+    listFilenames = [filename for filename in os.listdir(directory) if filename.endswith(".tif")]
+    return array_from_imagelist(listFilenames, directory)
 
 def array_from_imagelist(list_images : List[str], directory:str = None) -> DataArray:
     """
