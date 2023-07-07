@@ -1,6 +1,6 @@
-# IM-Python-API
+# Acquifer-Python-API
 
-Python module providing utilitary functionalities when working with an ACQUIFER Imaging Machine.  
+Python package providing utilitary functionalities when working with an ACQUIFER Imaging Machine.  
 Functionalities include :  
 - metadata persing from filenames  
 - control of the microscope (tcpip) 
