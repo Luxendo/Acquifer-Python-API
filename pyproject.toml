@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "acquifer"
+dynamic = ["version"]
+authors = [
+  { name="Laurent Thomas"},
+]
+description="Utilitary functions when working with image datasets acquired with an ACQUIFER Imaging Machine microscope"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies=['numpy',
+              'sortedcontainers',
+		      'dask-image',
+              'xarray']
+classifiers = [
+    "Programming Language :: Python :: 3",
+	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research"		
+    ]
+keywords=["microscopy", "smart-imaging", "image-processing", "image-analysis"]
+
+[tool.hatch.version]
+path = "acquifer/version.py"
+
+[project.urls]
+"Homepage" = "https://acquifer.de"
+"Repository" = "https://github.com/acquifer/Acquifer-Python-API"
+"Bug Tracker" = "https://github.com/acquifer/Acquifer-Python-API/issues"

@@ -3,11 +3,13 @@
 Python module providing utilitary functionalities when working with an ACQUIFER Imaging Machine.  
 Functionalities include :  
 - metadata persing from filenames  
+- control of the microscope (tcpip) 
 
-It should work in python 2 AND 3 environment, however it will not work in jython within Fiji (no more module socket).  
-In Fiji, the java package acquifer-core should be used for that purpose.  
+Similar functions are available for java programs (e.g Fiji) via the acquifer-core package, distributed via the ACQUIFER update site (upon request).  
 
 ## Installation
+In a command prompt, use `pip install acquifer`.
+
 The package can be installed locally for test purpose, by opening a command line in the repository directory : 
 `pip install -e .` with e for "experimental"  
 This way any change to the code is directly reflected. 
