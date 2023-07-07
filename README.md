@@ -8,6 +8,6 @@ It should work in python 2 AND 3 environment, however it will not work in jython
 In Fiji, the java package acquifer-core should be used for that purpose.  
 
 ## Installation
-The package can be installed locally for test purpose using 
+The package can be installed locally for test purpose, by opening a command line in the repository directory : 
 `pip install -e .` with e for "experimental"  
 This way any change to the code is directly reflected. 
