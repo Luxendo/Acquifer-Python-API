@@ -114,7 +114,7 @@ class TcpIp(object):
 		
 		except socket.error:
 			msg = ("Cannot connect to IM GUI.\nMake sure an IM is available, powered-on and the IM program is running.\n" +
-			"Also make sure that the option 'Block remote connection' of the admin panel is deactivated, and that the port numbers match (port 6200 is used by default in IM constructor if none specified).")
+			"Also make sure that the option 'Block remote connection' of the admin panel is deactivated, and that the port numbers match (here set to {}).".format(port))
 			raise socket.error(msg)
 		
 		self._isConnected = True # only False once socket is closed
