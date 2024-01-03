@@ -1,0 +1,1 @@
+from acquifer import scripts # should print a WellInfo with A001
