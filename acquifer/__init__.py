@@ -14,15 +14,18 @@ class WellPosition():
 		Parameters
 		----------
 		wellID : str
-			wellID as in IM filename, it should start with a capital letter followed by 3 numbers.
-		x : float
+			wellID as in IM filename (but not case sensitive), it should start with a letter followed by 3 numbers.
+		
+        x : float
 			Objective coordinates in mm
-		y : float
+		
+        y : float
 			Objective coordinates in mm.
-		subposition : int, optional
+		
+        subposition : int, optional
 			subposition index within a well, this will impact the PO tag in the filename. The default is 1.
 		"""
-		self.wellID = checkWellID(wellID)
+		self.wellID = utils.checkWellID(wellID.upper())
 		
 		if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
 			raise TypeError("x,y must be numbers")
