@@ -9,13 +9,17 @@ This module holds function to handle IM scripts, for instance to replace objecti
 import os, clr, sys
 
 dllDir = os.path.join(os.path.dirname(__file__), 'dlls')
-print(dllDir)
+#print(dllDir)
 
 sys.path.append(dllDir)
 
 clr.AddReference("ScriptUtils")
 
 
-#data_text = files('acquifer.dlls').joinpath('System.Memory.xml').read_text()
+from ScriptUtils import ScriptModifier, WellInfo
 
-#print(data_text)
+well = WellInfo("a001", 1, 1 , 1, 1)
+print(str(well)) # priting the object wont show the string representation, so first need to convert to string
+
+#listWells = WellInfo
+#ScriptModifier.ReplacePositions
