@@ -14,7 +14,8 @@ requires-python = ">=3.7"
 dependencies=['numpy',
               'sortedcontainers',
 		      'dask-image',
-              'xarray']
+              'xarray',
+              "pythonnet"]
 classifiers = [
     "Programming Language :: Python :: 3",
 	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
