@@ -327,6 +327,16 @@ class TcpIp(object):
 		"""
 		Move the objective to pre-defined well position, and update well/subposition metadata.
 		"""
+		
+		"""
+		# Check if wellPosition is a WellInfo object
+		# could work but requires importing the dll here too
+		if isinstance(wellPosition, WellPosition):
+			x,y = wellPosition.x, wellPosition.y
+		
+		elif isinstance(wellPosition, WellInfo):
+			x,y 
+		"""
 		self.moveXYto(wellPosition.x, wellPosition.y)
 		self.setMetadataWellId(wellPosition.wellID)
 		self.setMetadataSubposition(wellPosition.subposition)
