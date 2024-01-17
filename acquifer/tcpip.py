@@ -402,6 +402,8 @@ class TcpIp(object):
 		"""
 		self.checkLidClosed()
 		
+		scriptPath = scriptPath.lower() # script centered with PV are typically upper-case sos till work here
+		
 		if not (scriptPath.endswith(".imsf") or scriptPath.endswith(".cs")):
 			raise ValueError("Script must be a .imsf or .cs file.")
 		
