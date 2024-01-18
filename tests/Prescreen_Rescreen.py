@@ -17,17 +17,18 @@ from acquifer import tcpip, scripts
 from ScriptUtils import PixelPosition
 import MTM, cv2, os
 
+#%% Checks
 hasUpdatedValues = input("Did you update values for path_prescreen, path_rescreen, path_template and zref ? (y/n)")
 
 if not hasUpdatedValues.strip().lower() in ["y", "yes"]:
 	raise InterruptedError("Update values first")
 
 #%% Input scripts
-path_prescreen = ""
-path_rescreen  = ""
-path_template = r"C:\Users\Laurent.Thomas\Documents\Dataset\temp.tif"
+path_prescreen = r"C:\Users\Administrator\Downloads\2X-script.imsf"
+path_rescreen  = r"C:\Users\Administrator\Downloads\4X-script.imsf"
+path_template = r"C:\Users\Administrator\Downloads\medaka_crop.tif"
 
-zref = 0.0
+zref = 21500.1
 
 #%% Run prescript
 im = tcpip.TcpIp()
@@ -53,29 +54,37 @@ for filename in os.listdir(directory_prescreen):
 	
 	image = cv2.imread(filepath, -1)
 	
-	list_Hits = MTM.matchTemplates(listTemplates=[("template", template)], 
+	hits = MTM.matchTemplates(listTemplates=[("template", template)], 
 								   image = image,
 								   N_object = 1, 
 								   score_threshold=0.5, 
 								   method=cv2.TM_CCOEFF_NORMED, 
 								   maxOverlap=0)
 	
-	bbox = list_Hits["BBox"][0]
+	if len(hits) == 0:
+		continue
+	
+	print(hits)
+	
+	score = hits["Score"][0]
+	if score < 0.5:
+		continue
+	
+	bbox = hits["BBox"][0]
 	x,y,width, height = bbox
 	bboxCenter_x = int(x + width/2)
 	bboxCenter_y = int(y + height/2)
 	
 	# Crop detected region and save it
-	foundImage = image[x:width, y:height]
+	foundImage = image[x : x+width, y : y+height]
 	cv2.imwrite(os.path.join(directory_detected, filename), foundImage)
 	
 	# Create a pixel poxition and add it to the list
 	position = PixelPosition(bboxCenter_x, bboxCenter_y, float(zref), filepath)
 	listPositions.append(position)
 
-#%% Replace with PixelPosition
-script = scripts.ReplacePositionsInScriptFile(path_rescreen, listPositions)
+#%% Update positions and run script with new positions
+script = scripts.replacePositionsInScriptFile(path_rescreen, listPositions)
 
-#%% Run script with new positions
 im = tcpip.TcpIp()
 im.runScript(script)
