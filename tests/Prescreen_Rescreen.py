@@ -31,8 +31,8 @@ path_template = r"C:\Users\Administrator\Downloads\medaka_crop.tif"
 zref = 21500.1
 
 #%% Run prescript
-im = tcpip.TcpIp()
-directory_prescreen = im.runScript(path_prescreen)
+scope = tcpip.TcpIp()
+directory_prescreen = scope.runScript(path_prescreen)
 
 
 #%% Run template matching
@@ -86,5 +86,5 @@ for filename in os.listdir(directory_prescreen):
 #%% Update positions and run script with new positions
 script = scripts.replacePositionsInScriptFile(path_rescreen, listPositions)
 
-im = tcpip.TcpIp()
-im.runScript(script)
+scope = tcpip.TcpIp()
+scope.runScript(script)
