@@ -1,5 +1,5 @@
 This directory contains example files needed to run a fully automated prescreen / rescreen experiment on the imaging machine, coordinated from python.  
-See the pdf file for a schematic illustration of the workflow.  
+See the [pdf file](https://github.com/Luxendo/Acquifer-Python-API/blob/master/examples/prescreen_rescreen/Prescreen_Rescreen_IM.pdf) for a schematic illustration of the workflow.  
 
 ## Files
 
