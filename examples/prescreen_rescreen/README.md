@@ -8,7 +8,7 @@ Pre-screen script for overview imaging.
 This file is generated via the Imaging Machine control software, based on the settings defined by the user in the GUI.  
 It is actually written in C#, but for this use-case this does not really matter, we mostly treat the script as a black box containing the parameters needed for the acquisition.  
 
-- 4x-script.imsf
+- 4x-script.imsf  
 Similar than the previous script, with settings for the rescreen imaging (here higher spatial-resolution imaging)  
 
 - 4X-SCRIPT-CENTERED.IMSF  
