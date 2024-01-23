@@ -1,0 +1,73 @@
+
+/*
+Experiment-Infos:
+-----------------
+Enter optional experiment information here...
+*/
+//PlateSize:12x8
+ProjectFolder = @"D:\IMAGING-DATA\IMAGES\SCRIPTS\project";
+PlateFolder = DateTime.Now.ToString("yyyyMMdd_HHmmss") + @"_default";
+MaxLoopNumber = 1;
+IntervalTime = 1 * 1000;
+DefaultAcquireFolder = PathCombine(ProjectFolder, PlateFolder);
+
+//Well definition
+Wells = new WellInfo[]{
+	new WellInfo() {Coordinate = "A001", X = 14.423, Y = 10.897, Z = 21500.1, WellNo = 1, SubPos = 1},
+	new WellInfo() {Coordinate = "A003", X = 32.259, Y = 11.186, Z = 21500.1, WellNo = 3, SubPos = 1},
+	new WellInfo() {Coordinate = "A005", X = 50.408, Y = 11.170, Z = 21500.1, WellNo = 5, SubPos = 1},
+	new WellInfo() {Coordinate = "A009", X = 86.379, Y = 11.515, Z = 21500.1, WellNo = 9, SubPos = 1},
+	new WellInfo() {Coordinate = "A011", X = 104.069, Y = 10.943, Z = 21500.1, WellNo = 11, SubPos = 1},
+	new WellInfo() {Coordinate = "B002", X = 23.428, Y = 19.807, Z = 21500.1, WellNo = 23, SubPos = 1},
+	new WellInfo() {Coordinate = "B004", X = 41.424, Y = 20.467, Z = 21500.1, WellNo = 21, SubPos = 1},
+	new WellInfo() {Coordinate = "B006", X = 59.559, Y = 20.373, Z = 21500.1, WellNo = 19, SubPos = 1},
+	new WellInfo() {Coordinate = "B008", X = 77.021, Y = 19.804, Z = 21500.1, WellNo = 17, SubPos = 1},
+	new WellInfo() {Coordinate = "B010", X = 95.351, Y = 20.373, Z = 21500.1, WellNo = 15, SubPos = 1},
+	new WellInfo() {Coordinate = "B012", X = 113.415, Y = 20.324, Z = 21500.1, WellNo = 13, SubPos = 1},
+};
+
+
+//Initialization
+SetObjective(2); //'4X'
+GotoXYZ(Wells[0]);
+
+//Loop over the entire wellplate
+for (LoopNumber=1; LoopNumber<=MaxLoopNumber; LoopNumber++)
+{
+    StartInterval();
+
+    //Loop over the chosen wells
+    for (WellIndex=0; WellIndex<Wells.Length; WellIndex++)
+    {
+        //Get the info for a single well and move to its position
+        WellInfo well = Wells[WellIndex];
+        SetWellInfo(well);
+        GotoXYZ(well);
+
+        //Autofocus
+        double z = well.Z;
+		
+        //no autofocus
+		
+        //Acquire the images
+        //SetCamera(binning, x, y, width, height);
+        SetCamera(1, 0, 0, 2048, 2048);
+
+        //SetBrightField (channelNumber, filterIndex, intensity, exposureTime, afOffset, lightConstantOn);
+        SetBrightField(1, 4, 30, 20, 0, false); //BF
+        //Acquire(noOfZSlices, zSliceHeight, zStackCenter, path);
+        Acquire(1, 2.7, z);
+
+        //Turn off light
+        SetBrightField(1, 4, 0, 0, 0, false);
+    }
+
+  //Move the machine to a waiting position in the middle of the plate between loops
+    if (LoopNumber < MaxLoopNumber && IntervalTime >= 5000)
+    {
+        GotoXYZ(63.773, 42.827, 15000);
+        WaitEndOfInterval(IntervalTime - 5000);
+        GotoXYZ(Wells[0]);
+        WaitEndOfInterval(IntervalTime);
+    }  
+}
