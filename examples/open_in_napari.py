@@ -6,7 +6,7 @@ For this example to work you need to install napari in the python environment ru
 With pip : 
     pip install napari[all]
 """
-from acquifer.utils import array_from_directory
+from acquifer_napari_plugin.utils import array_from_directory
 import napari
 
 def view_in_napari(array6D):

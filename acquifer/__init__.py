@@ -16,13 +16,13 @@ class WellPosition():
 		wellID : str
 			wellID as in IM filename (but not case sensitive), it should start with a letter followed by 3 numbers.
 		
-        x : float
+		x : float
 			Objective coordinates in mm
 		
-        y : float
+		y : float
 			Objective coordinates in mm.
 		
-        subposition : int, optional
+		subposition : int, optional
 			subposition index within a well, this will impact the PO tag in the filename. The default is 1.
 		"""
 		self.wellID = utils.checkWellID(wellID.upper())

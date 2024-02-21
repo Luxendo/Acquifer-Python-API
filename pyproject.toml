@@ -12,9 +12,6 @@ description="Utilitary functions when working with image datasets acquired with 
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies=['numpy',
-              'sortedcontainers',
-              'dask-image',
-              'xarray',
               'pythonnet']
 classifiers = [
     "Programming Language :: Python :: 3",
