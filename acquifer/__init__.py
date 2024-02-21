@@ -1,4 +1,4 @@
-from . import tcpip, utils, metadata, scripts # needed to be able to do from acquifer import tcpip, utils, metadata
+from . import tcpip, utils, metadata # scripts excluded to avoid issue when importing clr/pythonnet in spyder # needed to be able to do from acquifer import tcpip, utils, metadata
 from .version import __version__
 
 class WellPosition():
